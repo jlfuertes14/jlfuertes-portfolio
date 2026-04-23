@@ -117,7 +117,7 @@ export default function MobileMenu() {
         createPortal(
           <div
             ref={overlayRef}
-            className="fixed inset-0 z-[9999] flex flex-col bg-background"
+            className="fixed inset-0 z-9999 flex flex-col bg-background"
             style={{
               clipPath: "circle(0% at calc(100% - 2.5rem) 2.5rem)",
             }}
@@ -150,7 +150,7 @@ export default function MobileMenu() {
             {/* Bottom Accent */}
             <div className="pb-10 text-center">
               <p className="text-xs font-bold uppercase tracking-[0.3em] text-foreground/20">
-                Portfolio 2025
+                Portfolio 2026
               </p>
             </div>
           </div>,

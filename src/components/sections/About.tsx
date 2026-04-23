@@ -135,10 +135,10 @@ export default function About() {
                 return (
                   <span
                     key={skill.name}
-                    className="skill-pill group relative z-10 hover:z-50 cursor-default flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-xl border border-border bg-card/50 transition-all duration-300 hover:border-primary/50 hover:shadow-[0_0_20px_-5px_oklch(0.75_0.18_160/0.3)] opacity-0"
+                    className="skill-pill group relative z-10 hover:z-50 cursor-default flex h-3.25rem w-3.25rem items-center justify-center rounded-xl border border-border bg-card/50 transition-all duration-300 hover:border-primary/50 hover:shadow-[0_0_20px_-5px_oklch(0.75_0.18_160/0.3)] opacity-0"
                   >
                     <Icon className="h-6 w-6" style={{ color: mapping.color }} />
-                    
+
                     {/* Hover Tooltip */}
                     <span className="absolute -bottom-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap text-xs font-medium text-foreground bg-background border border-border/60 rounded-md px-2.5 py-1.5 shadow-xl pointer-events-none hidden md:block">
                       {skill.name}

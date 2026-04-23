@@ -168,13 +168,13 @@ export default function Hero() {
 
       {/* ─── Bottom Bar ─── */}
       <footer className="z-30 flex w-full max-w-7xl items-center justify-between">
-        <div className="hero-footer-el text-xs font-bold uppercase tracking-[0.2em] text-foreground/30 opacity-0">
+        <div className="hero-footer-el text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-0">
           Taytay, Rizal, PH
         </div>
 
         {/* Scroll Indicator */}
         <div className="hero-footer-el flex flex-col items-center gap-1.5 opacity-0">
-          <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-foreground/25">
+          <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
             Scroll
           </span>
           <div className="relative h-8 w-[1px] overflow-hidden">
@@ -182,7 +182,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="hero-footer-el text-xs font-bold uppercase tracking-[0.2em] text-foreground/30 opacity-0">
+        <div className="hero-footer-el text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-0">
           © {new Date().getFullYear()}
         </div>
       </footer>
