@@ -89,7 +89,7 @@ export const projects = [
     location: "Anime Discovery Engine",
     flag: "🌸",
     stats: "Next.js • FastAPI • MongoDB",
-    imageUrl: "/images/aniverse-preview.png",
+    imageUrl: "/images/aniverse.png",
     href: "https://aniverse-rose.vercel.app/",
     themeColor: "330 80% 55%",
   },
