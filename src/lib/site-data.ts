@@ -84,4 +84,13 @@ export const projects = [
     href: "https://hotel-site-nu.vercel.app/",
     themeColor: "36 80% 50%",
   },
+  {
+    title: "AniVerse",
+    location: "Anime Discovery Engine",
+    flag: "🌸",
+    stats: "Next.js • FastAPI • MongoDB",
+    imageUrl: "/images/aniverse-preview.png",
+    href: "https://aniverse-rose.vercel.app/",
+    themeColor: "330 80% 55%",
+  },
 ];
