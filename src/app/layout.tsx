@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import AiChat from "@/components/AiChat";
 import ScrollProgress from "@/components/ScrollProgress";
+import ScrollToTop from "@/components/ui/scroll-to-top";
 import DotsBackground from "@/components/DotsBackground";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
@@ -61,6 +62,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <AiChat />
+          <ScrollToTop />
         </ThemeProvider>
       </body>
     </html>

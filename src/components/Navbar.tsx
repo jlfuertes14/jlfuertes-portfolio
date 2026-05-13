@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Logo } from "@/components/Logo";
 import MobileMenu from "@/components/MobileMenu";
 import { navLinks, siteConfig } from "@/lib/site-data";
 
@@ -37,26 +38,39 @@ export default function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 sm:px-8 md:px-12 py-4">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="text-xl font-bold tracking-wider text-foreground hover:text-primary transition-colors duration-300"
-        >
-          {siteConfig.shortName}
-        </Link>
+      <div className="flex items-center justify-between px-8 sm:px-12 md:px-48 py-6">
+        {/* Left Side: Logo + Nav Links */}
+        <div className="flex items-center gap-16">
+          <Link
+            href="/"
+            className="transition-opacity hover:opacity-90 active:scale-95 transition-transform"
+          >
+            <Logo />
+          </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden items-center space-x-8 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.label}
-              href={resolveHref(link.href)}
-              className="text-sm font-medium tracking-widest text-foreground/60 transition-colors duration-300 hover:text-primary uppercase"
-            >
-              {link.label}
-            </Link>
-          ))}
+            {/* Desktop Nav Links */}
+            <div className="hidden items-center space-x-10 md:flex">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  href={resolveHref(link.href)}
+                  onClick={(e) => {
+                    if (link.href.startsWith("#") && pathname === "/") {
+                      e.preventDefault();
+                      const element = document.getElementById(link.href.substring(1));
+                      element?.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                  className="text-[15px] font-medium text-foreground/50 transition-colors duration-300 hover:text-primary"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+        </div>
+
+        {/* Right Side: Theme Toggle */}
+        <div className="hidden md:block">
           <ThemeToggle />
         </div>
 

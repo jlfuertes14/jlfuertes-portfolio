@@ -139,7 +139,16 @@ export default function MobileMenu() {
                 <Link
                   key={link.label}
                   href={resolveHref(link.href)}
-                  onClick={handleClose}
+                  onClick={(e) => {
+                    handleClose();
+                    if (link.href.startsWith("#") && pathname === "/") {
+                      e.preventDefault();
+                      // Small delay to allow menu closing animation to start/finish if desired, 
+                      // or scroll immediately.
+                      const element = document.getElementById(link.href.substring(1));
+                      element?.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
                   className="mobile-nav-link text-4xl font-black uppercase tracking-tighter text-foreground transition-colors duration-300 hover:text-primary"
                 >
                   {link.label}

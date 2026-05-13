@@ -4,9 +4,9 @@ import React, { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { siteConfig } from "@/lib/site-data";
+import { TechMarquee } from "../TechMarquee";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -14,21 +14,22 @@ export default function Hero() {
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
+      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+      const reanimate = () => tl.restart();
+      window.addEventListener("hero-reanimate", reanimate);
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const tl = gsap.timeline({
-          defaults: { ease: "power4.out" },
-        });
-
         // 1. Circle — elastic scale-in
         tl.fromTo(
           ".hero-circle",
-          { scale: 0, opacity: 0 },
+          { scale: 0, opacity: 0, y: -150 },
           {
             scale: 1,
             opacity: 1,
-            duration: 1.2,
-            ease: "elastic.out(1, 0.55)",
+            y: 0,
+            duration: 1.5,
+            ease: "elastic.out(1, 0.75)",
           },
           0.1
         );
@@ -49,57 +50,49 @@ export default function Hero() {
             opacity: 1,
             y: 0,
             rotationX: 0,
-            duration: 0.7,
-            stagger: 0.035,
-            ease: "back.out(1.7)",
+            duration: 0.8,
+            stagger: 0.05,
+            ease: "power4.out",
           },
           0.5
         );
 
         // 4. Description + CTA
         tl.fromTo(
-          ".hero-desc",
+          ".hero-desc-group",
           { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.6 },
+          { opacity: 1, y: 0, duration: 0.8 },
           "-=0.4"
         );
 
-        // 7. Footer elements
+        // 5. Vertical Text
         tl.fromTo(
-          ".hero-footer-el",
-          { opacity: 0, y: 15 },
-          { opacity: 1, y: 0, duration: 0.4, stagger: 0.1 },
-          "-=0.2"
+          ".hero-side-text",
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.6, stagger: 0.2 },
+          "-=0.6"
         );
 
-        // Single float on load
-        gsap.to(".hero-circle", {
-          y: -8,
-          duration: 2,
-          ease: "power2.out",
-        });
-
-        // Continuous: scroll line pulse
-        gsap.fromTo(
-          ".hero-scroll-line",
-          { y: -12, opacity: 1 },
-          {
-            y: 20,
-            opacity: 0,
-            duration: 1.4,
-            repeat: -1,
-            ease: "power2.in",
-          }
+        // 7. Footer elements (Tech Marquee)
+        tl.fromTo(
+          ".hero-footer-el",
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
+          0.8
         );
       });
 
       // Reduced motion — just show everything
       mm.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set(
-          ".hero-logo, .hero-circle, .hero-image, .hero-char, .hero-desc, .hero-nav, .hero-footer-el",
+          ".hero-logo, .hero-circle, .hero-image, .hero-char, .hero-desc-group, .hero-side-text, .hero-footer-el",
           { opacity: 1, y: 0, x: 0, scale: 1, rotationX: 0 }
         );
       });
+
+      return () => {
+        window.removeEventListener("hero-reanimate", reanimate);
+      };
     },
     { scope: containerRef }
   );
@@ -118,74 +111,78 @@ export default function Hero() {
   return (
     <div
       ref={containerRef}
-      className="relative flex min-h-screen w-full flex-col items-center justify-between overflow-hidden bg-background p-6 sm:p-8 md:p-12"
+      className="relative flex min-h-screen w-full flex-col items-center justify-between overflow-hidden bg-background p-6 sm:p-8 md:p-12 pb-8 sm:pb-12 md:pb-16"
     >
-      {/* Spacer for sticky navbar */}
-      <div className="h-16" />
+      <div className="h-16" /> {/* Spacer for sticky navbar */}
+
+      {/* Architectural Side Text */}
+      <div className="absolute left-10 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-12 z-20">
+        <span className="hero-side-text vertical-text text-[10px] uppercase tracking-[0.4em] text-muted-foreground/50 opacity-0 [writing-mode:vertical-rl]">
+          Full Stack Developer
+        </span>
+        <div className="hero-side-text w-px h-24 bg-border/40 opacity-0" />
+        <span className="hero-side-text vertical-text text-[10px] uppercase tracking-[0.4em] text-muted-foreground/50 opacity-0 [writing-mode:vertical-rl]">
+          Based in Philippines
+        </span>
+      </div>
+
+      <div className="absolute right-10 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-12 z-20">
+        <span className="hero-side-text vertical-text text-[10px] uppercase tracking-[0.4em] text-muted-foreground/50 opacity-0 [writing-mode:vertical-rl]">
+          Est. 2026
+        </span>
+        <div className="hero-side-text w-px h-24 bg-border/40 opacity-0" />
+        <span className="hero-side-text vertical-text text-[10px] uppercase tracking-[0.4em] text-muted-foreground/50 opacity-0 [writing-mode:vertical-rl]">
+          {new Date().getFullYear()} Edition
+        </span>
+      </div>
 
       {/* ─── Main Content Area ─── */}
-      <div className="relative grid w-full max-w-7xl grow grid-cols-1 items-center md:grid-cols-3">
-        {/* Left — Description */}
-        <div className="hero-desc z-20 order-2 md:order-1 text-center md:text-left opacity-0">
-          <p className="mx-auto max-w-xs text-sm leading-relaxed text-foreground/70 md:mx-0">
-            {siteConfig.tagline}
-          </p>
-          <a
-            href="#about"
-            className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors duration-300 underline decoration-primary underline-offset-4"
-          >
-            Read More
-            <ArrowRight className="h-4 w-4" />
-          </a>
+      <div className="relative z-10 grid w-full max-w-7xl grow grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-0">
+        {/* Left Side: Typography & Bio */}
+        <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+          <h1 className="text-[15vw] lg:text-[10rem] font-extralight text-foreground leading-[0.8] tracking-tighter mb-8">
+            {splitText("Hello")}
+          </h1>
+
+          <div className="hero-desc-group opacity-0 max-w-md space-y-8">
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+              I am <span className="text-foreground font-medium">{siteConfig.name}</span>,  a Computer Engineer bridging the gap between <span className="text-primary/80">hardware circuits</span> and <span className="text-primary/80">intelligent software</span>.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              <button
+                onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
+                className="group flex items-center gap-3 px-6 py-3 rounded-full bg-foreground text-background font-medium hover:bg-foreground/90 transition-all duration-300"
+              >
+                <span>Scroll down</span>
+                <ChevronDown className="w-4 h-4 animate-bounce" />
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Center — Profile Image + Circle */}
-        <div className="relative order-1 md:order-2 flex justify-center items-center h-full overflow-visible">
-          {/* Yellow circle — centered behind upper body */}
-          <div className="hero-circle absolute z-0 rounded-full bg-yellow-400/90 opacity-0 h-[250px] w-[250px] md:h-[350px] md:w-[350px] lg:h-[430px] lg:w-[430px] -translate-y-[60%]" />
-          {/* Profile image — overlaps circle, body extends below */}
-          <div className="hero-image relative z-10 opacity-0 w-[280px] md:w-[340px] lg:w-[420px] translate-y-[15%]">
+        {/* Right Side: Signature Profile style */}
+        <div className="hero-image-container relative flex justify-center items-center h-full">
+          <div className="hero-circle absolute z-0 rounded-full bg-primary opacity-0 h-[280px] w-[280px] md:h-[400px] md:w-[400px] lg:h-[520px] lg:w-[520px]" />
+          <div className="hero-image relative z-10 opacity-0 w-[240px] md:w-[320px] lg:w-[440px] mt-12 lg:mt-20">
             <Image
               src="/images/prof trans.png"
               alt={siteConfig.name}
               width={900}
               height={1300}
-              className="w-full h-auto"
+              className="w-full h-auto drop-shadow-2xl"
               priority
             />
           </div>
         </div>
-
-        {/* Right — Name */}
-        <div className="z-20 order-3 flex items-center justify-center text-center md:justify-start">
-          <h1 className="text-6xl font-extrabold text-foreground sm:text-7xl md:text-8xl lg:text-9xl leading-[0.85] tracking-tighter">
-            {splitText("JOHN")}
-            <br />
-            {splitText("LESTER")}
-          </h1>
-        </div>
       </div>
 
-      {/* ─── Bottom Bar ─── */}
-      <footer className="z-30 flex w-full max-w-7xl items-center justify-between">
-        <div className="hero-footer-el text-xs font-bold uppercase tracking-[0.2em] text-foreground/30 opacity-0">
-          Taytay, Rizal, PH
+      {/* ─── Bottom Bar (Tech Stack Marquee) ─── */}
+      <div className="z-30 w-full mt-auto border-none">
+        <div className="hero-footer-el opacity-0 border-none">
+          <TechMarquee />
         </div>
-
-        {/* Scroll Indicator */}
-        <div className="hero-footer-el flex flex-col items-center gap-1.5 opacity-0">
-          <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-foreground/25">
-            Scroll
-          </span>
-          <div className="relative h-8 w-1px overflow-hidden">
-            <div className="hero-scroll-line absolute top-0 left-0 w-full h-3 bg-gradient-to-b from-primary to-transparent" />
-          </div>
-        </div>
-
-        <div className="hero-footer-el text-xs font-bold uppercase tracking-[0.2em] text-foreground/30 opacity-0">
-          © {new Date().getFullYear()}
-        </div>
-      </footer>
+      </div>
     </div>
   );
 }

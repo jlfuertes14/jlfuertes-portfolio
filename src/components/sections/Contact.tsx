@@ -9,16 +9,16 @@ import {
   Loader2,
   Mail,
   MapPin,
-  GraduationCap,
   Github,
   Linkedin,
   Twitter,
   Instagram,
   Facebook,
   Youtube,
+  ExternalLink,
 } from "lucide-react";
-import SectionHeading from "@/components/SectionHeading";
 import { siteConfig, socialLinks as socialData } from "@/lib/site-data";
+import { Button } from "@/components/ui/button";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -71,27 +71,12 @@ export default function Contact() {
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         gsap.fromTo(
-          ".contact-info",
-          { opacity: 0, x: -30 },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.7,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: ".contact-grid",
-              start: "top 80%",
-            },
-          }
-        );
-        gsap.fromTo(
-          ".contact-form",
-          { opacity: 0, y: 30 },
+          ".contact-header",
+          { opacity: 0, y: 20 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.7,
-            delay: 0.15,
+            duration: 0.6,
             ease: "power3.out",
             scrollTrigger: {
               trigger: ".contact-grid",
@@ -99,30 +84,37 @@ export default function Contact() {
             },
           }
         );
+
         gsap.fromTo(
-          ".social-icon",
-          { opacity: 0, scale: 0.7 },
+          ".contact-item",
+          { opacity: 0, x: -20 },
           {
             opacity: 1,
-            scale: 1,
-            duration: 0.4,
-            stagger: 0.05,
-            ease: "back.out(2)",
+            x: 0,
+            duration: 0.5,
+            stagger: 0.1,
+            ease: "power3.out",
             scrollTrigger: {
-              trigger: ".social-row",
-              start: "top 90%",
+              trigger: ".contact-grid",
+              start: "top 80%",
             },
           }
         );
-      });
 
-      mm.add("(prefers-reduced-motion: reduce)", () => {
-        gsap.set(".contact-info, .contact-form, .social-icon", {
-          opacity: 1,
-          x: 0,
-          y: 0,
-          scale: 1,
-        });
+        gsap.fromTo(
+          ".contact-form-container",
+          { opacity: 0, scale: 0.98 },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.8,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".contact-grid",
+              start: "top 75%",
+            },
+          }
+        );
       });
     },
     { scope: sectionRef }
@@ -171,44 +163,70 @@ export default function Contact() {
     <section
       id="contact"
       ref={sectionRef}
-      className="w-full py-24 md:py-32 border-t border-border/20"
+      className="pt-48 pb-32 bg-background relative overflow-hidden scroll-mt-24 min-h-screen flex flex-col justify-start"
     >
-      <div className="mx-auto max-w-7xl px-6 md:px-12">
-        <SectionHeading
-          title="LET'S"
-          highlight="CONNECT"
-          subtitle="Have a project in mind? Let's build something amazing together."
-        />
+      {/* Absolute background cover to ensure no peeking */}
+      <div className="absolute inset-0 bg-background z-0" />
+      {/* Background Glows */}
+      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="contact-grid mt-16 md:mt-20 grid gap-16 lg:grid-cols-[1fr_1.5fr]">
-          {/* ══════ Left — Contact Info + Social ══════ */}
-          <div className="contact-info space-y-10 opacity-0">
-            {/* Contact Details */}
-            <div className="space-y-6">
-              <InfoItem
-                icon={<Mail className="h-5 w-5" />}
-                label="Email"
-                value={siteConfig.email}
-                href={`mailto:${siteConfig.email}`}
-              />
-              <InfoItem
-                icon={<MapPin className="h-5 w-5" />}
-                label="Location"
-                value={siteConfig.location}
-              />
-              <InfoItem
-                icon={<GraduationCap className="h-5 w-5" />}
-                label="University"
-                value={siteConfig.university}
-              />
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="contact-grid grid gap-16 lg:grid-cols-[1fr_1.5fr] items-start">
+
+          {/* ══════ Left — "Noir Minimalist" Info ══════ */}
+          <div className="contact-info-panel space-y-12">
+            <div className="contact-header space-y-2">
+              <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-foreground">
+                Get in <span className="text-foreground/90">touch</span>
+              </h2>
             </div>
 
-            {/* Social Links */}
-            <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-foreground/30 mb-4">
+            <div className="space-y-8">
+              <div className="contact-item group">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">
+                  Email:
+                </p>
+                <a
+                  href={`mailto:${siteConfig.email}`}
+                  className="text-xl md:text-2xl font-medium text-foreground hover:text-primary transition-colors block"
+                >
+                  {siteConfig.email}
+                </a>
+              </div>
+
+              <div className="contact-item group">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">
+                  Address:
+                </p>
+                <p className="text-xl md:text-2xl font-medium text-foreground">
+                  {siteConfig.location}
+                </p>
+              </div>
+
+              <div className="contact-item pt-2">
+                <Button
+                  variant="outline"
+                  className="rounded-full px-8 h-12 border-border bg-transparent hover:bg-foreground hover:text-background transition-all duration-300 font-semibold"
+                  asChild
+                >
+                  <a
+                    href={socialData.find(s => s.label === "LinkedIn")?.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Let&apos;s connect
+                  </a>
+                </Button>
+              </div>
+            </div>
+
+            {/* Follow Us */}
+            <div className="pt-6 border-t border-border/10 reveal-item">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 mb-4 block">
                 Follow Me
-              </h3>
-              <div className="social-row flex flex-wrap gap-3">
+              </span>
+              <div className="flex flex-wrap gap-4">
                 {socialData.map((link) => {
                   const Icon = iconMap[link.icon];
                   if (!Icon) return null;
@@ -218,10 +236,10 @@ export default function Contact() {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="social-icon flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-card/50 text-foreground/50 opacity-0 transition-all duration-300 hover:border-primary/50 hover:text-primary hover:shadow-[0_0_20px_-5px_oklch(0.75_0.18_160/0.4)] hover:scale-110"
+                      className="w-10 h-10 rounded-full bg-muted/50 border border-border flex items-center justify-center text-foreground hover:bg-foreground hover:text-background transition-all duration-300 hover:scale-110"
                       aria-label={link.label}
                     >
-                      <Icon className="h-5 w-5" />
+                      <Icon className="w-4 h-4" />
                     </a>
                   );
                 })}
@@ -229,148 +247,92 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* ══════ Right — Contact Form ══════ */}
-          <form
-            onSubmit={handleSubmit}
-            className="contact-form space-y-5 opacity-0"
-          >
-            <div className="grid gap-5 md:grid-cols-2">
-              <div>
-                <label
-                  htmlFor="contact-name"
-                  className="mb-1.5 block text-xs font-medium uppercase tracking-widest text-foreground/40"
-                >
-                  Name
+          {/* ══════ Right — Form ══════ */}
+          <div className="contact-form-container lg:pl-10">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="grid gap-8 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-sm font-medium text-foreground/70 ml-1">
+                    Your Name
+                  </label>
+                  <input
+                    id="name"
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Your full name"
+                    className="w-full bg-muted/30 border border-border/50 rounded-2xl px-6 py-4 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 focus:bg-muted/50 transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-sm font-medium text-foreground/70 ml-1">
+                    Email address
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="Your email address"
+                    className="w-full bg-muted/30 border border-border/50 rounded-2xl px-6 py-4 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 focus:bg-muted/50 transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="message" className="text-sm font-medium text-foreground/70 ml-1">
+                  Message
                 </label>
-                <input
-                  id="contact-name"
-                  name="name"
-                  type="text"
+                <textarea
+                  id="message"
                   required
-                  autoComplete="name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  className="w-full rounded-xl border border-border bg-card/50 px-4 py-3.5 text-sm text-foreground placeholder:text-foreground/25 outline-none transition-all duration-300 focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
-                  placeholder="Your name…"
+                  rows={6}
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  placeholder="Write something..."
+                  className="w-full bg-muted/30 border border-border/50 rounded-2xl px-6 py-4 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 focus:bg-muted/50 transition-all resize-none"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor="contact-email"
-                  className="mb-1.5 block text-xs font-medium uppercase tracking-widest text-foreground/40"
+
+              <div className="space-y-6 pt-2">
+                {/* Status Messages */}
+                {status === "success" && (
+                  <div className="rounded-xl border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-primary font-medium">
+                    ✓ Message sent successfully! I&apos;ll get back to you soon.
+                  </div>
+                )}
+                {status === "error" && (
+                  <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400 font-medium">
+                    ✗ Something went wrong. Please try again.
+                  </div>
+                )}
+                {status === "ratelimited" && (
+                  <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-400 font-medium">
+                    ⏳ Rate limit exceeded. Try again in {getRemainingTime()} minutes.
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={status === "sending"}
+                  className="w-full bg-foreground text-background font-bold py-5 rounded-2xl transition-all hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2 group"
                 >
-                  Email
-                </label>
-                <input
-                  id="contact-email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  spellCheck={false}
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  className="w-full rounded-xl border border-border bg-card/50 px-4 py-3.5 text-sm text-foreground placeholder:text-foreground/25 outline-none transition-all duration-300 focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
-                  placeholder="your@email.com…"
-                />
+                  {status === "sending" ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <>
+                      Send Message
+                      <Send className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                    </>
+                  )}
+                </button>
               </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="contact-message"
-                className="mb-1.5 block text-xs font-medium uppercase tracking-widest text-foreground/40"
-              >
-                Message
-              </label>
-              <textarea
-                id="contact-message"
-                name="message"
-                rows={6}
-                required
-                value={formData.message}
-                onChange={(e) =>
-                  setFormData({ ...formData, message: e.target.value })
-                }
-                className="w-full resize-none rounded-xl border border-border bg-card/50 px-4 py-3.5 text-sm text-foreground placeholder:text-foreground/25 outline-none transition-all duration-300 focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
-                placeholder="Tell me about your project or idea…"
-              />
-            </div>
-
-            {/* Status Messages */}
-            {status === "success" && (
-              <div className="rounded-xl border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-primary font-medium">
-                ✓ Message sent successfully! I&apos;ll get back to you soon.
-              </div>
-            )}
-            {status === "error" && (
-              <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400 font-medium">
-                ✗ Something went wrong. Please try again or email me directly.
-              </div>
-            )}
-            {status === "ratelimited" && (
-              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-400 font-medium">
-                ⏳ You&apos;ve sent too many messages. Please try again in ~{getRemainingTime()} minutes.
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={status === "sending"}
-              className="group inline-flex items-center gap-2.5 rounded-xl bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground uppercase tracking-wider transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_30px_-5px_oklch(0.75_0.18_160/0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {status === "sending" ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              )}
-              {status === "sending" ? "Sending…" : "Send Message"}
-            </button>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </section>
   );
-}
-
-/* ─── Contact Info Row Component ─── */
-function InfoItem({
-  icon,
-  label,
-  value,
-  href,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  href?: string;
-}) {
-  const content = (
-    <div className="flex items-start gap-4 group">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-card/50 text-foreground/40 transition-all duration-300 group-hover:border-primary/50 group-hover:text-primary">
-        {icon}
-      </div>
-      <div>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/30">
-          {label}
-        </p>
-        <p className="mt-0.5 text-sm font-medium text-foreground/70 group-hover:text-primary transition-colors duration-300">
-          {value}
-        </p>
-      </div>
-    </div>
-  );
-
-  if (href) {
-    return (
-      <a href={href} className="block">
-        {content}
-      </a>
-    );
-  }
-  return content;
 }

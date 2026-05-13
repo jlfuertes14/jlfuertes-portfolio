@@ -89,7 +89,7 @@ export default function SectionHeading({
       className={`${align === "center" ? "text-center" : ""} ${className}`}
     >
       <h2
-        className="text-4xl font-black tracking-tighter sm:text-5xl md:text-6xl uppercase"
+        className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl"
         style={{ textWrap: "balance" } as React.CSSProperties}
       >
         {splitWord(title + " ")}
@@ -97,7 +97,7 @@ export default function SectionHeading({
       </h2>
       {subtitle && (
         <p
-          className={`sh-sub mt-4 text-sm font-bold uppercase tracking-widest text-foreground/40 max-w-lg ${
+          className={`sh-sub mt-4 text-sm font-bold tracking-widest text-foreground/40 max-w-lg ${
             align === "center" ? "mx-auto" : ""
           }`}
         >

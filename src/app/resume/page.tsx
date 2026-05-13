@@ -1,389 +1,382 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Github,
-  Download,
-  ArrowLeft,
-  ExternalLink,
-  GraduationCap,
-  Briefcase,
-  Trophy,
-  Code2,
-  Wrench,
-  Languages,
-  Gamepad2,
-} from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
+import React, { useState } from 'react';
+import { Mail, Phone, MapPin, Github, Linkedin, Twitter, Download, ExternalLink, Briefcase, GraduationCap, Award, Code, Globe } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import Link from 'next/link';
+import Image from 'next/image';
+import { siteConfig, skills, projects } from '@/lib/site-data';
+import { motion } from 'framer-motion';
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 },
-};
-
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1,
+const JohnResumeData = {
+  name: siteConfig.name,
+  title: siteConfig.title,
+  avatar: "/images/profile-dark.png",
+  email: siteConfig.email,
+  phone: siteConfig.phone,
+  location: siteConfig.location,
+  summary: "Computer Engineering student bridging software and hardware. I pride myself on having an 'I'll figure it out' mindset no matter how hard the problem is. Experienced in full-stack web development, electronics, and embedded systems.",
+  skills: [
+    { name: 'React / Next.js', level: 90 },
+    { name: 'TypeScript', level: 85 },
+    { name: 'Node.js', level: 80 },
+    { name: 'Python', level: 85 },
+    { name: 'C++ / Arduino', level: 90 },
+    { name: 'Embedded Systems', level: 85 },
+  ],
+  experience: [
+    {
+      title: 'Open Source Projects & Technical Contributions',
+      company: 'GitHub Portfolio',
+      period: '2022 - Present',
+      description: 'Developing and maintaining multiple high-performance web applications and robotics projects. Architecting scalable backends and intuitive user interfaces.',
     },
+    {
+      title: 'STEM Research Lead',
+      company: 'Buting Senior High School',
+      period: '2020 - 2022',
+      description: 'Led feasibility studies on Piezoelectric generators and natural mouth cleaners. Coordinated team experiments resulting in Honors graduation.',
+    },
+  ],
+  education: [
+    {
+      degree: 'BS Computer Engineering',
+      institution: 'Rizal Technological University',
+      year: 'Expected 2026',
+    },
+    {
+      degree: 'STEM Strand (Honors)',
+      institution: 'Buting Senior High School',
+      year: '2022',
+    },
+  ],
+  projects: projects.slice(0, 3).map(p => ({
+    name: p.title,
+    description: p.description,
+    tags: p.techStack,
+    link: p.href
+  })),
+  socialLinks: {
+    github: "https://github.com/jlfuertes14",
+    linkedin: "https://www.linkedin.com/in/jlfuertes14/",
+    twitter: "https://x.com/chiro_yui14",
   },
 };
 
 export default function ResumePage() {
+  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+  const data = JohnResumeData;
+
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30 selection:text-primary">
-      {/* Spacer for sticky navbar */}
-      <div className="h-20" />
-
-      {/* Floating Download PDF button */}
-      <div className="fixed top-20 right-6 md:right-12 z-40">
-        <a
-          href="/assets/resume.pdf"
-          download="John_Lester_Fuertes_Resume.pdf"
-          className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 shadow-lg"
+      {/* Navigation Space */}
+      <div className="h-24" />
+      
+      <div className="max-w-6xl mx-auto px-6 py-12 md:px-12">
+        {/* Header Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden mb-12 transition-all duration-500 hover:shadow-2xl hover:border-primary/20"
         >
-          <Download className="h-4 w-4" />
-          Download PDF
-        </a>
-      </div>
-
-      <main className="mx-auto max-w-7xl px-6 py-12 md:px-12 lg:py-20">
-        <div className="grid gap-12 lg:grid-cols-[320px_1fr]">
-          {/* Sidebar */}
-          <aside className="space-y-10 lg:sticky lg:top-24 lg:self-start">
-            {/* Profile */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="text-center lg:text-left"
-            >
-              <div className="relative mx-auto h-32 w-32 overflow-hidden rounded-full border-2 border-primary/20 lg:mx-0">
-                <Image
-                  src="/images/profile-dark.png"
-                  alt="John Lester Fuertes"
-                  fill
-                  className="object-cover"
-                />
+          <div className="relative h-32 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-card"></div>
+          </div>
+          
+          <div className="relative px-8 pb-8 -mt-16">
+            <div className="flex flex-col md:flex-row items-center md:items-end gap-8">
+              <div className="relative group">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary via-primary/50 to-primary opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
+                <div className="relative size-32 rounded-full border-4 border-card shadow-xl overflow-hidden z-10 bg-muted">
+                  <Image
+                    src={data.avatar}
+                    alt={data.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
               </div>
-              <h1 className="mt-6 text-2xl font-bold tracking-tight font-heading">
-                John Lester C. Fuertes
-              </h1>
-              <p className="mt-2 text-sm text-foreground/60 font-medium uppercase tracking-wider">
-                Computer Engineering Student
-              </p>
+              
+              <div className="flex-1 text-center md:text-left">
+                <h1 className="text-4xl md:text-5xl font-heading font-bold tracking-tighter mb-2">{data.name}</h1>
+                <p className="text-lg md:text-xl text-primary font-heading font-medium mb-4 uppercase tracking-[0.2em] text-sm opacity-80">{data.title}</p>
+                
+                <div className="flex flex-wrap justify-center md:justify-start gap-6 text-sm text-muted-foreground font-medium">
+                  <div className="flex items-center gap-2 hover:text-foreground transition-colors cursor-default">
+                    <Mail className="size-4 text-primary/70" />
+                    <span>{data.email}</span>
+                  </div>
+                  <div className="flex items-center gap-2 hover:text-foreground transition-colors cursor-default">
+                    <Phone className="size-4 text-primary/70" />
+                    <span>{data.phone}</span>
+                  </div>
+                  <div className="flex items-center gap-2 hover:text-foreground transition-colors cursor-default">
+                    <MapPin className="size-4 text-primary/70" />
+                    <span>{data.location}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                <Button variant="default" className="gap-2 rounded-xl shadow-lg shadow-primary/20 font-heading" asChild>
+                  <a href="/assets/resume.pdf" download="John_Lester_Fuertes_Resume.pdf">
+                    <Download className="size-4" />
+                    Download CV
+                  </a>
+                </Button>
+                <div className="flex justify-center gap-2">
+                  <Button variant="outline" size="icon" className="rounded-xl border-border/50 hover:border-primary/30 transition-all" asChild>
+                    <a href={data.socialLinks.github} target="_blank" aria-label="GitHub">
+                      <Github className="size-4" />
+                    </a>
+                  </Button>
+                  <Button variant="outline" size="icon" className="rounded-xl border-border/50 hover:border-primary/30 transition-all" asChild>
+                    <a href={data.socialLinks.linkedin} target="_blank" aria-label="LinkedIn">
+                      <Linkedin className="size-4" />
+                    </a>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* Left Column */}
+          <div className="lg:col-span-1 space-y-10">
+            {/* Skills */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <Card className="p-6 bg-card border-border shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
+                <h2 className="text-xl font-heading font-bold text-foreground mb-8 flex items-center gap-3 tracking-tighter">
+                  <Code className="size-5 text-primary" />
+                  Core Skills
+                </h2>
+                <div className="space-y-6">
+                  {data.skills.map((skill) => (
+                    <div
+                      key={skill.name}
+                      className="group"
+                      onMouseEnter={() => setHoveredSkill(skill.name)}
+                      onMouseLeave={() => setHoveredSkill(null)}
+                    >
+                      <div className="flex justify-between mb-2 font-heading">
+                        <span className="text-xs font-bold uppercase tracking-widest text-foreground/80">{skill.name}</span>
+                        <span className="text-xs font-bold text-primary">{skill.level}%</span>
+                      </div>
+                      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                        <motion.div
+                          className="h-full bg-primary rounded-full"
+                          initial={{ width: 0 }}
+                          whileInView={{ width: `${skill.level}%` }}
+                          transition={{ duration: 1.5, ease: "easeOut" }}
+                          viewport={{ once: true }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
             </motion.div>
 
-            {/* Contact */}
-            <motion.section
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-              className="space-y-4"
+            {/* Software & Tools */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
             >
-              <h2 className="text-xs font-semibold uppercase tracking-widest text-primary font-heading">
-                Contact
-              </h2>
-              <div className="space-y-3">
-                <motion.a
-                  variants={fadeInUp}
-                  href="mailto:johnlester.fuertes@gmail.com"
-                  className="flex items-center gap-3 text-sm text-foreground/70 transition-colors hover:text-primary"
-                >
-                  <Mail className="h-4 w-4 shrink-0" />
-                  johnlester.fuertes@gmail.com
-                </motion.a>
-                <motion.div
-                  variants={fadeInUp}
-                  className="flex items-center gap-3 text-sm text-foreground/70"
-                >
-                  <Phone className="h-4 w-4 shrink-0" />
-                  09774129580
-                </motion.div>
-                <motion.div
-                  variants={fadeInUp}
-                  className="flex items-center gap-3 text-sm text-foreground/70"
-                >
-                  <MapPin className="h-4 w-4 shrink-0" />
-                  Taytay, Rizal, Philippines
-                </motion.div>
-                <motion.a
-                  variants={fadeInUp}
-                  href="https://github.com/jlfuertes14"
-                  target="_blank"
-                  className="flex items-center gap-3 text-sm text-foreground/70 transition-colors hover:text-primary"
-                >
-                  <Github className="h-4 w-4 shrink-0" />
-                  github.com/jlfuertes14
-                </motion.a>
-              </div>
-            </motion.section>
+              <Card className="p-6 bg-card border-border shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
+                <h2 className="text-xl font-heading font-bold text-foreground mb-6 flex items-center gap-3 tracking-tighter">
+                  <Briefcase className="size-5 text-primary" />
+                  Software & Tools
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    "VS Code",
+                    "Visual Studio",
+                    "Arduino IDE",
+                    "Thonny",
+                    "KiCAD",
+                    "TinkerCAD",
+                    "MATLAB",
+                    "Git/GitHub",
+                  ].map((tool) => (
+                    <Badge key={tool} variant="secondary" className="bg-muted/50 border-none text-[10px] uppercase tracking-tighter px-3 py-1 font-bold">
+                      {tool}
+                    </Badge>
+                  ))}
+                </div>
+              </Card>
+            </motion.div>
 
-            {/* Skills */}
-            <motion.section
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-              className="space-y-4"
+            {/* Education */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
             >
-              <h2 className="text-xs font-semibold uppercase tracking-widest text-primary font-heading">
-                Technical Skills
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  "HTML/CSS",
-                  "JavaScript",
-                  "React",
-                  "Next.js",
-                  "Node.js",
-                  "MongoDB",
-                  "C++/Arduino",
-                  "C#",
-                  "Python",
-                  "MicroPython",
-                  "ESP32",
-                  "Embedded Systems",
-                ].map((skill) => (
-                  <motion.span
-                    key={skill}
-                    variants={fadeInUp}
-                    className="rounded-md border border-border bg-card/50 px-2 py-1 text-xs font-medium text-foreground/70"
-                  >
-                    {skill}
-                  </motion.span>
-                ))}
-              </div>
-            </motion.section>
-
-            {/* Tools */}
-            <motion.section
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-              className="space-y-4"
-            >
-              <h2 className="text-xs font-semibold uppercase tracking-widest text-primary font-heading">
-                Software & Tools
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  "VS Code",
-                  "Visual Studio",
-                  "Arduino IDE",
-                  "Thonny",
-                  "KiCAD",
-                  "TinkerCAD",
-                  "MATLAB",
-                  "Git/GitHub",
-                ].map((tool) => (
-                  <motion.span
-                    key={tool}
-                    variants={fadeInUp}
-                    className="rounded-md border border-border bg-card/50 px-2 py-1 text-xs font-medium text-foreground/70"
-                  >
-                    {tool}
-                  </motion.span>
-                ))}
-              </div>
-            </motion.section>
+              <Card className="p-6 bg-card border-border shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
+                <h2 className="text-xl font-heading font-bold text-foreground mb-8 flex items-center gap-3 tracking-tighter">
+                  <GraduationCap className="size-5 text-primary" />
+                  Education
+                </h2>
+                <div className="space-y-8">
+                  <div className="relative pl-6 before:absolute before:left-0 before:top-1.5 before:h-2 before:w-2 before:rounded-full before:bg-primary group font-sans">
+                    <h3 className="font-heading font-bold text-foreground group-hover:text-primary transition-colors tracking-tight text-lg">BS Computer Engineering</h3>
+                    <p className="text-sm text-muted-foreground font-medium">Rizal Technological University</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-primary/60 mt-1">Expected 2026</p>
+                    <p className="mt-4 text-xs leading-relaxed text-muted-foreground/80 font-medium italic">
+                      Thesis: HatchWatch - IoT and AI-based Egg Incubator system for Philippine Mallard Ducks.
+                    </p>
+                  </div>
+                  <div className="relative pl-6 before:absolute before:left-0 before:top-1.5 before:h-2 before:w-2 before:rounded-full before:bg-primary/50 group">
+                    <h3 className="font-heading font-bold text-foreground group-hover:text-primary transition-colors tracking-tight text-lg">STEM Strand (Honors)</h3>
+                    <p className="text-sm text-muted-foreground font-medium">Buting Senior High School</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-primary/60 mt-1">2022</p>
+                    <p className="mt-1 text-xs text-muted-foreground/80 font-medium">Graduated with 94% GPA.</p>
+                  </div>
+                  <div className="relative pl-6 before:absolute before:left-0 before:top-1.5 before:h-2 before:w-2 before:rounded-full before:bg-primary/50 group border-none">
+                    <h3 className="font-heading font-bold text-foreground group-hover:text-primary transition-colors tracking-tight text-lg">Junior High School (Honors)</h3>
+                    <p className="text-sm text-muted-foreground font-medium">Nagpayong High School</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-primary/60 mt-1">2020</p>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
 
             {/* Languages */}
-            <motion.section
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-              className="space-y-4"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
             >
-              <h2 className="text-xs font-semibold uppercase tracking-widest text-primary font-heading">
-                Languages
-              </h2>
-              <div className="space-y-2">
-                <motion.div variants={fadeInUp} className="flex justify-between text-sm">
-                  <span className="text-foreground/70">English</span>
-                  <span className="text-foreground/50 italic">Proficient</span>
-                </motion.div>
-                <motion.div variants={fadeInUp} className="flex justify-between text-sm">
-                  <span className="text-foreground/70">Tagalog</span>
-                  <span className="text-foreground/50 italic">Proficient</span>
-                </motion.div>
-              </div>
-            </motion.section>
-          </aside>
-
-          {/* Main Content */}
-          <div className="space-y-16">
-            {/* Education */}
-            <section className="space-y-8">
-              <div className="flex items-center gap-3 border-b border-border pb-4">
-                <GraduationCap className="h-6 w-6 text-primary" />
-                <h2 className="text-2xl font-bold tracking-tight font-heading">Education</h2>
-              </div>
-              <div className="space-y-10">
-                <TimelineItem
-                  title="Bachelor of Science in Computer Engineering"
-                  date="Expected Graduation: 2026"
-                  location="Rizal Technological University, Maybunga, Pasig"
-                  description={
-                    <p>
-                      <strong className="text-primary/90">Thesis:</strong> Design and Development of an IoT and
-                      AI-based Egg Incubator and Hatching System for Philippine Mallard
-                      Duck (HatchWatch)
-                    </p>
-                  }
-                />
-                <TimelineItem
-                  title="Senior High School - STEM Strand"
-                  date="2020 - 2022"
-                  location="Buting Senior High School, Buting, Pasig"
-                  description="Graduated with 94% GPA and Honors."
-                />
-                <TimelineItem
-                  title="Junior High School"
-                  date="2016 - 2020"
-                  location="Nagpayong High School, Pinabuhatan, Pasig"
-                  description="Graduated with Honors."
-                />
-              </div>
-            </section>
-
-            {/* Technical Projects */}
-            <section className="space-y-8">
-              <div className="flex items-center gap-3 border-b border-border pb-4">
-                <Code2 className="h-6 w-6 text-primary" />
-                <h2 className="text-2xl font-bold tracking-tight font-heading">
-                  Technical Projects
+              <Card className="p-6 bg-card border-border shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
+                <h2 className="text-xl font-heading font-bold text-foreground mb-6 flex items-center gap-3 tracking-tighter">
+                  <Globe className="size-5 text-primary" />
+                  Languages
                 </h2>
-              </div>
-              <div className="space-y-10">
-                <TimelineItem
-                  title="Lumina Electronics E-Commerce Platform"
-                  date="Web Development"
-                  description={
-                    <ul className="list-inside list-disc space-y-2 text-foreground/70">
-                      <li>
-                        Architected a full-stack e-commerce website using Vite, Vanilla
-                        JS, HTML5/CSS3, NodeJS and MongoDB.
-                      </li>
-                      <li>
-                        Designed a custom UI/UX for the product catalog and admin
-                        dashboard.
-                      </li>
-                      <li>Managed version control and deployment through GitHub.</li>
-                    </ul>
-                  }
-                />
-                <TimelineItem
-                  title="Barangay Digital Portal"
-                  date="Web Development"
-                  description={
-                    <ul className="list-inside list-disc space-y-2 text-foreground/70">
-                      <li>
-                        Developed a digital management system to streamline barangay
-                        services using React/Next.js and Tailwind CSS.
-                      </li>
-                      <li>Deployed via Vercel for high availability and performance.</li>
-                    </ul>
-                  }
-                />
-                <TimelineItem
-                  title="Self-Balancing Robot & Desktop Companion"
-                  date="Robotics / Embedded Systems"
-                  description={
-                    <ul className="list-inside list-disc space-y-2 text-foreground/70">
-                      <li>
-                        Developed a desktop companion using ESP32-S3 and SH1106 OLED
-                        display.
-                      </li>
-                      <li>
-                        Built a Self-Balancing Robot using ESP32, MPU6050, and DC
-                        motors.
-                      </li>
-                      <li>Implemented and tuned a PID controller for stabilization.</li>
-                    </ul>
-                  }
-                />
-              </div>
-            </section>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center text-sm font-sans">
+                    <span className="font-bold text-foreground/80 uppercase text-[11px] tracking-widest">English</span>
+                    <span className="text-[10px] uppercase tracking-widest text-primary font-bold bg-primary/10 px-2 py-0.5 rounded">Proficient</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm font-sans">
+                    <span className="font-bold text-foreground/80 uppercase text-[11px] tracking-widest">Tagalog</span>
+                    <span className="text-[10px] uppercase tracking-widest text-primary font-bold bg-primary/10 px-2 py-0.5 rounded">Native</span>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+          </div>
 
-            {/* Leadership */}
-            <section className="space-y-8">
-              <div className="flex items-center gap-3 border-b border-border pb-4">
-                <Trophy className="h-6 w-6 text-primary" />
-                <h2 className="text-2xl font-bold tracking-tight font-heading">
+          {/* Right Column */}
+          <div className="lg:col-span-2 space-y-10">
+            {/* Experience & Leadership */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Card className="p-8 bg-card border-border shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
+                <h2 className="text-xl font-heading font-bold text-foreground mb-10 flex items-center gap-3 tracking-tighter">
+                  <Award className="size-5 text-primary" />
                   Leadership & Activities
                 </h2>
-              </div>
-              <div className="space-y-10">
-                <TimelineItem
-                  title="Pasig City Scholarship"
-                  date="2015 - Present"
-                  location="Scholar / Member"
-                  description="Selected for a competitive local government scholarship program, maintaining all requirements for over a decade."
-                />
-                <TimelineItem
-                  title="Professional Development Seminars"
-                  date="Aug 2025 – Dec 2025"
-                  description="Participated in a series of 10 technical seminars covering IoT, API Security, and React Programming."
-                />
-                <TimelineItem
-                  title="STEM Research Lead"
-                  date="Buting Senior High School"
-                  description={
-                    <ul className="list-inside list-disc space-y-2 text-foreground/70">
-                      <li>
-                        Led feasibility studies on Piezoelectric generators and natural
-                        mouth cleaners.
-                      </li>
-                      <li>Coordinated team experiments resulting in Honors graduation.</li>
-                    </ul>
-                  }
-                />
-              </div>
-            </section>
+                <div className="space-y-10">
+                  <div className="relative pl-8 pb-10 border-l border-border/50 group">
+                    <div className="absolute left-[-4.5px] top-0 size-2 rounded-full bg-primary ring-4 ring-background" />
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+                      <h3 className="text-xl font-heading font-bold text-foreground group-hover:text-primary transition-colors tracking-tight">Pasig City Scholarship</h3>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground bg-muted px-3 py-1 rounded-md">2015 - Present</span>
+                    </div>
+                    <p className="text-xs font-bold text-primary/80 mb-4 uppercase tracking-widest">Scholar / Active Member</p>
+                    <p className="text-muted-foreground text-sm leading-relaxed font-medium">Maintained academic excellence and active participation in community programs for over a decade.</p>
+                  </div>
+
+                  <div className="relative pl-8 pb-10 border-l border-border/50 group">
+                    <div className="absolute left-[-4.5px] top-0 size-2 rounded-full bg-primary/50 ring-4 ring-background" />
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+                      <h3 className="text-xl font-heading font-bold text-foreground group-hover:text-primary transition-colors tracking-tight">Professional Development Seminars</h3>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground bg-muted px-3 py-1 rounded-md">Aug - Dec 2025</span>
+                    </div>
+                    <p className="text-muted-foreground text-sm leading-relaxed font-medium">Participated in a comprehensive series of 10 technical seminars covering IoT, API Security, and modern React development.</p>
+                  </div>
+
+                  <div className="relative pl-8 border-l border-border/50 last:border-none group">
+                    <div className="absolute left-[-4.5px] top-0 size-2 rounded-full bg-primary/50 ring-4 ring-background" />
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+                      <h3 className="text-xl font-heading font-bold text-foreground group-hover:text-primary transition-colors tracking-tight">STEM Research Lead</h3>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground bg-muted px-3 py-1 rounded-md">Buting SHS</span>
+                    </div>
+                    <p className="text-muted-foreground text-sm leading-relaxed font-medium">Led feasibility studies on Piezoelectric generators and coordinated cross-functional team experiments.</p>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+
+            {/* Projects */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              <Card className="p-8 bg-card border-border shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
+                <h2 className="text-xl font-heading font-bold text-foreground mb-10 flex items-center gap-3 tracking-tighter">
+                  <Code className="size-5 text-primary" />
+                  Featured Works
+                </h2>
+                <div className="space-y-12">
+                  {data.projects.map((project, index) => (
+                    <div
+                      key={index}
+                      className="relative pl-8 pb-12 border-l border-border/50 last:pb-0 last:border-none group"
+                    >
+                      <div className="absolute left-[-4.5px] top-0 size-2 rounded-full bg-primary/50 ring-4 ring-background group-hover:bg-primary group-hover:scale-125 transition-all" />
+                      
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+                        <div className="flex items-center gap-4">
+                          <h3 className="text-xl font-heading font-bold text-foreground group-hover:text-primary transition-colors tracking-tight">
+                            {project.name}
+                          </h3>
+                          {project.link && (
+                            <a 
+                              href={project.link} 
+                              target="_blank" 
+                              className="text-muted-foreground hover:text-primary transition-colors"
+                            >
+                              <ExternalLink className="size-4" />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-3xl font-medium">
+                        {project.description}
+                      </p>
+                      
+                      <div className="flex flex-wrap gap-2">
+                        {project.tags.map((tag) => (
+                          <span 
+                            key={tag} 
+                            className="text-[10px] font-bold uppercase tracking-tighter px-3 py-1 bg-primary/10 text-primary rounded-md border border-primary/5"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </motion.div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
-  );
-}
-
-function TimelineItem({
-  title,
-  date,
-  location,
-  description,
-}: {
-  title: string;
-  date: string;
-  location?: string;
-  description: React.ReactNode;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: true }}
-      className="relative pl-6 before:absolute before:left-0 before:top-1.5 before:h-2 before:w-2 before:rounded-full before:bg-primary"
-    >
-      <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
-        <h3 className="text-lg font-bold text-foreground font-heading">{title}</h3>
-        <span className="text-xs font-semibold uppercase tracking-widest text-primary/80 shrink-0">
-          {date}
-        </span>
-      </div>
-      {location && (
-        <p className="mt-1 text-sm font-medium text-foreground/50">{location}</p>
-      )}
-      <div className="mt-4 text-sm leading-relaxed text-foreground/70">
-        {description}
-      </div>
-    </motion.div>
   );
 }
