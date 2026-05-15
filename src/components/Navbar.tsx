@@ -43,7 +43,7 @@ export default function Navbar() {
         <div className="flex items-center gap-16">
           <Link
             href="/"
-            className="transition-opacity hover:opacity-90 active:scale-95 transition-transform"
+            className="hover:opacity-90 active:scale-95 transition-transform"
           >
             <Logo />
           </Link>

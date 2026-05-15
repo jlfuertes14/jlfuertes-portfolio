@@ -81,14 +81,14 @@ export default function ResumePage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden mb-12 transition-all duration-500 hover:shadow-2xl hover:border-primary/20"
         >
-          <div className="relative h-32 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10">
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-card"></div>
+          <div className="relative h-32 bg-linear-to-r from-primary/10 via-primary/5 to-primary/10">
+            <div className="absolute inset-0 bg-linear-to-b from-transparent to-card"></div>
           </div>
           
           <div className="relative px-8 pb-8 -mt-16">
             <div className="flex flex-col md:flex-row items-center md:items-end gap-8">
               <div className="relative group">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary via-primary/50 to-primary opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
+                <div className="absolute inset-0 rounded-full bg-linear-to-tr from-primary via-primary/50 to-primary opacity-20 blur-xl group-hover:opacity-40 transition-opacity"></div>
                 <div className="relative size-32 rounded-full border-4 border-card shadow-xl overflow-hidden z-10 bg-muted">
                   <Image
                     src={data.avatar}
@@ -101,7 +101,7 @@ export default function ResumePage() {
               
               <div className="flex-1 text-center md:text-left">
                 <h1 className="text-4xl md:text-5xl font-heading font-bold tracking-tighter mb-2">{data.name}</h1>
-                <p className="text-lg md:text-xl text-primary font-heading font-medium mb-4 uppercase tracking-[0.2em] text-sm opacity-80">{data.title}</p>
+                <p className="text-lg md:text-xl text-primary font-heading font-medium mb-4 uppercase tracking-[0.2em] opacity-80">{data.title}</p>
                 
                 <div className="flex flex-wrap justify-center md:justify-start gap-6 text-sm text-muted-foreground font-medium">
                   <div className="flex items-center gap-2 hover:text-foreground transition-colors cursor-default">
@@ -152,7 +152,7 @@ export default function ResumePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <Card className="p-6 bg-card border-border shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
+              <Card className="p-6 bg-card shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
                 <h2 className="text-xl font-heading font-bold text-foreground mb-8 flex items-center gap-3 tracking-tighter">
                   <Code className="size-5 text-primary" />
                   Core Skills
@@ -190,7 +190,7 @@ export default function ResumePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Card className="p-6 bg-card border-border shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
+              <Card className="p-6 bg-card shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
                 <h2 className="text-xl font-heading font-bold text-foreground mb-6 flex items-center gap-3 tracking-tighter">
                   <Briefcase className="size-5 text-primary" />
                   Software & Tools
@@ -220,7 +220,7 @@ export default function ResumePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <Card className="p-6 bg-card border-border shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
+              <Card className="p-6 bg-card shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
                 <h2 className="text-xl font-heading font-bold text-foreground mb-8 flex items-center gap-3 tracking-tighter">
                   <GraduationCap className="size-5 text-primary" />
                   Education
@@ -255,7 +255,7 @@ export default function ResumePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              <Card className="p-6 bg-card border-border shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
+              <Card className="p-6 bg-card shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
                 <h2 className="text-xl font-heading font-bold text-foreground mb-6 flex items-center gap-3 tracking-tighter">
                   <Globe className="size-5 text-primary" />
                   Languages
@@ -282,7 +282,7 @@ export default function ResumePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              <Card className="p-8 bg-card border-border shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
+              <Card className="p-8 bg-card shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
                 <h2 className="text-xl font-heading font-bold text-foreground mb-10 flex items-center gap-3 tracking-tighter">
                   <Award className="size-5 text-primary" />
                   Leadership & Activities
@@ -325,7 +325,7 @@ export default function ResumePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
             >
-              <Card className="p-8 bg-card border-border shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
+              <Card className="p-8 bg-card shadow-lg hover:shadow-xl transition-all duration-500 border-primary/5 hover:border-primary/20">
                 <h2 className="text-xl font-heading font-bold text-foreground mb-10 flex items-center gap-3 tracking-tighter">
                   <Code className="size-5 text-primary" />
                   Featured Works

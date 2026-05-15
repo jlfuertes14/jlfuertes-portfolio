@@ -55,7 +55,7 @@ export function ThemeToggle() {
         >
           {/* Inner highlights for glass look */}
           <div className={`absolute inset-0 rounded-full transition-opacity duration-300 ${
-            isDark ? "bg-gradient-to-tr from-primary/30 to-transparent opacity-100" : "bg-gradient-to-tr from-orange-300/40 to-transparent opacity-100"
+            isDark ? "bg-linear-to-tr from-primary/30 to-transparent opacity-100" : "bg-linear-to-tr from-orange-300/40 to-transparent opacity-100"
           } blur-[1px]`} />
           
           {/* Icons (Inside Thumb) */}

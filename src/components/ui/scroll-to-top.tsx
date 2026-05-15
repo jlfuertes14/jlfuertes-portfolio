@@ -33,7 +33,7 @@ export default function ScrollToTop() {
     <button
       onClick={scrollToTop}
       className={cn(
-        "fixed bottom-20 right-6 sm:right-8 z-[60] flex items-center justify-center w-12 h-12 rounded-full bg-card border border-border text-foreground shadow-2xl transition-all duration-500 hover:scale-110 active:scale-95 group",
+        "fixed bottom-20 right-6 sm:right-8 z-60 flex items-center justify-center w-12 h-12 rounded-full bg-card border border-border text-foreground shadow-2xl transition-all duration-500 hover:scale-110 active:scale-95 group",
         isVisible ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-10 pointer-events-none"
       )}
       aria-label="Back to top"

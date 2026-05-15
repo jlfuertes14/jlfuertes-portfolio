@@ -163,7 +163,7 @@ export default function Contact() {
     <section
       id="contact"
       ref={sectionRef}
-      className="pt-48 pb-32 bg-background relative overflow-hidden scroll-mt-24 min-h-screen flex flex-col justify-start"
+      className="pt-28 sm:pt-36 lg:pt-48 pb-24 sm:pb-32 bg-background relative overflow-hidden scroll-mt-24 min-h-screen flex flex-col justify-start"
     >
       {/* Absolute background cover to ensure no peeking */}
       <div className="absolute inset-0 bg-background z-0" />
@@ -172,12 +172,12 @@ export default function Contact() {
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="contact-grid grid gap-16 lg:grid-cols-[1fr_1.5fr] items-start">
+        <div className="contact-grid grid gap-12 sm:gap-16 lg:grid-cols-[1fr_1.5fr] items-start">
 
           {/* ══════ Left — "Noir Minimalist" Info ══════ */}
-          <div className="contact-info-panel space-y-12">
+          <div className="contact-info-panel space-y-8">
             <div className="contact-header space-y-2">
-              <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-foreground">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground">
                 Get in <span className="text-foreground/90">touch</span>
               </h2>
             </div>
@@ -189,7 +189,7 @@ export default function Contact() {
                 </p>
                 <a
                   href={`mailto:${siteConfig.email}`}
-                  className="text-xl md:text-2xl font-medium text-foreground hover:text-primary transition-colors block"
+                  className="text-lg sm:text-xl md:text-2xl font-medium text-foreground hover:text-primary transition-colors block break-all sm:break-normal"
                 >
                   {siteConfig.email}
                 </a>
@@ -199,7 +199,7 @@ export default function Contact() {
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">
                   Address:
                 </p>
-                <p className="text-xl md:text-2xl font-medium text-foreground">
+                <p className="text-lg sm:text-xl md:text-2xl font-medium text-foreground text-balance">
                   {siteConfig.location}
                 </p>
               </div>
@@ -222,7 +222,7 @@ export default function Contact() {
             </div>
 
             {/* Follow Us */}
-            <div className="pt-6 border-t border-border/10 reveal-item">
+            <div className="pt-3 border-t border-border/10 reveal-item">
               <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 mb-4 block">
                 Follow Me
               </span>
@@ -250,7 +250,7 @@ export default function Contact() {
           {/* ══════ Right — Form ══════ */}
           <div className="contact-form-container lg:pl-10">
             <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="grid gap-8 md:grid-cols-2">
+              <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
                 <div className="space-y-2">
                   <label htmlFor="name" className="text-sm font-medium text-foreground/70 ml-1">
                     Your Name
@@ -262,7 +262,7 @@ export default function Contact() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Your full name"
-                    className="w-full bg-muted/30 border border-border/50 rounded-2xl px-6 py-4 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 focus:bg-muted/50 transition-all"
+                    className="w-full bg-muted/30 border border-border/50 rounded-2xl px-5 sm:px-6 py-4 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 focus:bg-muted/50 transition-all"
                   />
                 </div>
                 <div className="space-y-2">
@@ -276,7 +276,7 @@ export default function Contact() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="Your email address"
-                    className="w-full bg-muted/30 border border-border/50 rounded-2xl px-6 py-4 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 focus:bg-muted/50 transition-all"
+                    className="w-full bg-muted/30 border border-border/50 rounded-2xl px-5 sm:px-6 py-4 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 focus:bg-muted/50 transition-all"
                   />
                 </div>
               </div>
@@ -292,7 +292,7 @@ export default function Contact() {
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   placeholder="Write something..."
-                  className="w-full bg-muted/30 border border-border/50 rounded-2xl px-6 py-4 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 focus:bg-muted/50 transition-all resize-none"
+                  className="w-full bg-muted/30 border border-border/50 rounded-2xl px-5 sm:px-6 py-4 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/30 focus:bg-muted/50 transition-all resize-none"
                 />
               </div>
 
@@ -317,7 +317,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={status === "sending"}
-                  className="w-full bg-foreground text-background font-bold py-5 rounded-2xl transition-all hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2 group"
+                  className="w-full bg-foreground text-background font-bold py-4 sm:py-5 rounded-xl sm:rounded-2xl transition-all hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2 group text-base sm:text-lg"
                 >
                   {status === "sending" ? (
                     <Loader2 className="h-5 w-5 animate-spin" />

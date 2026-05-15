@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MessageCircle, Send, X, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface Message {
   role: "user" | "model";
@@ -78,12 +79,17 @@ export default function AiChat() {
   return (
     <>
       {/* Chat Window */}
-      {isOpen && (
-        <div className="fixed bottom-20 right-4 sm:right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] rounded-2xl border border-border bg-background shadow-2xl shadow-black/20 flex flex-col overflow-hidden"
-          style={{ height: "500px" }}
+      <AnimatePresence>
+        {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.985 }}
+          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed inset-0 sm:inset-auto sm:bottom-20 sm:right-6 z-50 w-full h-[100dvh] sm:h-[500px] sm:w-[360px] sm:max-w-[calc(100vw-3rem)] rounded-none sm:rounded-2xl border-0 sm:border border-border bg-background shadow-2xl shadow-black/20 flex flex-col overflow-hidden origin-bottom sm:origin-bottom-right"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card pt-[max(0.75rem,env(safe-area-inset-top))] sm:pt-3">
             <div className="flex items-center gap-3">
               <div className="relative h-10 w-10 rounded-full overflow-hidden border border-border">
                 <Image
@@ -111,7 +117,7 @@ export default function AiChat() {
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 pb-6 sm:pb-4 space-y-4">
             {messages.map((m, idx) => (
               <div key={idx}>
                 {m.role === "model" && (
@@ -163,7 +169,7 @@ export default function AiChat() {
           </div>
 
           {/* Footer */}
-          <div className="border-t border-border bg-card p-3">
+          <div className="border-t border-border bg-card p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-3">
             <form onSubmit={handleSubmit} className="flex items-center gap-2">
               <input
                 value={input}
@@ -188,18 +194,20 @@ export default function AiChat() {
               </span>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* Toggle Button */}
-      <button
+      <motion.button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-4 right-4 sm:right-6 z-50 flex items-center gap-2 rounded-full bg-card border border-border px-4 py-3 text-sm font-semibold text-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
         aria-label="Chat with John Lester"
+        whileTap={{ scale: 0.96 }}
       >
         <MessageCircle className="h-5 w-5" />
         <span className="hidden sm:inline">Chat with John Lester</span>
-      </button>
+      </motion.button>
     </>
   );
 }

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github, Code2, Globe, Cpu, Star, GitFork, Users, BookOpen, Calendar, MapPin, GraduationCap, School, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
-import { GitHubCalendar } from "react-github-calendar";
+import dynamic from "next/dynamic";
 import { skills, siteConfig } from "@/lib/site-data";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence, Variants } from "framer-motion";
@@ -12,42 +12,79 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import {
-  SiHtml5,
-  SiReact,
-  SiTypescript,
-  SiTailwindcss,
-  SiNodedotjs,
-  SiMongodb,
-  SiPython,
-  SiCplusplus,
-  SiEspressif,
-  SiFigma,
   SiDotnet,
-  SiFastapi,
-  SiFlask,
-  SiArduino,
+  SiEspressif,
   SiMicropython,
 } from "react-icons/si";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const iconMap: Record<string, { icon: React.ElementType; color: string }> = {
-  "HTML/CSS/JS": { icon: SiHtml5, color: "#E34F26" },
-  "React / Next.js": { icon: SiReact, color: "#61DAFB" },
-  "TypeScript": { icon: SiTypescript, color: "#3178C6" },
-  "Tailwind CSS": { icon: SiTailwindcss, color: "#06B6D4" },
-  "Node.js": { icon: SiNodedotjs, color: "#339939" },
-  "MongoDB": { icon: SiMongodb, color: "#47A248" },
-  "Python": { icon: SiPython, color: "#FFCE3A" },
-  "C#": { icon: SiDotnet, color: "#512BD4" },
-  "FastAPI": { icon: SiFastapi, color: "#05998B" },
-  "Flask": { icon: SiFlask, color: "currentColor" },
-  "Arduino": { icon: SiArduino, color: "#00979D" },
-  "C++ / Arduino": { icon: SiCplusplus, color: "#00599C" },
-  "MicroPython": { icon: SiMicropython, color: "#2B2728" },
-  "ESP32": { icon: SiEspressif, color: "#E7352C" },
-  "Embedded Systems": { icon: Cpu, color: "#888888" },
-  "UI/UX Design": { icon: SiFigma, color: "currentColor" },
+const GitHubCalendar = dynamic(
+  () => import("react-github-calendar").then((mod) => mod.GitHubCalendar),
+  { ssr: false }
+);
+
+const iconMap: Record<
+  string,
+  | { kind: "image"; src: string; invertInDark?: boolean }
+  | { kind: "icon"; icon: React.ElementType; color: string }
+> = {
+  "HTML/CSS/JS": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
+  },
+  "React / Next.js": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+  },
+  "TypeScript": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
+  },
+  "Tailwind CSS": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg",
+  },
+  "Node.js": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
+  },
+  "MongoDB": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg",
+  },
+  "Python": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
+  },
+  "C#": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg",
+  },
+  "FastAPI": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg",
+  },
+  "Flask": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg",
+    invertInDark: true,
+  },
+  "Arduino": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/arduino/arduino-original.svg",
+  },
+  "C++ / Arduino": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
+  },
+  "MicroPython": { kind: "icon", icon: SiMicropython, color: "#2B2728" },
+  "ESP32": { kind: "icon", icon: SiEspressif, color: "#E7352C" },
+  "Embedded Systems": { kind: "icon", icon: Cpu, color: "#888888" },
+  "UI/UX Design": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
+  },
 };
 
 export default function About() {
@@ -55,6 +92,8 @@ export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
+  const curvePathRef = useRef<SVGPathElement>(null);
+  const curveGlowRef = useRef<SVGPathElement>(null);
 
   const [githubData, setGithubData] = useState({
     repos: "0",
@@ -83,6 +122,8 @@ export default function About() {
 
   const [currentIdx, setCurrentIdx] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [isGalleryPaused, setIsGalleryPaused] = useState(false);
+  const [isCompactCalendar, setIsCompactCalendar] = useState(false);
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -110,6 +151,27 @@ export default function About() {
     setDirection(-1);
     setCurrentIdx((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
   };
+
+  useEffect(() => {
+    if (isGalleryPaused) return;
+
+    const intervalId = window.setInterval(() => {
+      setDirection(1);
+      setCurrentIdx((prev) => (prev + 1) % galleryImages.length);
+    }, 4200);
+
+    return () => window.clearInterval(intervalId);
+  }, [galleryImages.length, isGalleryPaused]);
+
+  useEffect(() => {
+    const updateCalendarMode = () => {
+      setIsCompactCalendar(window.innerWidth < 640);
+    };
+
+    updateCalendarMode();
+    window.addEventListener("resize", updateCalendarMode);
+    return () => window.removeEventListener("resize", updateCalendarMode);
+  }, []);
 
   useGSAP(() => {
     // 1. Title Reveal
@@ -150,6 +212,28 @@ export default function About() {
       yoyo: true,
       ease: "sine.inOut"
     });
+
+    if (curvePathRef.current && curveGlowRef.current) {
+      const pathLength = curvePathRef.current.getTotalLength();
+
+      [curvePathRef.current, curveGlowRef.current].forEach((path) => {
+        gsap.set(path, {
+          strokeDasharray: pathLength,
+          strokeDashoffset: pathLength,
+        });
+      });
+
+      gsap.to([curvePathRef.current, curveGlowRef.current], {
+        strokeDashoffset: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 78%",
+          end: "bottom 35%",
+          scrub: 1.1,
+        },
+      });
+    }
   }, { scope: sectionRef });
 
   useEffect(() => {
@@ -227,14 +311,49 @@ export default function About() {
   };
 
   return (
-    <section id="about" ref={sectionRef} className="py-10 bg-background overflow-hidden relative scroll-mt-24">
+    <section id="about" ref={sectionRef} className="py-10 md:py-14 bg-background overflow-hidden relative scroll-mt-24">
       {/* Background Glow */}
       <div className="about-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[100px] pointer-events-none opacity-40" />
+      <div className="pointer-events-none absolute inset-x-0 top-10 bottom-0 z-0 opacity-100 hidden md:block">
+        <svg
+          viewBox="0 0 1200 1400"
+          className="h-full w-full"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            ref={curveGlowRef}
+            d="M1020 60C860 110 848 300 700 396C546 496 304 472 240 640C184 786 336 870 500 964C708 1082 818 1210 734 1360"
+            fill="none"
+            stroke="hsl(var(--primary))"
+            strokeWidth="14"
+            strokeLinecap="round"
+            opacity="0.18"
+            filter="url(#about-curve-blur)"
+          />
+          <path
+            ref={curvePathRef}
+            d="M1020 60C860 110 848 300 700 396C546 496 304 472 240 640C184 786 336 870 500 964C708 1082 818 1210 734 1360"
+            fill="none"
+            stroke="hsl(var(--primary))"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            opacity="0.55"
+            strokeLinejoin="round"
+            strokeMiterlimit="10"
+          />
+          <defs>
+            <filter id="about-curve-blur" x="-10%" y="-10%" width="120%" height="120%">
+              <feGaussianBlur stdDeviation="8" />
+            </filter>
+          </defs>
+        </svg>
+      </div>
 
       <div className="container mx-auto px-6 relative z-10">
         {/* Section Header: Centered Title */}
         <div ref={titleRef} className="text-center mb-8 overflow-hidden">
-          <h1 className="about-title text-5xl md:text-7xl font-bold tracking-tight bg-linear-to-br from-foreground to-foreground/50 bg-clip-text text-transparent inline-block">
+          <h1 className="about-title text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight bg-linear-to-br from-foreground to-foreground/50 bg-clip-text text-transparent inline-block">
             About <span className="text-foreground">Me</span>
           </h1>
         </div>
@@ -248,7 +367,9 @@ export default function About() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: "circOut" }}
-            className="relative h-[450px] lg:h-full min-h-[420px] rounded-3xl overflow-hidden group border border-border/50 bg-muted/20"
+            className="relative h-[360px] sm:h-[420px] lg:h-full min-h-[360px] sm:min-h-[420px] rounded-3xl overflow-hidden group border border-border/50 bg-muted/20"
+            onMouseEnter={() => setIsGalleryPaused(true)}
+            onMouseLeave={() => setIsGalleryPaused(false)}
           >
             <div className="relative w-full h-full overflow-hidden">
               <AnimatePresence initial={false} custom={direction} mode="popLayout">
@@ -260,8 +381,8 @@ export default function About() {
                   animate="center"
                   exit="exit"
                   transition={{
-                    x: { type: "spring", stiffness: 300, damping: 30 },
-                    opacity: { duration: 0.2 }
+                    x: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+                    opacity: { duration: 0.35, ease: "easeOut" }
                   }}
                   className="absolute inset-0"
                 >
@@ -276,32 +397,32 @@ export default function About() {
               </AnimatePresence>
 
               {/* Navigation Controls */}
-              <div className="absolute inset-0 flex items-center justify-between p-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 flex items-center justify-between p-3 sm:p-4 z-20 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
                 <button
                   onClick={prevSlide}
-                  className="w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-md hover:bg-black/70 transition-all border border-white/10 group/btn"
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-md hover:bg-black/70 transition-all border border-white/10 group/btn"
                   aria-label="Previous slide"
                 >
-                  <ChevronLeft className="w-6 h-6 transition-transform group-hover/btn:-translate-x-0.5" />
+                  <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover/btn:-translate-x-0.5" />
                 </button>
                 <button
                   onClick={nextSlide}
-                  className="w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-md hover:bg-black/70 transition-all border border-white/10 group/btn"
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-md hover:bg-black/70 transition-all border border-white/10 group/btn"
                   aria-label="Next slide"
                 >
-                  <ChevronRight className="w-6 h-6 transition-transform group-hover/btn:translate-x-0.5" />
+                  <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover/btn:translate-x-0.5" />
                 </button>
               </div>
 
               {/* Caption Overlay */}
-              <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-8 pt-20 z-10 pointer-events-none">
+              <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-5 sm:p-8 pt-16 sm:pt-20 z-10 pointer-events-none">
                 <AnimatePresence mode="wait">
                   <motion.p
                     key={currentIdx}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="text-white text-lg font-medium italic leading-relaxed"
+                    className="text-white text-base sm:text-lg font-medium italic leading-relaxed"
                   >
                     {galleryImages[currentIdx].caption}
                   </motion.p>
@@ -330,10 +451,10 @@ export default function About() {
           >
             <div className="space-y-8">
               <motion.div variants={itemVariants}>
-                <h3 className="text-2xl md:text-3xl font-bold mb-6 leading-tight">
+                <h3 className="text-2xl md:text-3xl font-bold mb-6 leading-tight text-balance">
                   Aspiring Full Stack Developer & AI Engineer
                 </h3>
-                <div className="space-y-6 text-muted-foreground text-base leading-relaxed flex-grow mb-auto">
+                <div className="space-y-5 sm:space-y-6 text-muted-foreground text-sm sm:text-base leading-relaxed grow mb-auto">
                   <p>
                     I’m a <span className="text-foreground font-bold">4th-year Computer Engineering student</span> specializing in that sweet spot where hardware circuits meet clean, scalable web apps. On the software side, I’m all about building intelligent web experiences using <span className="text-foreground font-bold">Gemini and Groq APIs</span> to power chatbots and implementing <span className="text-foreground font-bold">RAG systems</span> to make my projects hit differently. Whether I’m wrangling <span className="text-foreground font-bold">GraphQL</span>, building out <span className="text-foreground font-bold">RESTful APIs</span>, or tinkering with sensors, I focus on making the integration between the physical and digital seamless.
                   </p>
@@ -385,7 +506,7 @@ export default function About() {
                   variants={itemVariants}
                   className="bg-muted/50 dark:bg-white/5 border border-border p-6 rounded-3xl flex flex-col justify-between group hover:border-foreground/20 transition-all duration-300 order-1 lg:order-2 h-full"
                 >
-                  <div className="mb-6">
+                  <div className="grow">
                     <div className="w-10 h-10 bg-foreground rounded-xl flex items-center justify-center mb-6 overflow-hidden">
                       <Github className="w-6 h-6 text-background" />
                     </div>
@@ -415,10 +536,9 @@ export default function About() {
           >
             My Tech Stack
           </motion.p>
-          <div className="flex flex-wrap justify-center gap-10 md:gap-16">
+          <div className="flex flex-wrap justify-center gap-8 sm:gap-10 md:gap-16">
             {skills.map((skill, idx) => {
-              const mapping = iconMap[skill.name] || { icon: Cpu, color: "#888888" };
-              const Icon = mapping.icon;
+              const mapping = iconMap[skill.name] || { kind: "icon" as const, icon: Cpu, color: "#888888" };
               return (
                 <motion.div
                   key={idx}
@@ -428,11 +548,22 @@ export default function About() {
                   transition={{ delay: idx * 0.05 }}
                   className="flex flex-col items-center gap-3 group"
                 >
-                  <Icon
-                    className="h-10 w-10 md:h-12 md:w-12 transition-all duration-300 group-hover:scale-110 drop-shadow-sm"
-                    style={{ color: mapping.color }}
-                  />
-                  <span className="text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest">
+                  {mapping.kind === "image" ? (
+                    <div className="relative h-10 w-10 md:h-12 md:w-12 transition-all duration-300 group-hover:scale-110 drop-shadow-sm">
+                      <Image
+                        src={mapping.src}
+                        alt={skill.name}
+                        fill
+                        className={`object-contain ${mapping.invertInDark ? "dark:invert dark:brightness-100" : ""}`}
+                      />
+                    </div>
+                  ) : (
+                    <mapping.icon
+                      className="h-10 w-10 md:h-12 md:w-12 transition-all duration-300 group-hover:scale-110 drop-shadow-sm"
+                      style={{ color: mapping.color }}
+                    />
+                  )}
+                  <span className="text-[10px] font-bold opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity uppercase tracking-widest text-center">
                     {skill.name}
                   </span>
                 </motion.div>
@@ -485,25 +616,25 @@ export default function About() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
-          className="relative overflow-hidden rounded-3xl bg-background border border-border/50 p-8 md:p-12 flex flex-col items-center"
+          className="relative overflow-hidden rounded-3xl bg-background border border-border/50 p-6 sm:p-8 md:p-12 flex flex-col items-center"
         >
-          <div className="w-full flex items-center justify-between mb-8">
+          <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
             <div className="flex items-center gap-3">
               <Calendar className="w-5 h-5 text-muted-foreground" />
               <h3 className="text-sm font-bold tracking-widest text-muted-foreground">Contribution History</h3>
             </div>
-            <div className="text-[10px] font-medium text-muted-foreground/60 bg-muted/50 px-3 py-1 rounded-full border border-border/30">
+            <div className="w-fit text-[10px] font-medium text-muted-foreground/60 bg-muted/50 px-3 py-1 rounded-full border border-border/30">
               Last 12 Months
             </div>
           </div>
 
-          <div className="w-full overflow-x-auto pb-4 flex justify-center">
-            <div className="min-w-fit">
+          <div className="hide-scrollbar w-full overflow-x-auto pb-2 sm:pb-4 flex justify-start sm:justify-center">
+            <div className="min-w-fit pr-4 sm:pr-0">
               <GitHubCalendar
                 username="jlfuertes14"
-                fontSize={12}
-                blockSize={13}
-                blockMargin={5}
+                fontSize={isCompactCalendar ? 9 : 11}
+                blockSize={isCompactCalendar ? 8 : 11}
+                blockMargin={isCompactCalendar ? 3 : 4}
                 colorScheme={theme === "dark" ? "dark" : "light"}
                 theme={{
                   light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],

@@ -33,7 +33,7 @@ export default function Footer() {
     <footer id="footer" className="relative w-full bg-background pt-24 pb-12 overflow-hidden border-t border-border/10">
       {/* Massive Background Text */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-        <span className="text-[15vw] font-black text-foreground/[0.06] leading-none tracking-tighter uppercase whitespace-nowrap">
+        <span className="text-[15vw] font-black text-foreground/6 leading-none tracking-tighter uppercase whitespace-nowrap">
           {siteConfig.shortName}.FUERTES
         </span>
       </div>
