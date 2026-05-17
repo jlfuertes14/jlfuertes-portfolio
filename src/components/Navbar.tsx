@@ -38,9 +38,9 @@ export default function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <div className="flex items-center justify-between px-8 sm:px-12 md:px-48 py-6">
+      <div className="flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-10 xl:px-14 2xl:px-20 py-4 sm:py-5 lg:py-6">
         {/* Left Side: Logo + Nav Links */}
-        <div className="flex items-center gap-16">
+        <div className="flex items-center gap-8 lg:gap-12">
           <Link
             href="/"
             className="hover:opacity-90 active:scale-95 transition-transform"
@@ -49,7 +49,7 @@ export default function Navbar() {
           </Link>
 
             {/* Desktop Nav Links */}
-            <div className="hidden items-center space-x-10 md:flex">
+            <div className="hidden items-center space-x-6 lg:space-x-8 md:flex">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}

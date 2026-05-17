@@ -20,7 +20,7 @@ const technologies = [
   { name: "TypeScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" },
   { name: "Tailwind CSS", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" },
   { name: "MongoDB", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" },
-  { name: "Figma", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg", invertInDark: true },
+  { name: "UI/UX Design", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg", invertInDark: true },
 ];
 
 function TechItem({
@@ -32,14 +32,12 @@ function TechItem({
 }) {
   return (
     <div
-      className={`group flex items-center ${
-        compact ? "gap-3 rounded-full px-4 py-2.5" : "gap-6"
-      } opacity-80 transition-all duration-300 dark:grayscale hover:opacity-100 hover:grayscale-0`}
+      className={`group flex items-center ${compact ? "gap-3 rounded-full px-4 py-2.5" : "gap-6"
+        } opacity-80 transition-all duration-300 dark:grayscale hover:opacity-100 hover:grayscale-0`}
     >
       <div
-        className={`relative ${
-          compact ? "h-8 w-8" : "h-16 w-16"
-        } transition-transform duration-300 group-hover:scale-110`}
+        className={`relative ${compact ? "h-8 w-8" : "h-16 w-16"
+          } transition-transform duration-300 group-hover:scale-110`}
       >
         <Image
           src={tech.icon}
@@ -49,9 +47,8 @@ function TechItem({
         />
       </div>
       <span
-        className={`font-semibold tracking-tight text-foreground/80 ${
-          compact ? "text-sm" : "text-xl"
-        }`}
+        className={`font-semibold tracking-tight text-foreground/80 ${compact ? "text-sm" : "text-xl"
+          }`}
       >
         {tech.name}
       </span>
@@ -135,22 +132,22 @@ export const TechMarquee = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.35 }}
         transition={{ duration: 0.75, ease: "easeOut" }}
-        className="relative hidden sm:flex w-full items-center overflow-hidden bg-transparent py-16 md:py-24 px-8 sm:px-12 lg:px-20 xl:px-32 border-none"
+        className="relative hidden sm:flex w-full items-center overflow-hidden bg-transparent py-12 md:py-16 xl:py-20 px-4 sm:px-6 md:px-8 lg:px-10 xl:px-14 border-none"
       >
-        <div className="z-20 flex items-center bg-transparent pr-10 lg:pr-16">
-          <span className="whitespace-nowrap text-base lg:text-lg font-semibold tracking-tight text-foreground/60">
+        <div className="z-20 flex items-center bg-transparent pr-6 lg:pr-10 xl:pr-14 shrink-0">
+          <span className="whitespace-nowrap text-sm md:text-base lg:text-lg font-semibold tracking-tight text-foreground/60">
             My Essential Tool Stack
           </span>
         </div>
 
         <div className="flex-1 overflow-hidden" style={maskedStyle}>
           <motion.div
-            className="flex w-max items-center gap-16 lg:gap-24 xl:gap-32 whitespace-nowrap"
+            className="flex w-max items-center gap-10 md:gap-14 lg:gap-16 xl:gap-24 whitespace-nowrap"
             animate={prefersReducedMotion ? undefined : { x: ["0%", "-50%"] }}
             transition={
               prefersReducedMotion
                 ? undefined
-                : { duration: 28, repeat: Infinity, ease: "linear" }
+                : { duration: 24, repeat: Infinity, ease: "linear" }
             }
           >
             {desktopItems.map((tech, index) => (

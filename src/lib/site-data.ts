@@ -52,7 +52,21 @@ export const skills = [
   { name: "UI/UX Design", category: "design" },
 ];
 
-export const projects = [
+export interface Project {
+  title: string;
+  category: string;
+  description: string;
+  techStack: string[];
+  imageUrl: string;
+  previewImage?: string;
+  desktopRightImage?: string;
+  desktopLeftImage?: string;
+  href: string;
+  ctaLabel: string;
+  themeColor: string;
+}
+
+export const projects: Project[] = [
   {
     title: "AniVerse",
     category: "ANIME DISCOVERY ENGINE",
@@ -62,7 +76,21 @@ export const projects = [
     previewImage: "/images/aniverse-mobile-preview.png",
     desktopRightImage: "/images/aniverse-right-image.png",
     href: "https://aniverse-rose.vercel.app/",
+    ctaLabel: "Visit Live Site",
     themeColor: "330 80% 55%",
+  },
+  {
+    title: "Vitae",
+    category: "AI RESUME BUILDER",
+    description: "A full-stack AI resume builder with ATS scoring, job-match analysis, resume imports, cover letter generation, and a premium dark control-room interface.",
+    techStack: ["Next.js 16", "Supabase", "Prisma", "Groq + OpenRouter"],
+    imageUrl: "/images/vitae.png",
+    previewImage: "/images/vitae-mobile-preview.png",
+    desktopRightImage: "/images/vitae-right-desktop-view.png",
+    desktopLeftImage: "/images/vitae-dashboard.png",
+    href: "https://vitae-rho.vercel.app/",
+    ctaLabel: "Visit Live Site",
+    themeColor: "174 70% 45%",
   },
   {
     title: "Lumina Electronics",
@@ -73,29 +101,8 @@ export const projects = [
     previewImage: "/images/lumina-mobile-preview.png",
     desktopRightImage: "/images/lumina-admin-dashboard.png",
     href: "https://jlfuertes14.github.io/lumina/",
+    ctaLabel: "Visit Live Site",
     themeColor: "142 70% 45%",
-  },
-  {
-    title: "JL Robotics",
-    category: "EMBEDDED SYSTEMS",
-    description: "A self-balancing robot project exploring PID control algorithms, ESP32 integration, and real-time sensor data processing.",
-    techStack: ["ESP32", "C++", "Arduino", "PID Control"],
-    imageUrl: "/images/jl-robotics-preview.png",
-    previewImage: "/images/jl-robotics-mobile-preview.png",
-    desktopRightImage: "/images/jl-robotics-right-desktop-preview.png",
-    href: "https://jlfuertes14.github.io/roboportfolio/",
-    themeColor: "217 91% 60%",
-  },
-  {
-    title: "Barangay Portal",
-    category: "DIGITAL SERVICES",
-    description: "A community-focused digital portal designed to streamline barangay services and improve communication between residents and officials.",
-    techStack: ["Next.js", "Tailwind CSS", "Vercel", "Framer Motion"],
-    imageUrl: "/images/barangay-portal.png",
-    previewImage: "/images/barangay-portal-mobile-preview.png",
-    desktopRightImage: "/images/barangay-portal-right-dekstop-preveiw.png",
-    href: "https://barangay-digital-portal.vercel.app/",
-    themeColor: "262 83% 58%",
   },
   {
     title: "Chamen Resort",
@@ -106,6 +113,31 @@ export const projects = [
     previewImage: "/images/chamen-resort-mobile-preview.png",
     desktopRightImage: "/images/chamen-resort-rght-dekstop.png",
     href: "https://hotel-site-nu.vercel.app/",
+    ctaLabel: "Visit Live Site",
     themeColor: "36 80% 50%",
+  },
+  {
+    title: "Barangay Portal",
+    category: "DIGITAL SERVICES",
+    description: "A community-focused digital portal designed to streamline barangay services and improve communication between residents and officials.",
+    techStack: ["Next.js", "Tailwind CSS", "Vercel", "Framer Motion"],
+    imageUrl: "/images/barangay-portal.png",
+    previewImage: "/images/barangay-portal-mobile-preview.png",
+    desktopRightImage: "/images/barangay-portal-right-dekstop-preveiw.png",
+    href: "https://barangay-digital-portal.vercel.app/",
+    ctaLabel: "Visit Live Site",
+    themeColor: "262 83% 58%",
+  },
+  {
+    title: "JL Robotics",
+    category: "EMBEDDED SYSTEMS",
+    description: "A self-balancing robot project exploring PID control algorithms, ESP32 integration, and real-time sensor data processing.",
+    techStack: ["ESP32", "C++", "Arduino", "PID Control"],
+    imageUrl: "/images/jl-robotics-preview.png",
+    previewImage: "/images/jl-robotics-mobile-preview.png",
+    desktopRightImage: "/images/jl-robotics-right-desktop-preview.png",
+    href: "https://jlfuertes14.github.io/roboportfolio/",
+    ctaLabel: "Visit Live Site",
+    themeColor: "217 91% 60%",
   },
 ];

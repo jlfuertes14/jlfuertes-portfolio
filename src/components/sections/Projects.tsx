@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { projects } from "@/lib/site-data";
@@ -23,7 +23,7 @@ export default function Projects() {
         id: "desktop-left",
         label: "Desktop Preview",
         type: "desktop" as const,
-        image: project.imageUrl,
+        image: project.desktopLeftImage || project.imageUrl,
       },
       {
         id: "mobile",
@@ -44,13 +44,16 @@ export default function Projects() {
     });
   };
 
-  const selectedViews = selectedProject ? getProjectViews(selectedProject) : [];
+  const selectedViews = useMemo(
+    () => (selectedProject ? getProjectViews(selectedProject) : []),
+    [selectedProject]
+  );
   const currentViewIndex = selectedViews.findIndex(
     (view) => view.image === selectedImage && view.type === selectedViewType
   );
   const activeView = currentViewIndex >= 0 ? selectedViews[currentViewIndex] : selectedViews[0];
 
-  const openProjectView = (
+  const openProjectView = useCallback((
     project: typeof projects[0],
     viewType: "mobile" | "desktop",
     image: string
@@ -58,9 +61,14 @@ export default function Projects() {
     setSelectedProject(project);
     setSelectedViewType(viewType);
     setSelectedImage(image);
-  };
+  }, []);
 
-  const navigatePreview = (direction: "previous" | "next") => {
+  const closeProjectView = useCallback(() => {
+    setSelectedProject(null);
+    setSelectedImage(null);
+  }, []);
+
+  const navigatePreview = useCallback((direction: "previous" | "next") => {
     if (!selectedProject || selectedViews.length <= 1) return;
 
     const safeIndex = currentViewIndex >= 0 ? currentViewIndex : 0;
@@ -72,14 +80,13 @@ export default function Projects() {
 
     setSelectedViewType(nextView.type);
     setSelectedImage(nextView.image);
-  };
+  }, [currentViewIndex, selectedProject, selectedViews]);
 
   useEffect(() => {
     if (selectedProject) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
-      setSelectedImage(null);
     }
 
     return () => {
@@ -92,7 +99,7 @@ export default function Projects() {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setSelectedProject(null);
+        closeProjectView();
         return;
       }
 
@@ -107,7 +114,7 @@ export default function Projects() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedProject, currentViewIndex, selectedViews.length]);
+  }, [closeProjectView, navigatePreview, selectedProject]);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -251,11 +258,11 @@ export default function Projects() {
                             animate={{ x: -140, y: -5, opacity: 1, rotate: -12, scale: 0.98 }}
                             whileHover={{ scale: 1.06, rotate: -6, y: -24, opacity: 1, zIndex: 120 }}
                             transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                            onClick={() => openProjectView(project, "desktop", project.imageUrl)}
+                            onClick={() => openProjectView(project, "desktop", project.desktopLeftImage || project.imageUrl)}
                             className="absolute w-[280px] h-[180px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-2xl z-60 cursor-pointer will-change-transform"
                           >
                             <Image
-                              src={project.imageUrl}
+                              src={project.desktopLeftImage || project.imageUrl}
                               alt="Desktop Preview Left"
                               fill
                               className="object-cover"
@@ -343,7 +350,7 @@ export default function Projects() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-1000 flex items-center justify-center p-4 sm:p-12 bg-black/60 backdrop-blur-xl"
-            onClick={() => setSelectedProject(null)}
+            onClick={closeProjectView}
           >
             <div className="fixed top-0 left-0 right-0 p-4 sm:p-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between z-1100 pointer-events-none">
               <div className="pointer-events-auto max-w-[min(100%,32rem)]">
@@ -365,12 +372,12 @@ export default function Projects() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 sm:gap-3 px-4 sm:px-8 py-3 sm:py-4 rounded-full bg-foreground text-background font-bold text-sm sm:text-lg hover:scale-105 active:scale-95 transition-all shadow-[0_20px_40px_rgba(0,0,0,0.3)] group"
                 >
-                  <span>Visit Live Site</span>
+                  <span>{selectedProject.ctaLabel}</span>
                   <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                 </a>
 
                 <button
-                  onClick={() => setSelectedProject(null)}
+                  onClick={closeProjectView}
                   className="w-11 h-11 sm:w-14 sm:h-14 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 border border-white/10 text-white backdrop-blur-xl transition-all group"
                 >
                   <svg className="w-6 h-6 sm:w-8 sm:h-8 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">

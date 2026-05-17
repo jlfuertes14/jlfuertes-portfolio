@@ -111,12 +111,12 @@ export default function Hero() {
   return (
     <div
       ref={containerRef}
-      className="relative flex min-h-screen w-full flex-col items-center justify-between overflow-hidden bg-background p-6 sm:p-8 md:p-12 pb-8 sm:pb-12 md:pb-16"
+      className="relative flex min-h-screen w-full flex-col items-center justify-between overflow-hidden bg-background px-5 py-6 sm:px-8 sm:py-8 lg:px-10 xl:px-14 pb-8 sm:pb-12 md:pb-16"
     >
       <div className="h-16" /> {/* Spacer for sticky navbar */}
 
       {/* Architectural Side Text */}
-      <div className="absolute left-10 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-12 z-20">
+      <div className="absolute left-8 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center gap-12 z-20">
         <span className="hero-side-text vertical-text text-[10px] uppercase tracking-[0.4em] text-muted-foreground/50 opacity-0 [writing-mode:vertical-rl]">
           Full Stack Developer
         </span>
@@ -126,7 +126,7 @@ export default function Hero() {
         </span>
       </div>
 
-      <div className="absolute right-10 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-12 z-20">
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center gap-12 z-20">
         <span className="hero-side-text vertical-text text-[10px] uppercase tracking-[0.4em] text-muted-foreground/50 opacity-0 [writing-mode:vertical-rl]">
           Est. 2026
         </span>
@@ -137,14 +137,14 @@ export default function Hero() {
       </div>
 
       {/* ─── Main Content Area ─── */}
-      <div className="relative z-10 grid w-full max-w-7xl grow grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-0">
+      <div className="relative z-10 grid w-full max-w-6xl grow grid-cols-1 lg:grid-cols-2 items-center gap-12 xl:gap-4">
         {/* Left Side: Typography & Bio */}
         <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
-          <h1 className="text-[15vw] lg:text-[10rem] font-extralight text-foreground leading-[0.8] tracking-tighter mb-8">
+          <h1 className="text-[15vw] sm:text-[13vw] lg:text-[7.5rem] xl:text-[9rem] font-extralight text-foreground leading-[0.8] tracking-tighter mb-8">
             {splitText("Hello")}
           </h1>
 
-          <div className="hero-desc-group opacity-0 max-w-md space-y-8">
+          <div className="hero-desc-group opacity-0 max-w-md xl:max-w-lg space-y-6 sm:space-y-8">
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
               I am <span className="text-foreground font-medium">{siteConfig.name}</span>,  a Computer Engineer bridging the gap between <span className="text-primary/80">hardware circuits</span> and <span className="text-primary/80">intelligent software</span>.
             </p>
@@ -163,8 +163,8 @@ export default function Hero() {
 
         {/* Right Side: Signature Profile style */}
         <div className="hero-image-container relative flex justify-center items-center h-full">
-          <div className="hero-circle absolute z-0 rounded-full bg-primary opacity-0 h-[280px] w-[280px] md:h-[400px] md:w-[400px] lg:h-[520px] lg:w-[520px]" />
-          <div className="hero-image relative z-10 opacity-0 w-[240px] md:w-[320px] lg:w-[440px] mt-12 lg:mt-20">
+          <div className="hero-circle absolute z-0 rounded-full bg-primary opacity-0 h-[260px] w-[260px] md:h-[360px] md:w-[360px] lg:h-[420px] lg:w-[420px] xl:h-[520px] xl:w-[520px]" />
+          <div className="hero-image relative z-10 opacity-0 w-[220px] md:w-[300px] lg:w-[360px] xl:w-[440px] mt-8 lg:mt-12 xl:mt-20">
             <Image
               src="/images/prof trans.png"
               alt={siteConfig.name}
