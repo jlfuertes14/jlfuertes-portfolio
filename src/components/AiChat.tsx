@@ -201,7 +201,9 @@ export default function AiChat() {
       {/* Toggle Button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-4 right-4 sm:right-6 z-50 flex items-center gap-2 rounded-full bg-card border border-border px-4 py-3 text-sm font-semibold text-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+        className={`fixed bottom-4 right-4 sm:right-6 z-50 items-center gap-2 rounded-full bg-card border border-border px-4 py-3 text-sm font-semibold text-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 ${
+          isOpen ? "hidden sm:flex" : "flex"
+        }`}
         aria-label="Chat with John Lester"
         whileTap={{ scale: 0.96 }}
       >
