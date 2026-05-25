@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Github, Linkedin, Twitter, Download, ExternalLink, Briefcase, GraduationCap, Award, Code, Globe } from 'lucide-react';
+import React from 'react';
+import { Mail, Phone, MapPin, Github, Linkedin, Download, ExternalLink, Briefcase, GraduationCap, Award, Code, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import Link from 'next/link';
 import Image from 'next/image';
-import { siteConfig, skills, projects } from '@/lib/site-data';
+import { siteConfig, projects } from '@/lib/site-data';
 import { motion } from 'framer-motion';
 
 const JohnResumeData = {
@@ -66,7 +65,6 @@ const JohnResumeData = {
 };
 
 export default function ResumePage() {
-  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
   const data = JohnResumeData;
 
   return (
@@ -162,8 +160,6 @@ export default function ResumePage() {
                     <div
                       key={skill.name}
                       className="group"
-                      onMouseEnter={() => setHoveredSkill(skill.name)}
-                      onMouseLeave={() => setHoveredSkill(null)}
                     >
                       <div className="flex justify-between mb-2 font-heading">
                         <span className="text-xs font-bold uppercase tracking-widest text-foreground/80">{skill.name}</span>

@@ -6,10 +6,11 @@ import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Logo } from "@/components/Logo";
 import MobileMenu from "@/components/MobileMenu";
-import { navLinks, siteConfig } from "@/lib/site-data";
+import { navLinks } from "@/lib/site-data";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("/");
   const pathname = usePathname();
 
   useEffect(() => {
@@ -21,6 +22,52 @@ export default function Navbar() {
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (pathname !== "/") {
+      return;
+    }
+
+    const handleScrollSpy = () => {
+      const sectionIds = ["hero", "projects", "services", "about", "experience", "contact"];
+      const scrollPosition = window.scrollY + 200; // Offset for header
+
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100;
+      if (isAtBottom) {
+        setActiveSection("#contact");
+        return;
+      }
+
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            setActiveSection(id === "hero" ? "/" : `#${id}`);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScrollSpy, { passive: true });
+    handleScrollSpy();
+    return () => window.removeEventListener("scroll", handleScrollSpy);
+  }, [pathname]);
+
+  const isActive = (linkHref: string) => {
+    if (pathname === "/resume") {
+      return linkHref === "/resume";
+    }
+    if (pathname === "/") {
+      if (linkHref === "/") {
+        return activeSection === "/" || activeSection === "hero";
+      }
+      return activeSection === linkHref;
+    }
+    return false;
+  };
 
   // If on a sub-page (e.g. /resume), prefix hash links with /
   const resolveHref = (href: string) => {
@@ -43,6 +90,7 @@ export default function Navbar() {
         <div className="flex items-center gap-8 lg:gap-12">
           <Link
             href="/"
+            aria-label="John Lester Fuertes - Home"
             className="hover:opacity-90 active:scale-95 transition-transform"
           >
             <Logo />
@@ -61,7 +109,11 @@ export default function Navbar() {
                       element?.scrollIntoView({ behavior: "smooth" });
                     }
                   }}
-                  className="relative text-[15px] font-medium text-foreground/50 transition-colors duration-300 hover:text-primary pb-1 after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-primary after:transition-transform after:duration-300 hover:after:scale-x-100"
+                  className={`relative text-[15px] font-medium transition-colors duration-300 pb-1 after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:origin-bottom-left after:bg-primary after:transition-transform after:duration-300 ${
+                    isActive(link.href)
+                      ? "text-primary after:scale-x-100"
+                      : "text-foreground/50 hover:text-primary after:scale-x-0 hover:after:scale-x-100"
+                  }`}
                 >
                   {link.label}
                 </Link>

@@ -8,14 +8,12 @@ import {
   Send,
   Loader2,
   Mail,
-  MapPin,
   Github,
   Linkedin,
   Twitter,
   Instagram,
   Facebook,
   Youtube,
-  ExternalLink,
 } from "lucide-react";
 import { siteConfig, socialLinks as socialData } from "@/lib/site-data";
 import { Button } from "@/components/ui/button";
@@ -163,7 +161,7 @@ export default function Contact() {
     <section
       id="contact"
       ref={sectionRef}
-      className="pt-28 sm:pt-36 lg:pt-48 pb-24 sm:pb-32 bg-background relative overflow-hidden scroll-mt-24 min-h-screen flex flex-col justify-start"
+      className="pt-16 sm:pt-24 lg:pt-32 pb-24 sm:pb-32 bg-background relative overflow-hidden scroll-mt-24 min-h-screen flex flex-col justify-start"
     >
       {/* Absolute background cover to ensure no peeking */}
       <div className="absolute inset-0 bg-background z-0" />
@@ -236,7 +234,7 @@ export default function Contact() {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 h-10 rounded-full bg-muted/50 border border-border flex items-center justify-center text-foreground hover:bg-foreground hover:text-background transition-all duration-300 hover:scale-110"
+                      className="w-11 h-11 rounded-full bg-muted/50 border border-border flex items-center justify-center text-foreground hover:bg-foreground hover:text-background transition-all duration-300 hover:scale-110"
                       aria-label={link.label}
                     >
                       <Icon className="w-4 h-4" />

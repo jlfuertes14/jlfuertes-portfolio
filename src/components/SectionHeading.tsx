@@ -13,6 +13,7 @@ interface SectionHeadingProps {
   subtitle?: string;
   className?: string;
   align?: "left" | "center";
+  highlightClassName?: string;
 }
 
 export default function SectionHeading({
@@ -21,6 +22,7 @@ export default function SectionHeading({
   subtitle,
   className = "",
   align = "left",
+  highlightClassName = "text-primary",
 }: SectionHeadingProps) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -76,7 +78,7 @@ export default function SectionHeading({
     text.split("").map((char, i) => (
       <span
         key={`${isHighlight ? "h" : "t"}-${i}`}
-        className={`sh-char inline-block ${isHighlight ? "text-primary" : ""}`}
+        className={`sh-char inline-block ${isHighlight ? highlightClassName : ""}`}
         style={{ perspective: "600px" }}
       >
         {char === " " ? "\u00A0" : char}

@@ -18,7 +18,9 @@ export const siteConfig = {
 export const navLinks = [
   { label: "Home", href: "/" },
   { label: "Projects", href: "#projects" },
+  { label: "Services", href: "#services" },
   { label: "About", href: "#about" },
+  { label: "Experience", href: "#experience" },
   { label: "Contact", href: "#contact" },
   { label: "Resume", href: "/resume" },
 ];
@@ -70,7 +72,7 @@ export const projects: Project[] = [
   {
     title: "AniVerse",
     category: "ANIME DISCOVERY ENGINE",
-    description: "A high-performance anime discovery platform with real-time streaming data, advanced search capabilities, and a sleek brutalist-inspired UI.",
+    description: "A fast anime discovery platform featuring real-time streaming, advanced search, and a sleek brutalist-inspired UI.",
     techStack: ["Next.js", "FastAPI", "MongoDB", "Tailwind CSS"],
     imageUrl: "/images/aniverse.png",
     previewImage: "/images/aniverse-mobile-preview.png",
@@ -82,7 +84,7 @@ export const projects: Project[] = [
   {
     title: "Vitae",
     category: "AI RESUME BUILDER",
-    description: "A full-stack AI resume builder with ATS scoring, job-match analysis, resume imports, cover letter generation, and a premium dark control-room interface.",
+    description: "An AI resume builder with ATS scoring, job matching, resume imports, cover letter generation, and a dark control-room interface.",
     techStack: ["Next.js", "Supabase", "Prisma", "Groq + OpenRouter"],
     imageUrl: "/images/vitae.png",
     previewImage: "/images/vitae-mobile-preview.png",
@@ -95,7 +97,7 @@ export const projects: Project[] = [
   {
     title: "Onyx",
     category: "AI DESIGN SYSTEM",
-    description: "An AI-powered design system that generates custom design systems for websites and apps. It translates user-defined vibe prompts into comprehensive design tokens.",
+    description: "A tool that generates custom design systems for web apps. It turns your vibe prompts into ready-to-use design tokens.",
     techStack: ["Next.js", "Tailwind CSS", "Gemini + Groq", "Framer"],
     imageUrl: "/images/onyx-preview.png",
     previewImage: "/images/onyx-mobile-preview.png",

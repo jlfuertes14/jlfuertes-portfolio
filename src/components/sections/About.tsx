@@ -2,20 +2,16 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Github, Code2, Globe, Cpu, Star, GitFork, Users, BookOpen, Calendar, MapPin, GraduationCap, School, ChevronLeft, ChevronRight } from "lucide-react";
+import { ExternalLink, Github, Cpu, Calendar, MapPin, GraduationCap, School, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { skills, siteConfig } from "@/lib/site-data";
+import { skills } from "@/lib/site-data";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import {
-  SiDotnet,
-  SiEspressif,
-  SiMicropython,
-} from "react-icons/si";
+import { SiEspressif, SiMicropython } from "react-icons/si";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -469,10 +465,10 @@ export default function About() {
                 </h3>
                 <div className="space-y-5 sm:space-y-6 text-muted-foreground text-sm sm:text-base leading-relaxed grow mb-auto">
                   <p>
-                    I’m a <span className="text-foreground font-bold">Computer Engineering graduate</span> who builds clean, scalable web apps and hardware circuits. On the software side, I write web apps powered by <span className="text-foreground font-bold">Gemini and Groq APIs</span> to build chatbots, and use <span className="text-foreground font-bold">RAG systems</span> to make them fast and contextual. Whether I’m writing <span className="text-foreground font-bold">GraphQL</span> schemas, building <span className="text-foreground font-bold">RESTful APIs</span>, or tinkering with sensors, I enjoy connecting physical electronics to the web.
+                    I’m a <span className="text-foreground font-bold">Computer Engineering graduate</span> who builds web apps and hardware circuits. I work with <span className="text-foreground font-bold">Gemini and Groq APIs</span> to create chatbots, using <span className="text-foreground font-bold">RAG</span> to keep them fast and contextual. Whether I&apos;m designing <span className="text-foreground font-bold">GraphQL</span> schemas, building <span className="text-foreground font-bold">REST APIs</span>, or tinkering with sensors, I love connecting the physical world to the web.
                   </p>
                   <p>
-                    I use AI extensively to speed up my work. By treating LLMs as coding assistants, I can build and test features much faster. I design the architecture and direct the code generation so I can focus on building working hardware and clean, maintainable software.
+                    I use modern AI tools to speed up my workflow. By combining good architecture with AI coding assistants, I can focus on building solid hardware and maintainable code.
                   </p>
                 </div>
               </motion.div>

@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import Image from "next/image";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { siteConfig } from "@/lib/site-data";
 import { TechMarquee } from "../TechMarquee";
 
@@ -110,6 +110,7 @@ export default function Hero() {
 
   return (
     <div
+      id="hero"
       ref={containerRef}
       className="relative flex min-h-screen w-full flex-col items-center justify-between overflow-hidden bg-background px-5 py-6 sm:px-8 sm:py-8 lg:px-10 xl:px-14 pb-8 sm:pb-12 md:pb-16"
     >
@@ -164,7 +165,7 @@ export default function Hero() {
         {/* Right Side: Signature Profile style */}
         <div className="hero-image-container relative flex justify-center items-center h-full">
           <div className="hero-circle absolute z-0 rounded-full bg-primary opacity-0 h-[260px] w-[260px] md:h-[360px] md:w-[360px] lg:h-[420px] lg:w-[420px] xl:h-[520px] xl:w-[520px]" />
-          <div className="hero-image relative z-10 opacity-0 w-[220px] md:w-[300px] lg:w-[360px] xl:w-[440px] mt-10 md:mt-8 lg:mt-12 xl:mt-20">
+          <div className="hero-image relative z-10 opacity-0 w-[220px] md:w-[300px] lg:w-[360px] xl:w-[440px] mt-24 md:mt-8 lg:mt-12 xl:mt-20">
             <Image
               src="/images/prof trans.png"
               alt={siteConfig.name}

@@ -152,7 +152,7 @@ export default function MobileMenu() {
                       }
                     }
                   }}
-                  className="mobile-nav-link text-4xl font-black uppercase tracking-tighter text-foreground transition-colors duration-300 hover:text-primary"
+                  className="mobile-nav-link relative text-4xl font-black uppercase tracking-tighter text-foreground transition-colors duration-300 hover:text-primary pb-1 after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-primary after:transition-transform after:duration-300 hover:after:scale-x-100"
                 >
                   {link.label}
                 </Link>
