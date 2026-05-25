@@ -61,7 +61,7 @@ export default function Navbar() {
                       element?.scrollIntoView({ behavior: "smooth" });
                     }
                   }}
-                  className="text-[15px] font-medium text-foreground/50 transition-colors duration-300 hover:text-primary"
+                  className="relative text-[15px] font-medium text-foreground/50 transition-colors duration-300 hover:text-primary pb-1 after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-primary after:transition-transform after:duration-300 hover:after:scale-x-100"
                 >
                   {link.label}
                 </Link>

@@ -196,30 +196,29 @@ export default function Projects() {
                 onHoverEnd={() => setHoveredProject(null)}
                 className="project-card-mobile group relative h-full bg-card dark:bg-[#0a0a0a] border border-border dark:border-white/5 rounded-[2rem] transition-all duration-500 hover:border-black/20 dark:hover:border-white/20 flex flex-col hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
               >
-                <div className="relative p-6 sm:p-8 grow flex flex-col">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start mb-6">
+                <div className="relative p-5 sm:p-8 grow flex flex-col">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-start mb-4 sm:mb-6">
                     <div className="flex-1 sm:mr-4">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground block mb-2">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground block mb-1">
                         {project.category}
                       </span>
                       <h3 className="text-xl sm:text-2xl font-bold text-foreground transition-colors group-hover:text-foreground/80">
                         {project.title}
                       </h3>
                     </div>
-                    <div className="shrink-0 w-fit px-4 py-1.5 rounded-full border border-border bg-muted/50 text-[10px] font-bold text-muted-foreground uppercase tracking-wider backdrop-blur-sm group-hover:bg-foreground group-hover:text-background transition-all">
-                      <span className="hidden md:inline">Hover to preview</span>
-                      <span className="md:hidden">Tap to preview</span>
+                    <div className="hidden md:block shrink-0 w-fit px-4 py-1.5 rounded-full border border-border bg-muted/50 text-[10px] font-bold text-muted-foreground uppercase tracking-wider backdrop-blur-sm group-hover:bg-foreground group-hover:text-background transition-all">
+                      Hover to preview
                     </div>
                   </div>
 
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-8 line-clamp-3">
+                  <p className="text-muted-foreground text-sm leading-relaxed mb-4 sm:mb-8 line-clamp-2 sm:line-clamp-3">
                     {project.description}
                   </p>
 
                   <button
                     type="button"
                     onClick={() => openProjectView(project, "mobile", project.previewImage || project.imageUrl)}
-                    className="relative aspect-video w-full rounded-2xl bg-muted dark:bg-white/5 border border-border dark:border-white/5 overflow-hidden mb-4 flex items-center justify-center group-hover:bg-muted/20 transition-all duration-500 text-left"
+                    className="relative aspect-video w-full rounded-2xl bg-muted dark:bg-white/5 border border-border dark:border-white/5 overflow-hidden mb-4 flex items-center justify-center group-hover:bg-muted/20 transition-all duration-500 text-left cursor-pointer"
                   >
                     <div className="project-card-visual relative w-full h-full transition-all duration-500 group-hover:scale-105">
                       <Image
@@ -229,17 +228,21 @@ export default function Projects() {
                         className="object-cover opacity-80 group-hover:opacity-100 transition-all duration-500"
                       />
                     </div>
+                    <div className="md:hidden absolute top-3 right-3 z-20 px-3 py-1 rounded-full border border-white/10 bg-black/40 text-[9px] font-bold text-white uppercase tracking-[0.15em] backdrop-blur-md shadow-sm pointer-events-none">
+                      Tap to preview
+                    </div>
                   </button>
 
-                  <div className="md:hidden mt-auto">
-                    <button
-                      type="button"
-                      onClick={() => openProjectView(project, "mobile", project.previewImage || project.imageUrl)}
-                      className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/40 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-foreground/80 transition-colors hover:bg-foreground hover:text-background"
+                  <div className="md:hidden mt-auto mb-2">
+                    <a
+                      href={project.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground/80 transition-colors hover:bg-foreground hover:text-background whitespace-nowrap"
                     >
-                      Open Preview
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </button>
+                      Visit Live Site
+                      <ExternalLink className="h-3.3 w-3.3" />
+                    </a>
                   </div>
 
                   <AnimatePresence>
@@ -322,8 +325,8 @@ export default function Projects() {
                   </AnimatePresence>
                 </div>
 
-                <div className="p-6 sm:p-8 pt-4 border-t border-border/50 bg-muted/20 dark:bg-black/40 z-120 rounded-b-[2rem]">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 block mb-4">
+                <div className="p-5 sm:p-8 pt-4 border-t border-border/50 bg-muted/20 dark:bg-black/40 z-120 rounded-b-[2rem]">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 block mb-2 sm:mb-4">
                     Tech Stack
                   </span>
                   <div className="flex flex-wrap gap-2">
@@ -352,25 +355,25 @@ export default function Projects() {
             className="fixed inset-0 z-1000 flex items-center justify-center p-4 sm:p-12 bg-black/60 backdrop-blur-xl"
             onClick={closeProjectView}
           >
-            <div className="fixed top-0 left-0 right-0 p-4 sm:p-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between z-1100 pointer-events-none">
-              <div className="pointer-events-auto max-w-[min(100%,32rem)]">
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground block mb-2 drop-shadow-sm">
+            <div className="fixed top-0 left-0 right-0 p-5 sm:p-8 flex items-start justify-between z-1100 pointer-events-none">
+              <div className="pointer-events-auto max-w-[calc(100%-6rem)] sm:max-w-[min(100%,32rem)]">
+                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground block mb-1 sm:mb-2 drop-shadow-sm">
                   {selectedProject.category} • {activeView?.label || "Preview"}
                 </span>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight drop-shadow-sm">
+                <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight drop-shadow-sm leading-tight">
                   {selectedProject.title}
                 </h2>
-                <p className="mt-3 text-sm text-white/70">
+                <p className="mt-1 text-xs sm:text-sm text-white/70">
                   {Math.max(currentViewIndex, 0) + 1} / {selectedViews.length}
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 sm:gap-6 pointer-events-auto self-end sm:self-auto">
+              <div className="flex flex-col items-end gap-2.5 sm:flex-row sm:items-center sm:gap-6 pointer-events-auto shrink-0">
                 <a
                   href={selectedProject.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 sm:gap-3 px-4 sm:px-8 py-3 sm:py-4 rounded-full bg-foreground text-background font-bold text-sm sm:text-lg hover:scale-105 active:scale-95 transition-all shadow-[0_20px_40px_rgba(0,0,0,0.3)] group"
+                  className="hidden sm:flex items-center gap-2 sm:gap-3 px-4 sm:px-8 py-3 sm:py-4 rounded-full bg-foreground text-background font-bold text-sm sm:text-lg hover:scale-105 active:scale-95 transition-all shadow-[0_20px_40px_rgba(0,0,0,0.3)] group"
                 >
                   <span>{selectedProject.ctaLabel}</span>
                   <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
@@ -384,6 +387,16 @@ export default function Projects() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
+
+                <a
+                  href={selectedProject.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="sm:hidden flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-foreground text-background font-bold text-[9.5px] uppercase tracking-[0.08em] hover:scale-105 active:scale-95 transition-all shadow-md whitespace-nowrap shrink-0"
+                >
+                  <span>{selectedProject.ctaLabel}</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
               </div>
             </div>
 

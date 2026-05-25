@@ -94,6 +94,7 @@ export default function About() {
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const curvePathRef = useRef<SVGPathElement>(null);
   const curveGlowRef = useRef<SVGPathElement>(null);
+  const calendarScrollRef = useRef<HTMLDivElement>(null);
 
   const [githubData, setGithubData] = useState({
     repos: "0",
@@ -171,6 +172,18 @@ export default function About() {
     updateCalendarMode();
     window.addEventListener("resize", updateCalendarMode);
     return () => window.removeEventListener("resize", updateCalendarMode);
+  }, []);
+
+  useEffect(() => {
+    const container = calendarScrollRef.current;
+    if (!container) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      container.scrollLeft = container.scrollWidth;
+    });
+
+    resizeObserver.observe(container);
+    return () => resizeObserver.disconnect();
   }, []);
 
   useGSAP(() => {
@@ -456,10 +469,10 @@ export default function About() {
                 </h3>
                 <div className="space-y-5 sm:space-y-6 text-muted-foreground text-sm sm:text-base leading-relaxed grow mb-auto">
                   <p>
-                    I’m a <span className="text-foreground font-bold">4th-year Computer Engineering student</span> specializing in that sweet spot where hardware circuits meet clean, scalable web apps. On the software side, I’m all about building intelligent web experiences using <span className="text-foreground font-bold">Gemini and Groq APIs</span> to power chatbots and implementing <span className="text-foreground font-bold">RAG systems</span> to make my projects hit differently. Whether I’m wrangling <span className="text-foreground font-bold">GraphQL</span>, building out <span className="text-foreground font-bold">RESTful APIs</span>, or tinkering with sensors, I focus on making the integration between the physical and digital seamless.
+                    I’m a <span className="text-foreground font-bold">Computer Engineering graduate</span> who builds clean, scalable web apps and hardware circuits. On the software side, I write web apps powered by <span className="text-foreground font-bold">Gemini and Groq APIs</span> to build chatbots, and use <span className="text-foreground font-bold">RAG systems</span> to make them fast and contextual. Whether I’m writing <span className="text-foreground font-bold">GraphQL</span> schemas, building <span className="text-foreground font-bold">RESTful APIs</span>, or tinkering with sensors, I enjoy connecting physical electronics to the web.
                   </p>
                   <p>
-                    My real superpower? <span className="text-foreground font-bold">AI orchestration.</span> I’m a big believer in &quot;<span className="text-foreground font-bold">vibe coding</span>&quot; leveraging AI as a force multiplier to turn my visions into shippable features at light speed. I act as the architect, guiding the AI to build out the vision so I can focus on shipping fast and bridging the gap between software and hardware with robust hardware and even cleaner code.
+                    I use AI extensively to speed up my work. By treating LLMs as coding assistants, I can build and test features much faster. I design the architecture and direct the code generation so I can focus on building working hardware and clean, maintainable software.
                   </p>
                 </div>
               </motion.div>
@@ -628,7 +641,7 @@ export default function About() {
             </div>
           </div>
 
-          <div className="hide-scrollbar w-full overflow-x-auto pb-2 sm:pb-4 flex justify-start sm:justify-center">
+          <div ref={calendarScrollRef} className="hide-scrollbar w-full overflow-x-auto pb-2 sm:pb-4 flex justify-start sm:justify-center">
             <div className="min-w-fit pr-4 sm:pr-0">
               <GitHubCalendar
                 username="jlfuertes14"

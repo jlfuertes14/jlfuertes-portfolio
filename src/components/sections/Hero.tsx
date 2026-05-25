@@ -146,7 +146,7 @@ export default function Hero() {
 
           <div className="hero-desc-group opacity-0 max-w-md xl:max-w-lg space-y-6 sm:space-y-8">
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-              I am <span className="text-foreground font-medium">{siteConfig.name}</span>,  a Computer Engineer bridging the gap between <span className="text-primary/80">hardware circuits</span> and <span className="text-primary/80">intelligent software</span>.
+              I am <span className="text-foreground font-medium">{siteConfig.name}</span>, a Computer Engineering graduate building <span className="text-primary/80">web applications</span> and <span className="text-primary/80">hardware circuits</span>.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-6">
@@ -164,7 +164,7 @@ export default function Hero() {
         {/* Right Side: Signature Profile style */}
         <div className="hero-image-container relative flex justify-center items-center h-full">
           <div className="hero-circle absolute z-0 rounded-full bg-primary opacity-0 h-[260px] w-[260px] md:h-[360px] md:w-[360px] lg:h-[420px] lg:w-[420px] xl:h-[520px] xl:w-[520px]" />
-          <div className="hero-image relative z-10 opacity-0 w-[220px] md:w-[300px] lg:w-[360px] xl:w-[440px] mt-8 lg:mt-12 xl:mt-20">
+          <div className="hero-image relative z-10 opacity-0 w-[220px] md:w-[300px] lg:w-[360px] xl:w-[440px] mt-10 md:mt-8 lg:mt-12 xl:mt-20">
             <Image
               src="/images/prof trans.png"
               alt={siteConfig.name}

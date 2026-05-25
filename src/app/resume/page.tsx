@@ -17,7 +17,7 @@ const JohnResumeData = {
   email: siteConfig.email,
   phone: siteConfig.phone,
   location: siteConfig.location,
-  summary: "Computer Engineering student bridging software and hardware. I pride myself on having an 'I'll figure it out' mindset no matter how hard the problem is. Experienced in full-stack web development, electronics, and embedded systems.",
+  summary: "Computer Engineering graduate building web applications and hardware circuits. I pride myself on having an 'I'll figure it out' mindset no matter how hard the problem is. Experienced in full-stack web development, electronics, and embedded systems.",
   skills: [
     { name: 'React / Next.js', level: 90 },
     { name: 'TypeScript', level: 85 },
@@ -44,7 +44,7 @@ const JohnResumeData = {
     {
       degree: 'BS Computer Engineering',
       institution: 'Rizal Technological University',
-      year: 'Expected 2026',
+      year: 'Graduating July 2026',
     },
     {
       degree: 'STEM Strand (Honors)',
@@ -229,7 +229,7 @@ export default function ResumePage() {
                   <div className="relative pl-6 before:absolute before:left-0 before:top-1.5 before:h-2 before:w-2 before:rounded-full before:bg-primary group font-sans">
                     <h3 className="font-heading font-bold text-foreground group-hover:text-primary transition-colors tracking-tight text-lg">BS Computer Engineering</h3>
                     <p className="text-sm text-muted-foreground font-medium">Rizal Technological University</p>
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-primary/60 mt-1">Expected 2026</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-primary/60 mt-1">Graduating July 2026</p>
                     <p className="mt-4 text-xs leading-relaxed text-muted-foreground/80 font-medium italic">
                       Thesis: HatchWatch - IoT and AI-based Egg Incubator system for Philippine Mallard Ducks.
                     </p>

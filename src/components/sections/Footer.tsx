@@ -30,7 +30,7 @@ export default function Footer() {
   };
 
   return (
-    <footer id="footer" className="relative w-full bg-background pt-24 pb-12 overflow-hidden border-t border-border/10">
+    <footer id="footer" className="relative w-full bg-background pt-16 pb-8 md:pt-24 md:pb-12 overflow-hidden border-t border-border/10">
       {/* Massive Background Text */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
         <span className="text-[15vw] font-black text-foreground/6 leading-none tracking-tighter uppercase whitespace-nowrap">
@@ -39,9 +39,9 @@ export default function Footer() {
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-16">
           {/* Brand Column */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 md:space-y-6">
             <Link href="/" className="text-2xl font-bold tracking-tighter">
               {siteConfig.shortName}.<span className="text-primary">FUERTES</span>
             </Link>
@@ -51,16 +51,16 @@ export default function Footer() {
           </div>
 
           {/* Navigation Column */}
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <h4 className="text-sm font-bold tracking-widest text-foreground/40">
               Navigation
             </h4>
-            <nav className="flex flex-col gap-4">
+            <nav className="flex flex-row flex-wrap gap-x-6 gap-y-2 md:flex-col md:gap-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-base text-muted-foreground hover:text-foreground transition-colors duration-300 w-fit"
+                  className="relative text-base text-muted-foreground hover:text-foreground transition-colors duration-300 w-fit pb-1 after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-primary after:transition-transform after:duration-300 hover:after:scale-x-100"
                 >
                   {link.label}
                 </Link>
@@ -69,7 +69,7 @@ export default function Footer() {
           </div>
 
           {/* Social Column */}
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <h4 className="text-sm font-bold tracking-widest text-foreground/40">
               Socials
             </h4>
@@ -95,7 +95,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-10 border-t border-border/10 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="pt-8 md:pt-10 border-t border-border/10 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
           <div className="text-sm text-foreground/50 font-medium">
             © {new Date().getFullYear()} <span className="text-foreground/80 font-bold">{siteConfig.name}</span>. All rights reserved.
           </div>

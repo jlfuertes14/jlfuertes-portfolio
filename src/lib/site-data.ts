@@ -5,9 +5,9 @@
 export const siteConfig = {
   name: "John Lester C. Fuertes",
   shortName: "JL",
-  title: "Computer Engineering Student",
+  title: "Computer Engineering Graduate",
   tagline:
-    "Computer Engineering student bridging software and hardware. Building the future through code and circuits.",
+    "Computer Engineering graduate building web applications and hardware circuits.",
   location: "Taytay, Rizal, Philippines",
   email: "johnlester.fuertes@gmail.com",
   phone: "09774129580",
@@ -95,7 +95,7 @@ export const projects: Project[] = [
   {
     title: "Onyx",
     category: "AI DESIGN SYSTEM",
-    description: "An AI-powered design system that generates custom design systems for websites and apps. It translates user-defined vibe prompts into comprehensive design tokens, color scales, and unique React templates.",
+    description: "An AI-powered design system that generates custom design systems for websites and apps. It translates user-defined vibe prompts into comprehensive design tokens.",
     techStack: ["Next.js", "Tailwind CSS", "Gemini + Groq", "Framer"],
     imageUrl: "/images/onyx-preview.png",
     previewImage: "/images/onyx-mobile-preview.png",
@@ -107,7 +107,7 @@ export const projects: Project[] = [
   {
     title: "Lumina Electronics",
     category: "E-COMMERCE PLATFORM",
-    description: "A comprehensive electronics shop featuring a modern shopping experience, real-time inventory tracking, and secure checkout integration.",
+    description: "An electronics shop website with real-time inventory tracking and secure checkout.",
     techStack: ["Vite", "Node.js", "MongoDB", "Express"],
     imageUrl: "/images/lumina-preview.png",
     previewImage: "/images/lumina-mobile-preview.png",
@@ -119,7 +119,7 @@ export const projects: Project[] = [
   {
     title: "Chamen Resort",
     category: "HOSPITALITY WEBSITE",
-    description: "A premium resort landing page featuring immersive animations, easy booking flow, and a fully responsive gallery experience.",
+    description: "A resort landing page with smooth animations, a simple booking flow, and a responsive gallery.",
     techStack: ["Next.js", "Framer Motion", "Tailwind CSS", "Lucide"],
     imageUrl: "/images/chamen-resort.png",
     previewImage: "/images/chamen-resort-mobile-preview.png",
@@ -131,7 +131,7 @@ export const projects: Project[] = [
   {
     title: "JL Robotics",
     category: "EMBEDDED SYSTEMS",
-    description: "A self-balancing robot project exploring PID control algorithms, ESP32 integration, and real-time sensor data processing.",
+    description: "A self-balancing robot built using an ESP32, PID control algorithms, and real-time sensor data.",
     techStack: ["ESP32", "C++", "Arduino", "PID Control"],
     imageUrl: "/images/jl-robotics-preview.png",
     previewImage: "/images/jl-robotics-mobile-preview.png",

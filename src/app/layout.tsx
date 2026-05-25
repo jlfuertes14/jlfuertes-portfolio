@@ -11,7 +11,7 @@ import Navbar from "@/components/Navbar";
 export const metadata: Metadata = {
   title: "John Lester Fuertes — Portfolio",
   description:
-    "Computer Engineering student bridging software and hardware. Web developer, electronics hobbyist, and embedded systems enthusiast.",
+    "Computer Engineering graduate building web applications and hardware circuits. Web developer, electronics hobbyist, and embedded systems enthusiast.",
   keywords: [
     "John Lester Fuertes",
     "portfolio",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "John Lester Fuertes — Portfolio",
     description:
-      "Computer Engineering student bridging software and hardware.",
+      "Computer Engineering graduate building web applications and hardware circuits.",
     type: "website",
   },
 };

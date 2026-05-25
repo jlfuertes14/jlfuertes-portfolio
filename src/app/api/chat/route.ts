@@ -54,7 +54,7 @@ This portfolio has the following primary sections/pages:
 ${navigationSummary}
 
 ABOUT ME
-- I'm a 4th-year Computer Engineering student focused on bridging software and hardware.
+- I'm a Computer Engineering graduate (graduating July 2026) focused on building web applications and hardware circuits.
 - I care about both intelligent web development and embedded systems.
 - I describe myself as someone with an "I'll figure it out" mindset.
 - My work sits at the intersection of web apps, AI-powered experiences, embedded systems, and UI/UX.
@@ -98,7 +98,7 @@ OTHER IMPORTANT PROJECT / EXPERIENCE DETAILS
 EDUCATION
 - Rizal Technological University
   Bachelor of Science in Computer Engineering
-  Expected graduation: 2026
+  Graduation date: July 2026
 
 - Buting Senior High School
   STEM Strand
