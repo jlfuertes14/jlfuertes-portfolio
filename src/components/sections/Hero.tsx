@@ -112,6 +112,7 @@ export default function Hero() {
     <div
       id="hero"
       ref={containerRef}
+      data-theme-static
       className="relative flex min-h-screen w-full flex-col items-center justify-between overflow-hidden bg-background px-5 py-6 sm:px-8 sm:py-8 lg:px-10 xl:px-14 pb-8 sm:pb-12 md:pb-16"
     >
       <div className="h-16" /> {/* Spacer for sticky navbar */}

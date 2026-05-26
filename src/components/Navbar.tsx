@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -12,15 +12,39 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("/");
   const pathname = usePathname();
+  const navRef = useRef<HTMLElement>(null);
+  const scrollSectionIds = useMemo(
+    () => [
+      "hero",
+      ...navLinks
+        .filter((link) => link.href.startsWith("#"))
+        .map((link) => link.href.slice(1)),
+    ],
+    []
+  );
 
   useEffect(() => {
-    const handleScroll = () => {
+    let frameId: number | null = null;
+
+    const updateScrolledState = () => {
+      frameId = null;
       setScrolled(window.scrollY > 50);
     };
 
+    const handleScroll = () => {
+      if (frameId !== null) return;
+      frameId = window.requestAnimationFrame(updateScrolledState);
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    updateScrolledState();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -28,33 +52,71 @@ export default function Navbar() {
       return;
     }
 
-    const handleScrollSpy = () => {
-      const sectionIds = ["hero", "projects", "services", "about", "experience", "contact"];
-      const scrollPosition = window.scrollY + 200; // Offset for header
+    let frameId: number | null = null;
 
-      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100;
-      if (isAtBottom) {
-        setActiveSection("#contact");
+    const updateActiveSection = () => {
+      frameId = null;
+      const sections = scrollSectionIds
+        .map((id) => document.getElementById(id))
+        .filter((section): section is HTMLElement => section !== null);
+
+      if (sections.length === 0) {
+        setActiveSection("/");
         return;
       }
 
-      for (const id of sectionIds) {
-        const el = document.getElementById(id);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(id === "hero" ? "/" : `#${id}`);
-            break;
-          }
-        }
+      const navHeight = navRef.current?.offsetHeight ?? 0;
+      const activationLine = window.scrollY + navHeight + window.innerHeight * 0.3;
+      const documentBottom = window.scrollY + window.innerHeight;
+      const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
+
+      if (window.scrollY <= 32) {
+        setActiveSection("/");
+        return;
       }
+
+      if (documentBottom >= maxScrollTop - 8) {
+        const lastSection = sections.at(-1);
+        setActiveSection(lastSection?.id === "hero" ? "/" : `#${lastSection?.id}`);
+        return;
+      }
+
+      let currentSection = sections[0];
+
+      sections.forEach((section) => {
+        if (section.offsetTop <= activationLine) {
+          currentSection = section;
+        }
+      });
+
+      setActiveSection(currentSection.id === "hero" ? "/" : `#${currentSection.id}`);
     };
 
-    window.addEventListener("scroll", handleScrollSpy, { passive: true });
-    handleScrollSpy();
-    return () => window.removeEventListener("scroll", handleScrollSpy);
-  }, [pathname]);
+    const handleScroll = () => {
+      if (frameId !== null) return;
+      frameId = window.requestAnimationFrame(updateActiveSection);
+    };
+
+    const handleResize = () => {
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+      frameId = window.requestAnimationFrame(updateActiveSection);
+    };
+
+    updateActiveSection();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleResize, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, [pathname, scrollSectionIds]);
 
   const isActive = (linkHref: string) => {
     if (pathname === "/resume") {
@@ -79,9 +141,11 @@ export default function Navbar() {
 
   return (
     <nav
+      ref={navRef}
+      data-theme-static
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-background/80 backdrop-blur-xl shadow-sm border-b border-border/50"
+          ? "border-b border-border/50 bg-background/72 backdrop-blur-md shadow-sm"
           : "bg-transparent"
       }`}
     >

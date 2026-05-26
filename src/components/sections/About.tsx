@@ -183,6 +183,8 @@ export default function About() {
   }, []);
 
   useGSAP(() => {
+    const mm = gsap.matchMedia();
+
     // 1. Title Reveal
     gsap.fromTo(".about-title",
       { y: 100, opacity: 0 },
@@ -213,13 +215,12 @@ export default function About() {
       }
     );
 
-    // 3. Section Background Subtle Glow
-    gsap.to(".about-glow", {
-      opacity: 0.6,
-      duration: 3,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut"
+    mm.add("(prefers-reduced-motion: reduce)", () => {
+      gsap.set(".about-glow", { opacity: 0.22 });
+    });
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.set(".about-glow", { opacity: 0.28 });
     });
 
     if (curvePathRef.current && curveGlowRef.current) {
@@ -237,12 +238,13 @@ export default function About() {
         ease: "none",
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top 78%",
-          end: "bottom 35%",
-          scrub: 1.1,
+          start: "top 88%",
+          end: "bottom 12%",
+          scrub: 1.8,
         },
       });
     }
+    return () => mm.revert();
   }, { scope: sectionRef });
 
   useEffect(() => {
@@ -322,7 +324,7 @@ export default function About() {
   return (
     <section id="about" ref={sectionRef} className="py-10 md:py-14 bg-background overflow-hidden relative scroll-mt-24">
       {/* Background Glow */}
-      <div className="about-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[100px] pointer-events-none opacity-40" />
+      <div className="about-glow absolute top-1/2 left-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 opacity-30 blur-[72px] pointer-events-none" />
       <div className="pointer-events-none absolute inset-x-0 top-10 bottom-0 z-0 opacity-100 hidden md:block">
         <svg
           viewBox="0 0 1200 1400"
@@ -335,7 +337,7 @@ export default function About() {
             d="M1020 60C860 110 848 300 700 396C546 496 304 472 240 640C184 786 336 870 500 964C708 1082 818 1210 734 1360"
             fill="none"
             stroke="hsl(var(--primary))"
-            strokeWidth="14"
+            strokeWidth="10"
             strokeLinecap="round"
             opacity="0.18"
             filter="url(#about-curve-blur)"
@@ -353,7 +355,7 @@ export default function About() {
           />
           <defs>
             <filter id="about-curve-blur" x="-10%" y="-10%" width="120%" height="120%">
-              <feGaussianBlur stdDeviation="8" />
+              <feGaussianBlur stdDeviation="5" />
             </filter>
           </defs>
         </svg>
@@ -399,8 +401,8 @@ export default function About() {
                     src={galleryImages[currentIdx].url}
                     alt={`Gallery ${currentIdx}`}
                     fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
                     className="object-cover"
-                    priority
                   />
                 </motion.div>
               </AnimatePresence>

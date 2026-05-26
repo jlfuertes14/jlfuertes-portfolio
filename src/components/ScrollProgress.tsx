@@ -6,7 +6,10 @@ export default function ScrollProgress() {
   const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
+    let frameId: number | null = null;
+
+    const updateProgress = () => {
+      frameId = null;
       if (!barRef.current) return;
       const totalHeight =
         document.documentElement.scrollHeight - window.innerHeight;
@@ -14,9 +17,20 @@ export default function ScrollProgress() {
       barRef.current.style.transform = `scaleX(${progress})`;
     };
 
+    const handleScroll = () => {
+      if (frameId !== null) return;
+      frameId = window.requestAnimationFrame(updateProgress);
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // init
-    return () => window.removeEventListener("scroll", handleScroll);
+    updateProgress();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
   }, []);
 
   return (

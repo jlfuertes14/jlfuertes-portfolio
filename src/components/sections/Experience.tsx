@@ -2,18 +2,33 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Bypass bundler constraints by declaring global instances
-declare global {
-  interface Window {
-    gsap: any;
-    ScrollTrigger: any;
-    Lenis: any;
-  }
-}
+gsap.registerPlugin(ScrollTrigger);
+
+type TimelineMilestone =
+  | {
+      id: number | string;
+      period: string;
+      role: string;
+      organization: string;
+      description: string;
+      image: string;
+      images?: never;
+    }
+  | {
+      id: number | string;
+      period: string;
+      role: string;
+      organization: string;
+      description: string;
+      images: [string, string];
+      image?: never;
+    };
 
 // --- MOCK DATA ---
-const milestones = [
+const milestones: TimelineMilestone[] = [
   {
     id: 1,
     period: "July 2026",
@@ -68,9 +83,6 @@ function TimelineContent() {
   const dotRefs = useRef<(HTMLDivElement | null)[]>([]);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [pathD, setPathD] = useState('');
-
-  // Extract global libraries
-  const { gsap, ScrollTrigger } = window;
 
   // --- DYNAMIC SVG PATH CALCULATION ---
   useEffect(() => {
@@ -159,7 +171,7 @@ function TimelineContent() {
 
   // --- GSAP ANIMATIONS ---
   useEffect(() => {
-    if (!pathD || !pathRef.current || !gsap || !ScrollTrigger) return;
+    if (!pathD || !pathRef.current) return;
 
     const ctx = gsap.context(() => {
       const length = pathRef.current!.getTotalLength();
@@ -245,7 +257,7 @@ function TimelineContent() {
     });
 
     return () => ctx.revert();
-  }, [pathD, gsap, ScrollTrigger]);
+  }, [pathD]);
 
   return (
     <section id="experience" className="relative pt-24 pb-12 bg-background text-foreground scroll-mt-24 overflow-x-hidden">
@@ -335,15 +347,23 @@ function TimelineContent() {
                     {exp.id === 2 || exp.role.includes('Intern') ? (
                       <div className="absolute inset-0 w-full h-full flex flex-col gap-2 p-2">
                         <div className="relative w-full h-1/2 rounded-3xl overflow-hidden bg-muted">
-                          <img src={(exp as any).images?.[0] || "https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=400&auto=format&fit=crop"} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]" />
+                          <img
+                            src={exp.images?.[0] || "https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=400&auto=format&fit=crop"}
+                            alt={`${exp.role} preview 1`}
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
+                          />
                         </div>
                         <div className="relative w-full h-1/2 rounded-3xl overflow-hidden bg-muted">
-                          <img src={(exp as any).images?.[1] || "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=400&auto=format&fit=crop"} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] delay-75" />
+                          <img
+                            src={exp.images?.[1] || "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=400&auto=format&fit=crop"}
+                            alt={`${exp.role} preview 2`}
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] delay-75"
+                          />
                         </div>
                       </div>
                     ) : (
                       <img
-                        src={(exp as any).image || "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop"}
+                        src={exp.image || "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop"}
                         alt={exp.role}
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] bg-muted"
                       />
@@ -362,47 +382,5 @@ function TimelineContent() {
 
 // --- APP ENTRY POINT (Handles Dependency Loading) ---
 export default function Experience() {
-  const [engineReady, setEngineReady] = useState(false);
-
-  useEffect(() => {
-    const loadScript = (src: string) => {
-      return new Promise((resolve) => {
-        if (document.querySelector(`script[src="${src}"]`)) {
-          resolve(true);
-          return;
-        }
-        const script = document.createElement('script');
-        script.src = src;
-        script.onload = () => resolve(true);
-        document.head.appendChild(script);
-      });
-    };
-
-    const initEngine = async () => {
-      // Load GSAP Core and ScrollTrigger sequentially via CDN
-      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js');
-      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js');
-
-      // We don't strictly need Lenis initialized here if the main site uses it,
-      // but we will ensure GSAP is loaded to run the animations.
-
-      // Register Plugin globally
-      window.gsap.registerPlugin(window.ScrollTrigger);
-      setEngineReady(true);
-    };
-
-    initEngine();
-  }, []);
-
-  if (!engineReady) {
-    return (
-      <section id="experience" className="pt-24 pb-32 bg-background relative flex items-center justify-center min-h-[50vh]">
-        <div className="text-muted-foreground font-mono text-sm tracking-widest animate-pulse">
-          INITIALIZING...
-        </div>
-      </section>
-    );
-  }
-
   return <TimelineContent />;
 }

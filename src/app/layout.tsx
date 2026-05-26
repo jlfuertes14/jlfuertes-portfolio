@@ -15,11 +15,11 @@ const spaceGrotesk = Space_Grotesk({
 });
 import AiChat from "@/components/AiChat";
 import ScrollProgress from "@/components/ScrollProgress";
-import ScrollToTop from "@/components/ui/scroll-to-top";
 import DotsBackground from "@/components/DotsBackground";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 import Navbar from "@/components/Navbar";
+import { AppLoader } from "@/components/ui/app-loader";
 
 export const metadata: Metadata = {
   title: "John Lester Fuertes — Portfolio",
@@ -63,12 +63,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ScrollProgress />
-          <DotsBackground />
-          <Navbar />
-          {children}
-          <AiChat />
-          <ScrollToTop />
+          <AppLoader>
+            <ScrollProgress />
+            <DotsBackground />
+            <Navbar />
+            {children}
+            <AiChat />
+          </AppLoader>
         </ThemeProvider>
       </body>
     </html>

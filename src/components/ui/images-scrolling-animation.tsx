@@ -2,7 +2,6 @@
 
 import { motion, useTransform, MotionValue } from "framer-motion";
 import React, { useRef, ReactNode } from "react";
-import ReactLenis from "lenis/react";
 
 interface StickyCardProps {
   i: number;
@@ -34,12 +33,10 @@ export const StickyCard = ({
           scale,
           top: `calc(10vh + ${i * 25}px)`,
         }}
-        className={`origin-top relative flex flex-col overflow-hidden w-full max-w-5xl rounded-[2.5rem] bg-card dark:bg-[#0a0a0a] border border-border dark:border-white/5 shadow-2xl ${className}`}
+        className={`relative flex w-full max-w-5xl origin-top flex-col overflow-hidden rounded-[2.5rem] border border-border bg-card shadow-2xl will-change-transform dark:border-white/5 dark:bg-[#0a0a0a] ${className}`}
       >
         {children}
       </motion.div>
     </div>
   );
 };
-
-export { ReactLenis };

@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useLenis } from "lenis/react";
-import { ReactLenis, StickyCard } from "@/components/ui/images-scrolling-animation";
+import { StickyCard } from "@/components/ui/images-scrolling-animation";
 
 interface GalleryImage {
   src: string;
@@ -46,7 +46,7 @@ const services: ServiceItem[] = [
     title: "Full-Stack Development",
     subtitle: "Web Applications",
     description:
-      "You don't just need a website—you need a platform that works flawlessly and scales as you grow. I design and build full-stack web applications from the ground up. Whether it's a sleek customer portal, a data-heavy internal dashboard, or a fast-loading e-commerce site, I handle both the backend logic and the pixel-perfect frontend. The result? A digital product that looks great, runs fast, and drives your business forward.",
+      "You don't just need a website you need a platform that works flawlessly and scales as you grow. I design and build full-stack web applications from the ground up. Whether it's a sleek customer portal, a data-heavy internal dashboard, or a fast-loading e-commerce site, I handle both the backend logic and the pixel-perfect frontend. The result? A digital product that looks great, runs fast, and drives your business forward.",
     tech: ["React / Next.js", "TypeScript", "FastAPI / Node.js", "MongoDB / SQL"],
     hoverBorder: "hover:border-black/20 dark:hover:border-white/20",
     iconColor: "text-blue-500",
@@ -205,7 +205,7 @@ export default function Services() {
   }, [activeService, closeGallery, lenis]);
 
   return (
-    <ReactLenis root>
+    <>
       <section
         id="services"
         className="pt-24 bg-background relative scroll-mt-24"
@@ -499,6 +499,6 @@ export default function Services() {
           </motion.div>
         )}
       </AnimatePresence>
-    </ReactLenis>
+    </>
   );
 }
