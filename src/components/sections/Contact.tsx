@@ -307,7 +307,7 @@ export default function Contact() {
                   </div>
                 )}
                 {status === "ratelimited" && (
-                  <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-400 font-medium">
+                  <div className="rounded-xl border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-primary font-medium">
                     ⏳ Rate limit exceeded. Try again in {getRemainingTime()} minutes.
                   </div>
                 )}

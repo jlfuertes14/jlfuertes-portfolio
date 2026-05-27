@@ -8,8 +8,178 @@ import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import {
+  ScrollXCarousel,
+  ScrollXCarouselContainer,
+  ScrollXCarouselWrap,
+} from "@/components/ui/scroll-x-carousel";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const ProjectCardItem = ({
+  project,
+  index,
+  hoveredProject,
+  setHoveredProject,
+  openProjectView,
+}: {
+  project: typeof projects[0];
+  index: number;
+  hoveredProject: number | null;
+  setHoveredProject: (idx: number | null) => void;
+  openProjectView: (p: typeof projects[0], type: "mobile" | "desktop", img: string) => void;
+}) => (
+  <motion.div
+    onHoverStart={() => setHoveredProject(index)}
+    onHoverEnd={() => setHoveredProject(null)}
+    className="project-card-mobile group relative h-full bg-card dark:bg-[#0a0a0a] border border-border dark:border-white/5 rounded-[2rem] transition-all duration-500 hover:border-black/20 dark:hover:border-white/20 flex flex-col hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+  >
+    <div className="relative p-5 sm:p-8 grow flex flex-col">
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-start mb-4 sm:mb-6">
+        <div className="flex-1 sm:mr-4">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground block mb-1">
+            {project.category}
+          </span>
+          <h3 className="text-xl sm:text-2xl font-bold text-foreground transition-colors group-hover:text-foreground/80">
+            {project.title}
+          </h3>
+        </div>
+        <div className="hidden md:block shrink-0 w-fit px-4 py-1.5 rounded-full border border-border bg-muted/50 text-[10px] font-bold text-muted-foreground uppercase tracking-wider backdrop-blur-sm group-hover:bg-foreground group-hover:text-background transition-all">
+          Hover to preview
+        </div>
+      </div>
+
+      <p className="text-muted-foreground text-sm leading-relaxed mb-4 sm:mb-8 line-clamp-2 sm:line-clamp-3">
+        {project.description}
+      </p>
+
+      <button
+        type="button"
+        onClick={() => openProjectView(project, "mobile", project.previewImage || project.imageUrl)}
+        className="relative aspect-video w-full rounded-2xl bg-muted dark:bg-white/5 border border-border dark:border-white/5 overflow-hidden mb-4 flex items-center justify-center group-hover:bg-muted/20 transition-all duration-500 text-left cursor-pointer"
+      >
+        <div className="project-card-visual relative w-full h-full transition-all duration-500 group-hover:scale-105">
+          <Image
+            src={project.imageUrl}
+            alt={project.title}
+            fill
+            className="object-cover opacity-80 group-hover:opacity-100 transition-all duration-500"
+          />
+        </div>
+        <div className="md:hidden absolute top-3 right-3 z-20 px-3 py-1 rounded-full border border-white/10 bg-black/40 text-[9px] font-bold text-white uppercase tracking-[0.15em] backdrop-blur-md shadow-sm pointer-events-none">
+          Tap to preview
+        </div>
+      </button>
+
+      <div className="md:hidden mt-auto mb-2">
+        <a
+          href={project.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground/80 transition-colors hover:bg-foreground hover:text-background whitespace-nowrap"
+        >
+          Visit Live Site
+          <ExternalLink className="h-3.3 w-3.3" />
+        </a>
+      </div>
+
+      <AnimatePresence>
+        {hoveredProject === index && (
+          <div className="absolute inset-0 z-100 hidden md:flex items-center justify-center pointer-events-none">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 rounded-[2rem] z-50 bg-linear-to-b from-background/5 via-transparent to-background/10 dark:from-white/3 dark:via-transparent dark:to-black/20 border border-black/5 dark:border-white/8 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+            />
+
+            <div className="relative w-full h-full flex items-center justify-center pointer-events-auto">
+              <motion.div
+                initial={{ x: -80, y: 0, opacity: 0, rotate: -20, scale: 0.7 }}
+                animate={{ x: -140, y: -5, opacity: 1, rotate: -12, scale: 0.98 }}
+                whileHover={{ scale: 1.06, rotate: -6, y: -24, opacity: 1, zIndex: 120 }}
+                transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                onClick={() => openProjectView(project, "desktop", project.desktopLeftImage || project.imageUrl)}
+                className="absolute w-[280px] h-[180px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-2xl z-60 cursor-pointer will-change-transform"
+              >
+                <Image
+                  src={project.desktopLeftImage || project.imageUrl}
+                  alt="Desktop Preview Left"
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-white/10 dark:bg-black/20 opacity-0 hover:opacity-100 transition-opacity" />
+              </motion.div>
+
+              <motion.div
+                initial={{ x: 80, y: 0, opacity: 0, rotate: 20, scale: 0.7 }}
+                animate={{ x: 155, y: -5, opacity: 1, rotate: 12, scale: 0.98 }}
+                whileHover={{ scale: 1.06, rotate: 6, y: -24, opacity: 1, zIndex: 120 }}
+                transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                onClick={() => openProjectView(project, "desktop", project.desktopRightImage || project.imageUrl)}
+                className="absolute w-[280px] h-[180px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-2xl z-60 cursor-pointer will-change-transform"
+              >
+                <Image
+                  src={project.desktopRightImage || project.imageUrl}
+                  alt="Desktop Preview Right"
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-white/10 dark:bg-black/20 opacity-0 hover:opacity-100 transition-opacity" />
+              </motion.div>
+
+              <motion.div
+                initial={{ y: 150, opacity: 0, scale: 0.6 }}
+                animate={{ y: -60, opacity: 1, scale: 1.31 }}
+                whileHover={{ scale: 1.32, y: -80, zIndex: 130 }}
+                whileTap={{ scale: 1.35 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 180,
+                  damping: 22,
+                  mass: 1,
+                }}
+                onClick={() => openProjectView(project, "mobile", project.previewImage || project.imageUrl)}
+                className="relative w-[200px] h-[400px] bg-black border-8 border-[#111] rounded-[3rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-110 ring-1 ring-white/10 cursor-pointer active:cursor-grabbing will-change-transform"
+              >
+                <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-16 h-5 bg-[#111] rounded-full z-10 border border-white/5" />
+                <div className="relative w-full h-full bg-[#0a0a0a]">
+                  <Image
+                    src={project.previewImage || project.imageUrl}
+                    alt={`${project.title} Mobile`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <div className="bg-white/16 backdrop-blur-md p-2.5 rounded-full border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
+                    <ExternalLink className="w-5 h-5 text-white/90" />
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
+
+    <div className="p-5 sm:p-8 pt-4 border-t border-border/50 bg-muted/20 dark:bg-black/40 z-120 rounded-b-[2rem]">
+      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 block mb-2 sm:mb-4">
+        Tech Stack
+      </span>
+      <div className="flex flex-wrap gap-2">
+        {project.techStack.map((tech) => (
+          <span
+            key={tech}
+            className="px-4 py-1.5 rounded-full bg-slate-200 dark:bg-white/5 border border-black/5 dark:border-white/5 text-[11px] font-semibold text-foreground/60 transition-all hover:bg-primary/10 hover:text-primary"
+          >
+            {tech}
+          </span>
+        ))}
+      </div>
+    </div>
+  </motion.div>
+);
 
 export default function Projects() {
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
@@ -165,11 +335,11 @@ export default function Projects() {
   }, []);
 
   return (
-    <section id="projects" className="pt-16 pb-32 bg-background relative overflow-hidden scroll-mt-24">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+    <section id="projects" className="pt-16 pb-16 lg:pb-4 bg-background relative scroll-mt-24">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] max-w-[100vw] aspect-square bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="text-center mb-16 md:mb-24">
+        <div className="text-center mb-16 lg:mb-2">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -188,162 +358,45 @@ export default function Projects() {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 md:gap-y-24">
+        {/* MOBILE GRID */}
+        <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
           {projects.map((project, index) => (
-            <div key={index} className="relative h-full">
-              <motion.div
-                onHoverStart={() => setHoveredProject(index)}
-                onHoverEnd={() => setHoveredProject(null)}
-                className="project-card-mobile group relative h-full bg-card dark:bg-[#0a0a0a] border border-border dark:border-white/5 rounded-[2rem] transition-all duration-500 hover:border-black/20 dark:hover:border-white/20 flex flex-col hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
-              >
-                <div className="relative p-5 sm:p-8 grow flex flex-col">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-start mb-4 sm:mb-6">
-                    <div className="flex-1 sm:mr-4">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground block mb-1">
-                        {project.category}
-                      </span>
-                      <h3 className="text-xl sm:text-2xl font-bold text-foreground transition-colors group-hover:text-foreground/80">
-                        {project.title}
-                      </h3>
-                    </div>
-                    <div className="hidden md:block shrink-0 w-fit px-4 py-1.5 rounded-full border border-border bg-muted/50 text-[10px] font-bold text-muted-foreground uppercase tracking-wider backdrop-blur-sm group-hover:bg-foreground group-hover:text-background transition-all">
-                      Hover to preview
-                    </div>
-                  </div>
-
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-4 sm:mb-8 line-clamp-2 sm:line-clamp-3">
-                    {project.description}
-                  </p>
-
-                  <button
-                    type="button"
-                    onClick={() => openProjectView(project, "mobile", project.previewImage || project.imageUrl)}
-                    className="relative aspect-video w-full rounded-2xl bg-muted dark:bg-white/5 border border-border dark:border-white/5 overflow-hidden mb-4 flex items-center justify-center group-hover:bg-muted/20 transition-all duration-500 text-left cursor-pointer"
-                  >
-                    <div className="project-card-visual relative w-full h-full transition-all duration-500 group-hover:scale-105">
-                      <Image
-                        src={project.imageUrl}
-                        alt={project.title}
-                        fill
-                        className="object-cover opacity-80 group-hover:opacity-100 transition-all duration-500"
-                      />
-                    </div>
-                    <div className="md:hidden absolute top-3 right-3 z-20 px-3 py-1 rounded-full border border-white/10 bg-black/40 text-[9px] font-bold text-white uppercase tracking-[0.15em] backdrop-blur-md shadow-sm pointer-events-none">
-                      Tap to preview
-                    </div>
-                  </button>
-
-                  <div className="md:hidden mt-auto mb-2">
-                    <a
-                      href={project.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground/80 transition-colors hover:bg-foreground hover:text-background whitespace-nowrap"
-                    >
-                      Visit Live Site
-                      <ExternalLink className="h-3.3 w-3.3" />
-                    </a>
-                  </div>
-
-                  <AnimatePresence>
-                    {hoveredProject === index && (
-                      <div className="absolute inset-0 z-100 hidden md:flex items-center justify-center pointer-events-none">
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          className="absolute inset-0 rounded-[2rem] z-50 bg-linear-to-b from-background/5 via-transparent to-background/10 dark:from-white/3 dark:via-transparent dark:to-black/20 border border-black/5 dark:border-white/8 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
-                        />
-
-                        <div className="relative w-full h-full flex items-center justify-center pointer-events-auto">
-                          <motion.div
-                            initial={{ x: -80, y: 0, opacity: 0, rotate: -20, scale: 0.7 }}
-                            animate={{ x: -140, y: -5, opacity: 1, rotate: -12, scale: 0.98 }}
-                            whileHover={{ scale: 1.06, rotate: -6, y: -24, opacity: 1, zIndex: 120 }}
-                            transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                            onClick={() => openProjectView(project, "desktop", project.desktopLeftImage || project.imageUrl)}
-                            className="absolute w-[280px] h-[180px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-2xl z-60 cursor-pointer will-change-transform"
-                          >
-                            <Image
-                              src={project.desktopLeftImage || project.imageUrl}
-                              alt="Desktop Preview Left"
-                              fill
-                              className="object-cover"
-                            />
-                            <div className="absolute inset-0 bg-white/10 dark:bg-black/20 opacity-0 hover:opacity-100 transition-opacity" />
-                          </motion.div>
-
-                          <motion.div
-                            initial={{ x: 80, y: 0, opacity: 0, rotate: 20, scale: 0.7 }}
-                            animate={{ x: 155, y: -5, opacity: 1, rotate: 12, scale: 0.98 }}
-                            whileHover={{ scale: 1.06, rotate: 6, y: -24, opacity: 1, zIndex: 120 }}
-                            transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                            onClick={() => openProjectView(project, "desktop", project.desktopRightImage || project.imageUrl)}
-                            className="absolute w-[280px] h-[180px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-2xl z-60 cursor-pointer will-change-transform"
-                          >
-                            <Image
-                              src={project.desktopRightImage || project.imageUrl}
-                              alt="Desktop Preview Right"
-                              fill
-                              className="object-cover"
-                            />
-                            <div className="absolute inset-0 bg-white/10 dark:bg-black/20 opacity-0 hover:opacity-100 transition-opacity" />
-                          </motion.div>
-
-                          <motion.div
-                            initial={{ y: 150, opacity: 0, scale: 0.6 }}
-                            animate={{ y: -60, opacity: 1, scale: 1.31 }}
-                            whileHover={{ scale: 1.32, y: -80, zIndex: 130 }}
-                            whileTap={{ scale: 1.35 }}
-                            transition={{
-                              type: "spring",
-                              stiffness: 180,
-                              damping: 22,
-                              mass: 1,
-                            }}
-                            onClick={() => openProjectView(project, "mobile", project.previewImage || project.imageUrl)}
-                            className="relative w-[200px] h-[400px] bg-black border-8 border-[#111] rounded-[3rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-110 ring-1 ring-white/10 cursor-pointer active:cursor-grabbing will-change-transform"
-                          >
-                            <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-16 h-5 bg-[#111] rounded-full z-10 border border-white/5" />
-                            <div className="relative w-full h-full bg-[#0a0a0a]">
-                              <Image
-                                src={project.previewImage || project.imageUrl}
-                                alt={`${project.title} Mobile`}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                            <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <div className="bg-white/16 backdrop-blur-md p-2.5 rounded-full border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
-                                <ExternalLink className="w-5 h-5 text-white/90" />
-                              </div>
-                            </div>
-                          </motion.div>
-                        </div>
-                      </div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                <div className="p-5 sm:p-8 pt-4 border-t border-border/50 bg-muted/20 dark:bg-black/40 z-120 rounded-b-[2rem]">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 block mb-2 sm:mb-4">
-                    Tech Stack
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {project.techStack.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-4 py-1.5 rounded-full bg-slate-200 dark:bg-white/5 border border-black/5 dark:border-white/5 text-[11px] font-semibold text-foreground/60 transition-all hover:bg-primary/10 hover:text-primary"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
+            <div key={index} className="relative h-[550px] w-full">
+              <ProjectCardItem
+                project={project}
+                index={index}
+                hoveredProject={hoveredProject}
+                setHoveredProject={setHoveredProject}
+                openProjectView={openProjectView}
+              />
             </div>
           ))}
         </div>
+      </div>
+
+      {/* DESKTOP CAROUSEL */}
+      <div className="hidden lg:block relative z-10">
+        <ScrollXCarousel className="h-[250vh]">
+          <ScrollXCarouselContainer className="w-full flex h-auto flex-col py-12 px-12 top-24">
+            <ScrollXCarouselWrap
+              className="flex items-stretch gap-12 py-10"
+              xRange={["calc(0% + 0vw - 0rem)", "calc(-100% + 100vw - 6rem)"]}
+              inputRange={[0, 0.85]}
+            >
+              {projects.map((project, index) => (
+                <div key={index} className="relative h-auto w-[40vw] xl:w-[30vw] shrink-0">
+                  <ProjectCardItem
+                    project={project}
+                    index={index}
+                    hoveredProject={hoveredProject}
+                    setHoveredProject={setHoveredProject}
+                    openProjectView={openProjectView}
+                  />
+                </div>
+              ))}
+            </ScrollXCarouselWrap>
+          </ScrollXCarouselContainer>
+        </ScrollXCarousel>
       </div>
 
       <AnimatePresence>

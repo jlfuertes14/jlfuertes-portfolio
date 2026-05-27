@@ -61,7 +61,7 @@ export const RadialSocialMenu = () => {
               top: `calc(50% - 28px + ${y}px)`,
             }}
           >
-            {React.cloneElement(item.icon as React.ReactElement<any>, {
+            {React.cloneElement(item.icon as React.ReactElement<React.SVGProps<SVGSVGElement>>, {
               size: 24,
               className: "text-foreground/80 hover:text-primary transition-colors",
             })}

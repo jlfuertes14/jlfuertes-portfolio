@@ -14,7 +14,6 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
 });
 import AiChat from "@/components/AiChat";
-import ScrollProgress from "@/components/ScrollProgress";
 import DotsBackground from "@/components/DotsBackground";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
@@ -55,7 +54,7 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className="antialiased min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-primary transition-colors duration-300"
+        className="antialiased min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-primary transition-colors duration-300 overflow-x-hidden"
       >
         <ThemeProvider
           attribute="class"
@@ -64,7 +63,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AppLoader>
-            <ScrollProgress />
             <DotsBackground />
             <Navbar />
             {children}

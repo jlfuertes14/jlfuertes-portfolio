@@ -147,6 +147,8 @@ export default function Navbar() {
         scrolled
           ? "border-b border-border/50 bg-background/72 backdrop-blur-md shadow-sm"
           : "bg-transparent"
+      } ${
+        activeSection === "#services" ? "-translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
       }`}
     >
       <div className="flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-10 xl:px-14 2xl:px-20 py-4 sm:py-5 lg:py-6">

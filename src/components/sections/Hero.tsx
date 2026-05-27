@@ -139,7 +139,7 @@ export default function Hero() {
       </div>
 
       {/* ─── Main Content Area ─── */}
-      <div className="relative z-10 grid w-full max-w-6xl grow grid-cols-1 lg:grid-cols-2 items-center gap-12 xl:gap-4">
+      <div className="relative z-10 grid w-full max-w-[1650px] grow grid-cols-1 lg:grid-cols-2 items-center gap-12 xl:gap-4">
         {/* Left Side: Typography & Bio */}
         <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
           <h1 className="text-[15vw] sm:text-[13vw] lg:text-[7.5rem] xl:text-[9rem] font-extralight text-foreground leading-[0.8] tracking-tighter mb-8">

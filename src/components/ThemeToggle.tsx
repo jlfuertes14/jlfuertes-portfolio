@@ -40,7 +40,7 @@ export function ThemeToggle() {
           className={`absolute z-20 flex h-8 w-8 items-center justify-center rounded-full border ${
             isDark 
               ? "border-white/10 bg-primary/20 shadow-[0_0_20px_var(--color-primary)]" 
-              : "border-orange-200 bg-orange-50 shadow-[0_0_20px_rgba(249,115,22,0.4)]"
+              : "border-black/10 bg-primary/20 shadow-[0_0_20px_var(--color-primary)]"
           }`}
           initial={false}
           animate={{
@@ -54,9 +54,7 @@ export function ThemeToggle() {
           }}
         >
           {/* Inner highlights for glass look */}
-          <div className={`absolute inset-0 rounded-full transition-opacity duration-300 ${
-            isDark ? "bg-linear-to-tr from-primary/30 to-transparent opacity-100" : "bg-linear-to-tr from-orange-300/40 to-transparent opacity-100"
-          } blur-[1px]`} />
+          <div className="absolute inset-0 rounded-full transition-opacity duration-300 bg-linear-to-tr from-primary/30 to-transparent opacity-100 blur-[1px]" />
           
           {/* Icons (Inside Thumb) */}
           <AnimatePresence mode="wait" initial={false}>
@@ -78,16 +76,14 @@ export function ThemeToggle() {
                 exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
                 transition={{ duration: 0.15 }}
               >
-                <Sun className="h-4 w-4 text-orange-500 drop-shadow-[0_0_12px_rgba(249,115,22,0.8)]" />
+                <Sun className="h-4 w-4 text-primary drop-shadow-[0_0_12px_var(--color-primary)]" />
               </motion.div>
             )}
           </AnimatePresence>
         </motion.div>
 
         {/* Liquid Overflow Glow */}
-        <div className={`absolute -inset-1 rounded-full opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100 ${
-          isDark ? "bg-primary/10" : "bg-orange-500/10"
-        }`} />
+        <div className="absolute -inset-1 rounded-full opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100 bg-primary/10" />
       </button>
     </div>
   );

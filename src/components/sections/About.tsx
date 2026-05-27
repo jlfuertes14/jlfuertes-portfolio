@@ -647,10 +647,6 @@ export default function About() {
                 blockSize={isCompactCalendar ? 8 : 11}
                 blockMargin={isCompactCalendar ? 3 : 4}
                 colorScheme={theme === "dark" ? "dark" : "light"}
-                theme={{
-                  light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
-                  dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
-                }}
               />
             </div>
           </div>
