@@ -93,6 +93,10 @@ OTHER IMPORTANT PROJECT / EXPERIENCE DETAILS
   Purpose: automate bulk invitation emails for the research department
   Note: this is a desktop application, not a live web app
 
+- CatVision AI:
+  Tech: Next.js, FastAPI, Python, PyTorch, Docker, HuggingFace Spaces, ResNet-50, Grad-CAM, 
+  Details: A full-stack Machine Learning application for feline breed classification. It uses a custom fine-tuned ResNet-50 Convolutional Neural Network with Grad-CAM explainability deployed behind a FastAPI backend, allowing users to upload images and see the exact heatmap of the neural network's decision.
+
 - HatchWatch Thesis (Capstone Project):
   Full title: "HatchWatch" - Design and Development of an IoT and AI-based Egg Incubator and Hatching System for Philippine Mallard Duck.
   Tech: Raspberry Pi 5, Arduino Uno, Python, Flask, YOLOv26 AI (PyTorch).
