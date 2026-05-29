@@ -55,7 +55,7 @@ const ProjectCardItem = ({
 
       <button
         type="button"
-        onClick={() => openProjectView(project, "mobile", project.previewImage || project.imageUrl)}
+        onClick={() => openProjectView(project, project.isDesktopOnly ? "desktop" : "mobile", project.previewImage || project.imageUrl)}
         className="relative aspect-video w-full rounded-2xl bg-muted dark:bg-white/5 border border-border dark:border-white/5 overflow-hidden mb-4 flex items-center justify-center group-hover:bg-muted/20 transition-all duration-500 text-left cursor-pointer"
       >
         <div className="project-card-visual relative w-full h-full transition-all duration-500 group-hover:scale-105">
@@ -78,7 +78,7 @@ const ProjectCardItem = ({
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground/80 transition-colors hover:bg-foreground hover:text-background whitespace-nowrap"
         >
-          Visit Live Site
+          {project.ctaLabel}
           <ExternalLink className="h-3.3 w-3.3" />
         </a>
       </div>
@@ -128,35 +128,71 @@ const ProjectCardItem = ({
                 <div className="absolute inset-0 bg-white/10 dark:bg-black/20 opacity-0 hover:opacity-100 transition-opacity" />
               </motion.div>
 
-              <motion.div
-                initial={{ y: 150, opacity: 0, scale: 0.6 }}
-                animate={{ y: -60, opacity: 1, scale: 1.31 }}
-                whileHover={{ scale: 1.32, y: -80, zIndex: 130 }}
-                whileTap={{ scale: 1.35 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 180,
-                  damping: 22,
-                  mass: 1,
-                }}
-                onClick={() => openProjectView(project, "mobile", project.previewImage || project.imageUrl)}
-                className="relative w-[200px] h-[400px] bg-black border-8 border-[#111] rounded-[3rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-110 ring-1 ring-white/10 cursor-pointer active:cursor-grabbing will-change-transform"
-              >
-                <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-16 h-5 bg-[#111] rounded-full z-10 border border-white/5" />
-                <div className="relative w-full h-full bg-[#0a0a0a]">
-                  <Image
-                    src={project.previewImage || project.imageUrl}
-                    alt={`${project.title} Mobile`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <div className="bg-white/16 backdrop-blur-md p-2.5 rounded-full border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
-                    <ExternalLink className="w-5 h-5 text-white/90" />
+              {!project.isDesktopOnly ? (
+                <motion.div
+                  initial={{ y: 150, opacity: 0, scale: 0.6 }}
+                  animate={{ y: -60, opacity: 1, scale: 1.31 }}
+                  whileHover={{ scale: 1.32, y: -80, zIndex: 130 }}
+                  whileTap={{ scale: 1.35 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 180,
+                    damping: 22,
+                    mass: 1,
+                  }}
+                  onClick={() => openProjectView(project, "mobile", project.previewImage || project.imageUrl)}
+                  className="relative w-[200px] h-[400px] bg-black border-8 border-[#111] rounded-[3rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-110 ring-1 ring-white/10 cursor-pointer active:cursor-grabbing will-change-transform"
+                >
+                  <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-16 h-5 bg-[#111] rounded-full z-10 border border-white/5" />
+                  <div className="relative w-full h-full bg-[#0a0a0a]">
+                    <Image
+                      src={project.previewImage || project.imageUrl}
+                      alt={`${project.title} Mobile`}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
-                </div>
-              </motion.div>
+                  <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="bg-white/16 backdrop-blur-md p-2.5 rounded-full border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
+                      <ExternalLink className="w-5 h-5 text-white/90" />
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ y: 150, opacity: 0, scale: 0.6 }}
+                  animate={{ y: -60, opacity: 1, scale: 1.1 }}
+                  whileHover={{ scale: 1.15, y: -80, zIndex: 130 }}
+                  whileTap={{ scale: 1.2 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 180,
+                    damping: 22,
+                    mass: 1,
+                  }}
+                  onClick={() => openProjectView(project, "desktop", project.previewImage || project.imageUrl)}
+                  className="relative w-[340px] h-[220px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.6)] z-110 cursor-pointer active:cursor-grabbing will-change-transform"
+                >
+                  <div className="absolute top-0 left-0 right-0 h-6 bg-muted/50 border-b border-border flex items-center px-3 gap-1.5 z-10 backdrop-blur-sm">
+                    <div className="w-2 h-2 rounded-full bg-red-400/80" />
+                    <div className="w-2 h-2 rounded-full bg-amber-400/80" />
+                    <div className="w-2 h-2 rounded-full bg-green-400/80" />
+                  </div>
+                  <div className="relative w-full h-full pt-6 bg-[#0a0a0a]">
+                    <Image
+                      src={project.previewImage || project.imageUrl}
+                      alt={`${project.title} Preview`}
+                      fill
+                      className="object-cover mt-0"
+                    />
+                  </div>
+                  <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center bg-black/20 z-20">
+                    <div className="bg-white/16 backdrop-blur-md p-2.5 rounded-full border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.22)]">
+                      <ExternalLink className="w-5 h-5 text-white/90" />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
             </div>
           </div>
         )}
@@ -186,6 +222,13 @@ export default function Projects() {
   const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
   const [selectedViewType, setSelectedViewType] = useState<"mobile" | "desktop">("desktop");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [filter, setFilter] = useState("Web Development");
+
+  const filterOptions = ["Web Development", "Schoolworks", "AI/Machine Learning"];
+
+  const filteredProjects = useMemo(() => {
+    return projects.filter((p) => p.filterCategory === filter);
+  }, [filter]);
 
   const getProjectViews = (project: typeof projects[0]) => {
     const views = [
@@ -196,9 +239,9 @@ export default function Projects() {
         image: project.desktopLeftImage || project.imageUrl,
       },
       {
-        id: "mobile",
-        label: "Mobile Preview",
-        type: "mobile" as const,
+        id: project.isDesktopOnly ? "desktop-main" : "mobile",
+        label: project.isDesktopOnly ? "Main Preview" : "Mobile Preview",
+        type: (project.isDesktopOnly ? "desktop" : "mobile") as "desktop" | "mobile",
         image: project.previewImage || project.imageUrl,
       },
       {
@@ -332,7 +375,7 @@ export default function Projects() {
     });
 
     return () => mm.revert();
-  }, []);
+  }, { dependencies: [filteredProjects], revertOnUpdate: true });
 
   return (
     <section id="projects" className="pt-16 pb-16 lg:pb-4 bg-background relative scroll-mt-24">
@@ -352,15 +395,43 @@ export default function Projects() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-foreground/50 text-base sm:text-lg max-w-2xl mx-auto"
+            className="text-foreground/50 text-base sm:text-lg max-w-2xl mx-auto mb-8"
           >
             Here are some of my recent projects that showcase my skills and expertise.
           </motion.p>
+          
+          {/* Filter Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex flex-wrap justify-center gap-2 sm:gap-4 max-w-3xl mx-auto"
+          >
+            {filterOptions.map((option) => (
+              <button
+                key={option}
+                onClick={() => setFilter(option)}
+                className={`px-4 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${
+                  filter === option
+                    ? "bg-foreground text-background shadow-lg scale-105"
+                    : "bg-muted/50 text-foreground/70 hover:bg-muted hover:text-foreground border border-border"
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </motion.div>
         </div>
 
         {/* MOBILE GRID */}
-        <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
-          {projects.map((project, index) => (
+        <motion.div 
+          key={filter + "-mobile"}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12"
+        >
+          {filteredProjects.map((project, index) => (
             <div key={index} className="relative h-[550px] w-full">
               <ProjectCardItem
                 project={project}
@@ -371,33 +442,55 @@ export default function Projects() {
               />
             </div>
           ))}
-        </div>
+        </motion.div>
       </div>
 
-      {/* DESKTOP CAROUSEL */}
-      <div className="hidden lg:block relative z-10">
-        <ScrollXCarousel className="h-[250vh]">
-          <ScrollXCarouselContainer className="w-full flex h-auto flex-col py-12 px-12 top-24">
-            <ScrollXCarouselWrap
-              className="flex items-stretch gap-12 py-10"
-              xRange={["calc(0% + 0vw - 0rem)", "calc(-100% + 100vw - 6rem)"]}
-              inputRange={[0, 0.85]}
-            >
-              {projects.map((project, index) => (
-                <div key={index} className="relative h-auto w-[40vw] xl:w-[30vw] shrink-0">
-                  <ProjectCardItem
-                    project={project}
-                    index={index}
-                    hoveredProject={hoveredProject}
-                    setHoveredProject={setHoveredProject}
-                    openProjectView={openProjectView}
-                  />
-                </div>
-              ))}
-            </ScrollXCarouselWrap>
-          </ScrollXCarouselContainer>
-        </ScrollXCarousel>
-      </div>
+      {/* DESKTOP VIEW */}
+      <motion.div 
+        key={filter + "-desktop"}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="hidden lg:block relative z-10"
+      >
+        {filteredProjects.length <= 2 ? (
+          <div className="w-full flex items-stretch gap-12 py-24 px-12 justify-center min-h-[70vh]">
+            {filteredProjects.map((project, index) => (
+              <div key={index} className="relative h-auto w-[40vw] xl:w-[30vw] shrink-0">
+                <ProjectCardItem
+                  project={project}
+                  index={index}
+                  hoveredProject={hoveredProject}
+                  setHoveredProject={setHoveredProject}
+                  openProjectView={openProjectView}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <ScrollXCarousel style={{ height: `${Math.max(150, filteredProjects.length * 50)}vh` }}>
+            <ScrollXCarouselContainer className="w-full flex h-auto flex-col py-12 px-12 top-24">
+              <ScrollXCarouselWrap
+                className="flex items-stretch gap-12 py-10"
+                xRange={["calc(0% + 0vw - 0rem)", "calc(-100% + 100vw - 6rem)"]}
+                inputRange={[0, 0.85]}
+              >
+                {filteredProjects.map((project, index) => (
+                  <div key={index} className="relative h-auto w-[40vw] xl:w-[30vw] shrink-0">
+                    <ProjectCardItem
+                      project={project}
+                      index={index}
+                      hoveredProject={hoveredProject}
+                      setHoveredProject={setHoveredProject}
+                      openProjectView={openProjectView}
+                    />
+                  </div>
+                ))}
+              </ScrollXCarouselWrap>
+            </ScrollXCarouselContainer>
+          </ScrollXCarousel>
+        )}
+      </motion.div>
 
       <AnimatePresence>
         {selectedProject && (
@@ -410,10 +503,10 @@ export default function Projects() {
           >
             <div className="fixed top-0 left-0 right-0 p-5 sm:p-8 flex items-start justify-between z-1100 pointer-events-none">
               <div className="pointer-events-auto max-w-[calc(100%-6rem)] sm:max-w-[min(100%,32rem)]">
-                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground block mb-1 sm:mb-2 drop-shadow-sm">
+                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.3em] text-white/60 block mb-1 sm:mb-2 drop-shadow-sm">
                   {selectedProject.category} • {activeView?.label || "Preview"}
                 </span>
-                <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight drop-shadow-sm leading-tight">
+                <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight drop-shadow-sm leading-tight">
                   {selectedProject.title}
                 </h2>
                 <p className="mt-1 text-xs sm:text-sm text-white/70">
