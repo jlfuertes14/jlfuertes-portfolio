@@ -73,7 +73,7 @@ export interface Project {
 export const projects: Project[] = [
   {
     title: "Ghost Project",
-    category: "AI INFRASTRUCTURE WATCHDOG",
+    category: "ML INFRASTRUCTURE WATCHDOG",
     description: "An ML-driven geospatial analytics and prediction platform to track DPWH flood control projects across the Philippines. Features an interactive map and uses an XGBoost machine learning pipeline to predict project delivery risks and cost overruns.",
     techStack: ["Next.js", "FastAPI", "Python", "XGBoost", "DuckDB", "Mapbox"],
     imageUrl: "/images/ai_machine_learning/ghost_project1.png",
