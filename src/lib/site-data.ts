@@ -72,6 +72,21 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    title: "Ghost Project",
+    category: "AI INFRASTRUCTURE WATCHDOG",
+    description: "An ML-driven geospatial analytics and prediction platform to track DPWH flood control projects across the Philippines. Features an interactive map and uses an XGBoost machine learning pipeline to predict project delivery risks and cost overruns.",
+    techStack: ["Next.js", "FastAPI", "Python", "XGBoost", "DuckDB", "Mapbox"],
+    imageUrl: "/images/ai_machine_learning/ghost_project1.png",
+    previewImage: "/images/ai_machine_learning/ghost_project4.png",
+    desktopRightImage: "/images/ai_machine_learning/ghost_project2.png",
+    desktopLeftImage: "/images/ai_machine_learning/ghost_project3.png",
+    href: "https://ghost-project-one-dun.vercel.app/",
+    ctaLabel: "Visit Live Site",
+    themeColor: "210 90% 55%",
+    filterCategory: "AI/Machine Learning",
+    isDesktopOnly: true,
+  },
+  {
     title: "CatVision AI",
     category: "AI / MACHINE LEARNING",
     description: "A full-stack Machine Learning application that classifies cat breeds from uploaded images in real-time. Features a custom fine-tuned ResNet-50 Convolutional Neural Network with Grad-CAM explainability deployed behind a FastAPI backend.",

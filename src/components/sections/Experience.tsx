@@ -207,7 +207,8 @@ function TimelineContent() {
               ease: 'back.out(2)',
               scrollTrigger: {
                 trigger: dot,
-                start: 'center center',
+                start: 'center 55%',
+                end: 'center 10%',
                 toggleActions: 'play reverse play reverse',
               },
             }
@@ -226,8 +227,9 @@ function TimelineContent() {
               duration: 0.8,
               ease: 'power3.out',
               scrollTrigger: {
-                trigger: dot,
-                start: 'center center',
+                trigger: card,
+                start: 'top 65%',
+                end: 'bottom 25%',
                 toggleActions: 'play reverse play reverse',
               },
             }
@@ -245,8 +247,9 @@ function TimelineContent() {
                 duration: 0.8,
                 ease: 'power3.out',
                 scrollTrigger: {
-                  trigger: dot,
-                  start: 'center center',
+                  trigger: card,
+                  start: 'top 65%',
+                  end: 'bottom 25%',
                   toggleActions: 'play reverse play reverse',
                 },
               }

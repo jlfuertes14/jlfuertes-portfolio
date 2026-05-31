@@ -35,28 +35,41 @@ const ProjectCardItem = ({
     className="project-card-mobile group relative h-full bg-card dark:bg-[#0a0a0a] border border-border dark:border-white/5 rounded-[2rem] transition-all duration-500 hover:border-black/20 dark:hover:border-white/20 flex flex-col hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
   >
     <div className="relative p-5 sm:p-8 grow flex flex-col">
-      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-start mb-4 sm:mb-6">
-        <div className="flex-1 sm:mr-4">
+      <div className="flex flex-row justify-between items-start mb-3 sm:mb-6">
+        <div className="flex-1 pr-2">
           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground block mb-1">
             {project.category}
           </span>
-          <h3 className="text-xl sm:text-2xl font-bold text-foreground transition-colors group-hover:text-foreground/80">
+          <h3 className="text-xl sm:text-2xl font-bold text-foreground transition-colors group-hover:text-foreground/80 leading-tight">
             {project.title}
           </h3>
         </div>
-        <div className="hidden md:block shrink-0 w-fit px-4 py-1.5 rounded-full border border-border bg-muted/50 text-[10px] font-bold text-muted-foreground uppercase tracking-wider backdrop-blur-sm group-hover:bg-foreground group-hover:text-background transition-all">
+        
+        <div className="hidden md:block shrink-0 px-4 py-1.5 rounded-full border border-border bg-muted/50 text-[10px] font-bold text-muted-foreground uppercase tracking-wider backdrop-blur-sm group-hover:bg-foreground group-hover:text-background transition-all">
           Hover to preview
+        </div>
+        
+        <div className="md:hidden shrink-0 mt-2 max-w-[45%]">
+          <a
+            href={project.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 px-2 py-1.5 text-[8.5px] font-bold uppercase tracking-[0.05em] text-foreground/80 transition-colors hover:bg-foreground hover:text-background truncate"
+          >
+            <span className="truncate">{project.ctaLabel}</span>
+            <ExternalLink className="h-3 w-3 shrink-0" />
+          </a>
         </div>
       </div>
 
-      <p className="text-muted-foreground text-sm leading-relaxed mb-4 sm:mb-8 line-clamp-2 sm:line-clamp-3">
+      <p className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-4 sm:mb-6 text-pretty">
         {project.description}
       </p>
 
       <button
         type="button"
         onClick={() => openProjectView(project, project.isDesktopOnly ? "desktop" : "mobile", project.previewImage || project.imageUrl)}
-        className="relative aspect-video w-full rounded-2xl bg-muted dark:bg-white/5 border border-border dark:border-white/5 overflow-hidden mb-4 flex items-center justify-center group-hover:bg-muted/20 transition-all duration-500 text-left cursor-pointer"
+        className="relative aspect-video w-full rounded-2xl bg-muted dark:bg-white/5 border border-border dark:border-white/5 overflow-hidden flex items-center justify-center group-hover:bg-muted/20 transition-all duration-500 text-left cursor-pointer"
       >
         <div className="project-card-visual relative w-full h-full transition-all duration-500 group-hover:scale-105">
           <Image
@@ -70,18 +83,6 @@ const ProjectCardItem = ({
           Tap to preview
         </div>
       </button>
-
-      <div className="md:hidden mt-auto mb-2">
-        <a
-          href={project.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground/80 transition-colors hover:bg-foreground hover:text-background whitespace-nowrap"
-        >
-          {project.ctaLabel}
-          <ExternalLink className="h-3.3 w-3.3" />
-        </a>
-      </div>
 
       <AnimatePresence>
         {hoveredProject === index && (
@@ -229,6 +230,14 @@ export default function Projects() {
   const filteredProjects = useMemo(() => {
     return projects.filter((p) => p.filterCategory === filter);
   }, [filter]);
+
+  // Refresh GSAP ScrollTrigger after DOM layout changes due to filtering
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 600); // Wait for framer-motion layout animations to settle
+    return () => clearTimeout(timer);
+  }, [filteredProjects]);
 
   const getProjectViews = (project: typeof projects[0]) => {
     const views = [
