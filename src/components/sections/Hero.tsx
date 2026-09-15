@@ -65,15 +65,7 @@ export default function Hero() {
           "-=0.4"
         );
 
-        // 5. Vertical Text
-        tl.fromTo(
-          ".hero-side-text",
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.6, stagger: 0.2 },
-          "-=0.6"
-        );
-
-        // 7. Footer elements (Tech Marquee)
+        // 5. Footer elements (Tech Marquee)
         tl.fromTo(
           ".hero-footer-el",
           { opacity: 0, y: 20 },
@@ -85,7 +77,7 @@ export default function Hero() {
       // Reduced motion — just show everything
       mm.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set(
-          ".hero-logo, .hero-circle, .hero-image, .hero-char, .hero-desc-group, .hero-side-text, .hero-footer-el",
+          ".hero-logo, .hero-circle, .hero-image, .hero-char, .hero-desc-group, .hero-footer-el",
           { opacity: 1, y: 0, x: 0, scale: 1, rotationX: 0 }
         );
       });
@@ -117,26 +109,6 @@ export default function Hero() {
     >
       <div className="h-16" /> {/* Spacer for sticky navbar */}
 
-      {/* Architectural Side Text */}
-      <div className="absolute left-8 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center gap-12 z-20">
-        <span className="hero-side-text vertical-text text-[10px] uppercase tracking-[0.4em] text-muted-foreground/50 opacity-0 [writing-mode:vertical-rl]">
-          Full Stack Developer
-        </span>
-        <div className="hero-side-text w-px h-24 bg-border/40 opacity-0" />
-        <span className="hero-side-text vertical-text text-[10px] uppercase tracking-[0.4em] text-muted-foreground/50 opacity-0 [writing-mode:vertical-rl]">
-          Based in Philippines
-        </span>
-      </div>
-
-      <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center gap-12 z-20">
-        <span className="hero-side-text vertical-text text-[10px] uppercase tracking-[0.4em] text-muted-foreground/50 opacity-0 [writing-mode:vertical-rl]">
-          Est. 2026
-        </span>
-        <div className="hero-side-text w-px h-24 bg-border/40 opacity-0" />
-        <span className="hero-side-text vertical-text text-[10px] uppercase tracking-[0.4em] text-muted-foreground/50 opacity-0 [writing-mode:vertical-rl]">
-          {new Date().getFullYear()} Edition
-        </span>
-      </div>
 
       {/* ─── Main Content Area ─── */}
       <div className="relative z-10 grid w-full max-w-[1650px] grow grid-cols-1 lg:grid-cols-2 items-center gap-12 xl:gap-4">

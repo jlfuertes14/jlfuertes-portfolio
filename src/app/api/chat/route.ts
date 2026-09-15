@@ -87,6 +87,22 @@ PROJECTS CURRENTLY FEATURED ON THE PORTFOLIO
 ${projectsSummary}
 
 OTHER IMPORTANT PROJECT / EXPERIENCE DETAILS
+- Yomite (Universal Manga Reader):
+  Tech: React Native, Expo SDK 57, TypeScript, Supabase, React Native Web, MangaDex API.
+  Details: An ultra-fast cross-platform manga reader for Web, Android, and iOS. Features offline chapter caching with zero data consumption, a glassmorphic aesthetic with custom cubic bezier micro-interactions, full manga library sync via Supabase, and live deployment at https://yomite.vercel.app.
+
+- Aura (Mobile Audio Player):
+  Tech: React Native (Expo SDK 57), TypeScript, Python (yt-dlp), Node.js, EAS Build.
+  Details: A titanium dark-themed streaming and offline music player for Android and iOS. Built with synchronized lyrics powered by LRCLIB, an intelligent studio audio auto-resolver to swap live music video audio for authentic studio cuts, dynamic harmonic glow backdrops reacting to album art, and standalone Android APK distribution.
+
+- OrionCLI (AI Agent / Systems CLI):
+  Tech: Rust, Multi-Model LLM Orchestration, Autonomous Tool Execution, npm.
+  Details: A high-performance, terminal-native agentic coding assistant built in Rust and published as @chiro14/orion-agent-cli on npm. Capable of interactive REPL workflows, file edits, git operations, local tool execution, and multi-provider AI chat directly from the terminal.
+
+- Marci Homes (Luxury Real Estate Web Application):
+  Tech: React 18, Vite, Vanilla CSS, Tailwind CSS, JavaScript.
+  Details: A bespoke luxury real estate single-page web application revamped for Marci Metzger — The Ridge Realty Group in Pahrump, Nevada. Features an interactive MLS property search, property detail modals, valuation estimator, high-res photo gallery with lightbox, and live deployment at https://marci-ten.vercel.app.
+
 - QAsia Email Automation Software:
   Built during my internship at Q Asia Magazine Inc.
   Tech used: Python, CustomTkinter, SMTP
@@ -190,6 +206,38 @@ RESPONSE EXAMPLES OF TONE
 - "You can reach me directly at ${siteConfig.email}."
 `;
 
+const PRIMARY_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-20b";
+const FALLBACK_MODELS = ["openai/gpt-oss-120b", "groq/compound-mini"];
+
+interface ChatMessageInput {
+  role?: string;
+  content?: string;
+}
+
+function buildMessages(chatMessages: ChatMessageInput[] | undefined) {
+  const formatted: { role: "system" | "user" | "assistant"; content: string }[] = [
+    { role: "system", content: SYSTEM_PROMPT },
+  ];
+
+  if (Array.isArray(chatMessages) && chatMessages.length > 0) {
+    // Keep last 6 conversational turns to preserve context
+    const recent = chatMessages.slice(-6);
+    for (const msg of recent) {
+      if (!msg.content || typeof msg.content !== "string") continue;
+      const role: "user" | "assistant" = msg.role === "model" || msg.role === "assistant" ? "assistant" : "user";
+      formatted.push({ role, content: msg.content.slice(0, 1000) });
+    }
+  }
+
+  // Ensure there is at least one user message
+  const hasUserMessage = formatted.some((m) => m.role === "user");
+  if (!hasUserMessage) {
+    formatted.push({ role: "user", content: "Hello" });
+  }
+
+  return formatted;
+}
+
 const RATE_LIMIT = 10;
 const RATE_WINDOW = 60 * 1000;
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -218,8 +266,6 @@ export async function POST(request: NextRequest) {
 
   try {
     const { messages: chatMessages } = await request.json();
-    const lastUserMessage = chatMessages?.filter((m: { role: string }) => m.role === "user").pop();
-    const userContent = lastUserMessage?.content || "Hello";
 
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
@@ -230,18 +276,38 @@ export async function POST(request: NextRequest) {
     }
 
     const groq = new Groq({ apiKey });
+    const conversation = buildMessages(chatMessages);
 
-    const completion = await groq.chat.completions.create({
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: userContent },
-      ],
-      model: "llama-3.3-70b-versatile",
-      temperature: 0.7,
-      max_tokens: 400,
-    });
+    const modelsToTry = [
+      PRIMARY_MODEL,
+      ...FALLBACK_MODELS.filter((m) => m !== PRIMARY_MODEL),
+    ];
 
-    const reply = completion.choices[0]?.message?.content || "Sorry, I couldn't generate a response.";
+    let reply = "";
+    let lastErr: unknown = null;
+
+    for (const model of modelsToTry) {
+      try {
+        const completion = await groq.chat.completions.create({
+          messages: conversation,
+          model,
+          temperature: 0.7,
+          max_tokens: 450,
+        });
+
+        reply = completion.choices[0]?.message?.content || "";
+        if (reply) {
+          break;
+        }
+      } catch (err) {
+        lastErr = err;
+        console.warn(`Groq model ${model} failed, attempting next fallback...`, err);
+      }
+    }
+
+    if (!reply) {
+      throw lastErr || new Error("Failed to receive response from Groq models.");
+    }
 
     return NextResponse.json({ content: reply });
   } catch (error) {
@@ -252,3 +318,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

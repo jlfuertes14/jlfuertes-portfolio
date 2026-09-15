@@ -44,11 +44,11 @@ const ProjectCardItem = ({
             {project.title}
           </h3>
         </div>
-        
+
         <div className="hidden md:block shrink-0 px-4 py-1.5 rounded-full border border-border bg-muted/50 text-[10px] font-bold text-muted-foreground uppercase tracking-wider backdrop-blur-sm group-hover:bg-foreground group-hover:text-background transition-all">
           Hover to preview
         </div>
-        
+
         <div className="md:hidden shrink-0 mt-2 max-w-[45%]">
           <a
             href={project.href}
@@ -225,10 +225,12 @@ export default function Projects() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [filter, setFilter] = useState("Web Development");
 
-  const filterOptions = ["Web Development", "Schoolworks", "AI/Machine Learning"];
+  const filterOptions = ["Web Development", "Mobile Application", "AI/Machine Learning", "Schoolworks"];
 
   const filteredProjects = useMemo(() => {
-    return projects.filter((p) => p.filterCategory === filter);
+    return projects.filter((p) =>
+      p.filterCategories ? p.filterCategories.includes(filter) : p.filterCategory === filter
+    );
   }, [filter]);
 
   // Refresh GSAP ScrollTrigger after DOM layout changes due to filtering
@@ -408,7 +410,7 @@ export default function Projects() {
           >
             Here are some of my recent projects that showcase my skills and expertise.
           </motion.p>
-          
+
           {/* Filter Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -420,11 +422,10 @@ export default function Projects() {
               <button
                 key={option}
                 onClick={() => setFilter(option)}
-                className={`px-4 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${
-                  filter === option
-                    ? "bg-foreground text-background shadow-lg scale-105"
-                    : "bg-muted/50 text-foreground/70 hover:bg-muted hover:text-foreground border border-border"
-                }`}
+                className={`px-4 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${filter === option
+                  ? "bg-foreground text-background shadow-lg scale-105"
+                  : "bg-muted/50 text-foreground/70 hover:bg-muted hover:text-foreground border border-border"
+                  }`}
               >
                 {option}
               </button>
@@ -433,7 +434,7 @@ export default function Projects() {
         </div>
 
         {/* MOBILE GRID */}
-        <motion.div 
+        <motion.div
           key={filter + "-mobile"}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -455,7 +456,7 @@ export default function Projects() {
       </div>
 
       {/* DESKTOP VIEW */}
-      <motion.div 
+      <motion.div
         key={filter + "-desktop"}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -465,7 +466,7 @@ export default function Projects() {
         {filteredProjects.length <= 2 ? (
           <div className="w-full flex items-stretch gap-12 py-24 px-12 justify-center min-h-[70vh]">
             {filteredProjects.map((project, index) => (
-              <div key={index} className="relative h-auto w-[40vw] xl:w-[30vw] shrink-0">
+              <div key={index} className="relative h-auto w-[30vw] xl:w-[30vw] shrink-0">
                 <ProjectCardItem
                   project={project}
                   index={index}
@@ -485,7 +486,7 @@ export default function Projects() {
                 inputRange={[0, 0.85]}
               >
                 {filteredProjects.map((project, index) => (
-                  <div key={index} className="relative h-auto w-[40vw] xl:w-[30vw] shrink-0">
+                  <div key={index} className="relative h-auto w-[30vw] xl:w-[30vw] shrink-0">
                     <ProjectCardItem
                       project={project}
                       index={index}

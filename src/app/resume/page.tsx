@@ -119,7 +119,7 @@ export default function ResumePage() {
               
               <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
                 <Button variant="default" className="gap-2 rounded-xl shadow-lg shadow-primary/20 font-heading" asChild>
-                  <a href="/assets/JohnLesterFuertes_Resume_2026.pdf" target="_blank" rel="noopener noreferrer">
+                  <a href="/assets/JohnLesterFuertes-WebDeveloper.pdf" target="_blank" rel="noopener noreferrer">
                     <Download className="size-4" />
                     Download CV
                   </a>
