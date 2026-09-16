@@ -9,23 +9,23 @@ gsap.registerPlugin(ScrollTrigger);
 
 type TimelineMilestone =
   | {
-      id: number | string;
-      period: string;
-      role: string;
-      organization: string;
-      description: string;
-      image: string;
-      images?: never;
-    }
+    id: number | string;
+    period: string;
+    role: string;
+    organization: string;
+    description: string;
+    image: string;
+    images?: never;
+  }
   | {
-      id: number | string;
-      period: string;
-      role: string;
-      organization: string;
-      description: string;
-      images: [string, string];
-      image?: never;
-    };
+    id: number | string;
+    period: string;
+    role: string;
+    organization: string;
+    description: string;
+    images: [string, string];
+    image?: never;
+  };
 
 // --- MOCK DATA ---
 const milestones: TimelineMilestone[] = [
@@ -34,7 +34,7 @@ const milestones: TimelineMilestone[] = [
     period: "July 2026",
     role: "BS Computer Engineering Graduate",
     organization: "Rizal Technological University",
-    description: "I'll be graduating with my Bachelor of Science in Computer Engineering, where I've spent the last few years diving deep into digital systems, circuit design, and computer architectures. My crowning achievement is my thesis, 'HatchWatch' an IoT and AI-based egg incubator built for Philippine Mallard Ducks. Over time, I've really found my specialty at the exact intersection of programming physical microcontrollers like the ESP32 and building the full-stack web platforms that communicate with them.",
+    description: "I took up Computer Engineering back in 2022 simply because I loved computers, but looking back, it opened up so many doors for me to grow, not just as an engineer, but as a person. There were definitely times when I doubted whether I could keep up with complex circuit design and low-level architectures, but persevering through those challenges made me fall in love with the art of building. It led me straight to my capstone thesis, 'HatchWatch', an IoT and AI-powered incubator system for Philippine Mallard Ducks, and helped me realize my true path: creating practical software and intelligent hardware that solve real-world problems.",
     image: "/images/journey/graduation_pic.png"
   },
   {
@@ -42,7 +42,7 @@ const milestones: TimelineMilestone[] = [
     period: "February 2026 - April 2026",
     role: "IT Intern (Research Department)",
     organization: "Q Asia Magazine Inc.",
-    description: "During my time at the research department, I focused on building internal automation tools that directly impacted business lead generation. I single-handedly developed the 'QAsia Email Automation Software', a Python desktop application using CustomTkinter that automated bulk invitation emails via SMTP. I also designed data-extraction pipelines that slashed our manual contact tracing time by over 60%, while managing and optimizing databases for bulk lead collection.",
+    description: "Stepping into the research department at Q Asia Magazine opened my eyes to how fast-paced and demanding corporate workflows really are. It was completely new territory for me, but I adapted quickly and looked for ways to make a tangible difference. Even though it was a marketing-focused environment, I stood out by leaning into my technical strengths. I built the 'QAsia Email Automation Software', a custom Python and CustomTkinter desktop tool that streamlined bulk outreach via SMTP and cut manual contact tracing by over 60%, directly helping the team smash their daily quotas and widen company reach.",
     images: ["/images/journey/internship1.png", "/images/journey/internship2.jpeg"]
   },
   {
@@ -50,7 +50,7 @@ const milestones: TimelineMilestone[] = [
     period: "2020 - 2022",
     role: "STEM Research Lead",
     organization: "Buting Senior High School",
-    description: "In my senior high school years, I stepped up to coordinate several academic research teams, driving experimental designs in STEM. I had the opportunity to lead fascinating feasibility studies on piezoelectric generators and organic research initiatives. Beyond organizing laboratory setups and structuring our research publications, I proudly graduated with Honors and a 94% GPA.",
+    description: "Senior high school was where my curiosity and obsession with experimentation really took off. Stepping up as a STEM Research Lead, I coordinated our academic teams through late-night trial-and-error experiments, diving into feasibility studies on piezoelectric generators and organic materials. It taught me how to lead others, troubleshoot when experiments inevitably failed, and stay disciplined under pressure. Finishing that chapter with Honors and a 94% GPA gave me the confidence that I had what it takes to pursue engineering in college.",
     image: "/images/journey/buting-senior-high-research.jpeg"
   },
   {
@@ -58,7 +58,7 @@ const milestones: TimelineMilestone[] = [
     period: "2015 - 2026",
     role: "Pasig City Scholar",
     organization: "City Government of Pasig",
-    description: "I am incredibly proud to say I have been a continuous Pasig City Scholar for over a decade. After securing the scholarship through highly competitive screening based on academic excellence, I successfully maintained the required GPA and credentials for 11 consecutive years a testament to my long-term consistency and intense dedication to my education, from secondary school all the way through to my university graduation.",
+    description: "Being a Pasig City Scholar for 11 consecutive years is something I hold very close to my heart. Earning the scholarship through competitive academic screening was tough, but keeping it year after year from grade school all the way through to university graduation required relentless consistency. Whenever school got overwhelming or self-doubt crept in, this scholarship was a constant reminder of the trust placed in me and why I started. It shaped my work ethic, taught me accountability, and proved to me that staying disciplined over the long run always pays off.",
     image: "/images/journey/Pasig%20City%20Scholarship%20Office.png"
   }
 ];
@@ -321,9 +321,8 @@ function TimelineContent() {
                   >
                     <div
                       ref={(el) => { dotRefs.current[index] = el; }}
-                      className={`absolute top-12 w-3 h-3 rounded-full z-20 ${
-                        isLeft ? 'md:-right-[6px] -left-6 sm:-left-8 md:-left-[6px]' : '-left-6 sm:-left-8 md:-left-[6px]'
-                      }`}
+                      className={`absolute top-12 w-3 h-3 rounded-full z-20 ${isLeft ? 'md:-right-[6px] -left-6 sm:-left-8 md:-left-[6px]' : '-left-6 sm:-left-8 md:-left-[6px]'
+                        }`}
                     />
 
                     <div className="flex flex-col gap-2 relative z-10">
