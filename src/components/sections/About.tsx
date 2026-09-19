@@ -1,37 +1,35 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { ExternalLink, Github, Cpu, Calendar, MapPin, GraduationCap, School, ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { skills } from "@/lib/site-data";
+import { ArrowUpRight, ChevronLeft, ChevronRight, Cpu } from "lucide-react";
 import { useTheme } from "next-themes";
-import { motion, AnimatePresence, Variants } from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
-import { SiEspressif, SiMicropython } from "react-icons/si";
-
-gsap.registerPlugin(ScrollTrigger);
+import { motion, AnimatePresence, useReducedMotion, useInView, animate, type Variants } from "framer-motion";
+import { SiEspressif } from "react-icons/si";
 
 const GitHubCalendar = dynamic(
   () => import("react-github-calendar").then((mod) => mod.GitHubCalendar),
   { ssr: false }
 );
 
-const iconMap: Record<
-  string,
-  | { kind: "image"; src: string; invertInDark?: boolean }
-  | { kind: "icon"; icon: React.ElementType; color: string }
-> = {
-  "HTML/CSS/JS": {
+type SkillIcon =
+  | { kind: "image"; src: string; invertInDark?: boolean; rounded?: boolean }
+  | { kind: "icon"; icon: React.ElementType; color?: string; invertInDark?: boolean };
+
+const iconMap: Record<string, SkillIcon> = {
+  "HTML5": {
     kind: "image",
     src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
   },
-  "React / Next.js": {
+  "React": {
     kind: "image",
     src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+  },
+  "Next.js": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg",
+    invertInDark: true,
   },
   "TypeScript": {
     kind: "image",
@@ -45,6 +43,15 @@ const iconMap: Record<
     kind: "image",
     src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
   },
+  "FastAPI": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg",
+  },
+  "Flask": {
+    kind: "image",
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg",
+    invertInDark: true,
+  },
   "MongoDB": {
     kind: "image",
     src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg",
@@ -57,88 +64,302 @@ const iconMap: Record<
     kind: "image",
     src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg",
   },
-  "FastAPI": {
+  "C++": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg",
-  },
-  "Flask": {
-    kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg",
-    invertInDark: true,
+    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
   },
   "Arduino": {
     kind: "image",
     src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/arduino/arduino-original.svg",
   },
-  "C++ / Arduino": {
-    kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
+  "ESP32": {
+    kind: "icon",
+    icon: SiEspressif,
+    color: "#E7352C",
   },
-  "MicroPython": { kind: "icon", icon: SiMicropython, color: "#2B2728" },
-  "ESP32": { kind: "icon", icon: SiEspressif, color: "#E7352C" },
-  "Embedded Systems": { kind: "icon", icon: Cpu, color: "#888888" },
-  "UI/UX Design": {
+  "Embedded Systems": {
+    kind: "icon",
+    icon: Cpu,
+    color: "#888888",
+  },
+  "Figma": {
     kind: "image",
     src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
   },
+  "Google Stitch": {
+    kind: "image",
+    src: "/images/stitch.png",
+    rounded: true,
+  },
 };
+
+interface TechGroup {
+  category: string;
+  skills: string[];
+}
+
+const techStack: TechGroup[] = [
+  {
+    category: "Frontend",
+    skills: ["HTML5", "React", "Next.js", "TypeScript", "Tailwind CSS"],
+  },
+  {
+    category: "Backend & data",
+    skills: ["Node.js", "FastAPI", "Flask", "MongoDB"],
+  },
+  {
+    category: "Languages",
+    skills: ["Python", "C#", "C++"],
+  },
+  {
+    category: "Hardware",
+    skills: ["Arduino", "ESP32", "Embedded Systems"],
+  },
+  {
+    category: "Design",
+    skills: ["Figma", "Google Stitch"],
+  },
+];
+
+const galleryImages = [
+  {
+    url: "/images/programming.png",
+    caption: "Architecting high-performance web applications and hardware logic in VS Code.",
+  },
+  {
+    url: "/images/profile-pic.png",
+    caption: "I pride myself on having an 'I'll figure it out' mindset no matter how hard the problem is.",
+  },
+  {
+    url: "/images/companion_bot.png",
+    caption: "Meet my custom-built Desktop Companion Bot V1, a fusion of robotics and interactive design.",
+  },
+];
+
+interface AnimatedCounterProps {
+  value: string | number;
+  loading: boolean;
+  isActive: boolean;
+  delay?: number;
+}
+
+function AnimatedCounter({ value, loading, isActive, delay = 0 }: AnimatedCounterProps) {
+  const [displayValue, setDisplayValue] = useState<number | string>(0);
+  const shouldReduceMotion = useReducedMotion();
+  const currentValRef = useRef(0);
+
+  const numValue = typeof value === "number" ? value : parseInt(value.replace(/[^0-9]/g, ""), 10);
+  const isNumeric = !isNaN(numValue);
+
+  useEffect(() => {
+    if (loading) {
+      setDisplayValue("…");
+      return;
+    }
+
+    if (!isNumeric) {
+      setDisplayValue(value);
+      return;
+    }
+
+    if (shouldReduceMotion) {
+      setDisplayValue(isActive ? numValue.toLocaleString() : "0");
+      currentValRef.current = isActive ? numValue : 0;
+      return;
+    }
+
+    let timeoutId: NodeJS.Timeout | null = null;
+    let controls: { stop: () => void } | null = null;
+
+    if (isActive) {
+      // Scroll down: count UP from current value to numValue
+      timeoutId = setTimeout(() => {
+        controls = animate(currentValRef.current, numValue, {
+          duration: Math.min(1.8, Math.max(0.9, 0.4 + Math.log10(Math.max(numValue, 1)) * 0.45)),
+          ease: [0.16, 1, 0.3, 1], // Emil / Vercel luxury deceleration curve
+          onUpdate: (latest) => {
+            currentValRef.current = latest;
+            setDisplayValue(Math.round(latest).toLocaleString());
+          },
+        });
+      }, delay * 1000);
+    } else {
+      // Scroll up: count DOWN smoothly to 0
+      controls = animate(currentValRef.current, 0, {
+        duration: 0.55,
+        ease: [0.32, 0, 0.67, 0], // Smooth acceleration back to 0
+        onUpdate: (latest) => {
+          currentValRef.current = latest;
+          setDisplayValue(Math.round(latest).toLocaleString());
+        },
+      });
+    }
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      if (controls) controls.stop();
+    };
+  }, [isActive, loading, numValue, isNumeric, value, shouldReduceMotion, delay]);
+
+  return (
+    <span className="tabular-nums">
+      {loading ? "…" : displayValue}
+    </span>
+  );
+}
 
 export default function About() {
   const { theme } = useTheme();
-  const sectionRef = useRef<HTMLElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
-  const imageContainerRef = useRef<HTMLDivElement>(null);
-  const curvePathRef = useRef<SVGPathElement>(null);
-  const curveGlowRef = useRef<SVGPathElement>(null);
+  const shouldReduceMotion = useReducedMotion();
   const calendarScrollRef = useRef<HTMLDivElement>(null);
 
-  const [githubData, setGithubData] = useState({
-    repos: "0",
-    followers: "0",
-    stars: "0",
-    forks: "0",
-    commits: "0",
-    contributions: "0",
-    loading: true
-  });
+  const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeRows, setActiveRows] = useState<boolean[]>([false, false, false, false, false]);
 
-  const galleryImages = [
-    {
-      url: "/images/profile-pic.png",
-      caption: "\"I pride myself on having an 'I'll figure it out' mindset no matter how hard the problem is.\""
-    },
-    {
-      url: "/images/programming.png",
-      caption: "Architecting high-performance web applications and hardware logic in VS Code."
-    },
-    {
-      url: "/images/companion_bot.png",
-      caption: "Meet my custom-built Desktop Companion Bot V1, a fusion of robotics and interactive design."
-    }
-  ];
+  const metricsRef = useRef<HTMLDivElement>(null);
+  const [isMetricsActive, setIsMetricsActive] = useState(false);
+
+  // Track each category and metrics viewport alignment so animations are strictly scroll-based
+  useEffect(() => {
+    let ticking = false;
+
+    const checkRowsInView = () => {
+      const vh = window.innerHeight || 800;
+      // Trigger when the category row reaches the lower-middle focal reading zone (58% of viewport)
+      const triggerLine = vh * 0.58;
+      const exitHysteresis = 35; // 35px buffer prevents boundary jitter
+
+      setActiveRows((prev) => {
+        let changed = false;
+        const next = prev.map((currentActive, idx) => {
+          const el = rowRefs.current[idx];
+          if (!el) return currentActive;
+          const rect = el.getBoundingClientRect();
+
+          let isActive = currentActive;
+          if (rect.top <= triggerLine) {
+            isActive = true;
+          } else if (rect.top > triggerLine + exitHysteresis) {
+            isActive = false;
+          }
+
+          if (isActive !== currentActive) {
+            changed = true;
+          }
+          return isActive;
+        });
+
+        return changed ? next : prev;
+      });
+
+      // Track GitHub metrics viewport alignment:
+      // When scrolling down, counts up when top reaches 65% of viewport
+      // When scrolling up, counts down to 0 when it drops below 65% + hysteresis
+      if (metricsRef.current) {
+        const mRect = metricsRef.current.getBoundingClientRect();
+        const metricsTriggerLine = vh * 0.65;
+        setIsMetricsActive((prev) => {
+          if (mRect.top <= metricsTriggerLine) {
+            return true;
+          } else if (mRect.top > metricsTriggerLine + exitHysteresis) {
+            return false;
+          }
+          return prev;
+        });
+      }
+
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(checkRowsInView);
+        ticking = true;
+      }
+    };
+
+    checkRowsInView();
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  const stackLogoVariants: Variants = {
+    hidden: (custom: any) => ({
+      opacity: 0,
+      y: shouldReduceMotion ? 0 : -42,
+      rotate: shouldReduceMotion ? 0 : -360,
+      scale: shouldReduceMotion ? 1 : 0.7,
+      transition: {
+        delay: custom?.exitDelay ?? 0,
+        duration: 0.25,
+        ease: [0.32, 0, 0.67, 0],
+      },
+    }),
+    visible: (custom: any) => ({
+      opacity: 1,
+      y: 0,
+      rotate: 0,
+      scale: 1,
+      transition: shouldReduceMotion
+        ? { duration: 0.3, delay: custom?.enterDelay ?? 0 }
+        : {
+            delay: custom?.enterDelay ?? 0,
+            type: "spring",
+            stiffness: 150,
+            damping: 9,
+            mass: 1.0,
+          },
+    }),
+  };
+
+  const stackNameVariants: Variants = {
+    hidden: (custom: any) => ({
+      opacity: 0,
+      x: shouldReduceMotion ? 0 : -8,
+      scale: shouldReduceMotion ? 1 : 0.92,
+      transition: {
+        delay: custom?.exitDelay ?? 0,
+        duration: 0.16,
+        ease: "easeIn",
+      },
+    }),
+    visible: (custom: any) => ({
+      opacity: 1,
+      x: 0,
+      scale: 1,
+      transition: shouldReduceMotion
+        ? { duration: 0.2, delay: custom?.enterDelay ?? 0 }
+        : {
+            delay: custom?.enterDelay ?? 0,
+            type: "spring",
+            stiffness: 280,
+            damping: 16,
+            mass: 0.75,
+          },
+    }),
+  };
 
   const [currentIdx, setCurrentIdx] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isGalleryPaused, setIsGalleryPaused] = useState(false);
   const [isCompactCalendar, setIsCompactCalendar] = useState(false);
 
-  const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0
-    }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1
-    },
-    exit: (direction: number) => ({
-      zIndex: 0,
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0
-    })
-  };
+  const [githubData, setGithubData] = useState({
+    repos: "35",
+    followers: "3",
+    stars: "1",
+    forks: "1",
+    commits: "670",
+    contributions: "707",
+    loading: true,
+  });
 
+  // Slide navigation
   const nextSlide = () => {
     setDirection(1);
     setCurrentIdx((prev) => (prev + 1) % galleryImages.length);
@@ -149,20 +370,22 @@ export default function About() {
     setCurrentIdx((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
   };
 
+  // Carousel autoplay
   useEffect(() => {
     if (isGalleryPaused) return;
 
     const intervalId = window.setInterval(() => {
       setDirection(1);
       setCurrentIdx((prev) => (prev + 1) % galleryImages.length);
-    }, 4200);
+    }, 4500);
 
     return () => window.clearInterval(intervalId);
-  }, [galleryImages.length, isGalleryPaused]);
+  }, [isGalleryPaused]);
 
+  // Responsive calendar sizing
   useEffect(() => {
     const updateCalendarMode = () => {
-      setIsCompactCalendar(window.innerWidth < 640);
+      setIsCompactCalendar(window.innerWidth < 768);
     };
 
     updateCalendarMode();
@@ -170,6 +393,7 @@ export default function About() {
     return () => window.removeEventListener("resize", updateCalendarMode);
   }, []);
 
+  // Center or scroll calendar into view
   useEffect(() => {
     const container = calendarScrollRef.current;
     if (!container) return;
@@ -182,71 +406,7 @@ export default function About() {
     return () => resizeObserver.disconnect();
   }, []);
 
-  useGSAP(() => {
-    const mm = gsap.matchMedia();
-
-    // 1. Title Reveal
-    gsap.fromTo(".about-title",
-      { y: 100, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: "power4.out",
-        scrollTrigger: {
-          trigger: titleRef.current,
-          start: "top 85%",
-        }
-      }
-    );
-
-    // 2. Image Parallax/Slow Zoom
-    gsap.fromTo(".about-image",
-      { scale: 1.1, y: 20 },
-      {
-        scale: 1,
-        y: 0,
-        scrollTrigger: {
-          trigger: imageContainerRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          scrub: 1.5,
-        }
-      }
-    );
-
-    mm.add("(prefers-reduced-motion: reduce)", () => {
-      gsap.set(".about-glow", { opacity: 0.22 });
-    });
-
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.set(".about-glow", { opacity: 0.28 });
-    });
-
-    if (curvePathRef.current && curveGlowRef.current) {
-      const pathLength = curvePathRef.current.getTotalLength();
-
-      [curvePathRef.current, curveGlowRef.current].forEach((path) => {
-        gsap.set(path, {
-          strokeDasharray: pathLength,
-          strokeDashoffset: pathLength,
-        });
-      });
-
-      gsap.to([curvePathRef.current, curveGlowRef.current], {
-        strokeDashoffset: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 88%",
-          end: "bottom 12%",
-          scrub: 1.8,
-        },
-      });
-    }
-    return () => mm.revert();
-  }, { scope: sectionRef });
-
+  // Live GitHub stats fetcher
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -260,14 +420,14 @@ export default function About() {
         let totalForks = 0;
 
         if (Array.isArray(reposData)) {
-          reposData.forEach(repo => {
+          reposData.forEach((repo) => {
             totalStars += repo.stargazers_count;
             totalForks += repo.forks_count;
           });
         }
 
         const commitsRes = await fetch("https://api.github.com/search/commits?q=author:jlfuertes14", {
-          headers: { "Accept": "application/vnd.github.cloak-preview" }
+          headers: { Accept: "application/vnd.github.cloak-preview" },
         });
         const commitsData = await commitsRes.json();
 
@@ -275,17 +435,25 @@ export default function About() {
         const issuesData = await issuesRes.json();
 
         setGithubData({
-          repos: userData.public_repos?.toString() || "0",
-          followers: userData.followers?.toString() || "0",
-          stars: totalStars.toString(),
-          forks: totalForks.toString(),
-          commits: commitsData.total_count?.toString() || "0",
-          contributions: ((commitsData.total_count || 0) + (issuesData.total_count || 0) + (userData.public_repos || 0)).toString(),
-          loading: false
+          repos: userData.public_repos?.toString() || "35",
+          followers: userData.followers?.toString() || "3",
+          stars: totalStars.toString() || "1",
+          forks: totalForks.toString() || "1",
+          commits: commitsData.total_count?.toString() || "670",
+          contributions:
+            ((commitsData.total_count || 0) + (issuesData.total_count || 0) + (userData.public_repos || 0)).toString() || "707",
+          loading: false,
         });
-      } catch (error) {
-        console.error("Error fetching GitHub stats:", error);
-        setGithubData(prev => ({ ...prev, loading: false }));
+      } catch {
+        setGithubData({
+          repos: "35",
+          followers: "3",
+          stars: "1",
+          forks: "1",
+          commits: "670",
+          contributions: "707",
+          loading: false,
+        });
       }
     };
 
@@ -294,363 +462,408 @@ export default function About() {
 
   const statsItems = [
     { label: "Repositories", value: githubData.repos },
-    { label: "Total Stars", value: githubData.stars },
-    { label: "Total Forks", value: githubData.forks },
+    { label: "Total stars", value: githubData.stars },
+    { label: "Total forks", value: githubData.forks },
     { label: "Commits", value: githubData.commits },
     { label: "Contributions", value: githubData.contributions },
     { label: "Followers", value: githubData.followers },
   ];
 
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
+  const slideVariants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? "100%" : "-100%",
+      opacity: 0,
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
       opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2
-      }
-    }
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" }
-    }
+    },
+    exit: (dir: number) => ({
+      zIndex: 0,
+      x: dir < 0 ? "100%" : "-100%",
+      opacity: 0,
+    }),
   };
 
   return (
-    <section id="about" ref={sectionRef} className="py-10 md:py-14 bg-background overflow-hidden relative scroll-mt-24">
-      {/* Background Glow */}
-      <div className="about-glow absolute top-1/2 left-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 opacity-30 blur-[72px] pointer-events-none" />
-      <div className="pointer-events-none absolute inset-x-0 top-10 bottom-0 z-0 opacity-100 hidden md:block">
-        <svg
-          viewBox="0 0 1200 1400"
-          className="h-full w-full"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <path
-            ref={curveGlowRef}
-            d="M1020 60C860 110 848 300 700 396C546 496 304 472 240 640C184 786 336 870 500 964C708 1082 818 1210 734 1360"
-            fill="none"
-            stroke="hsl(var(--primary))"
-            strokeWidth="10"
-            strokeLinecap="round"
-            opacity="0.18"
-            filter="url(#about-curve-blur)"
-          />
-          <path
-            ref={curvePathRef}
-            d="M1020 60C860 110 848 300 700 396C546 496 304 472 240 640C184 786 336 870 500 964C708 1082 818 1210 734 1360"
-            fill="none"
-            stroke="hsl(var(--primary))"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            opacity="0.55"
-            strokeLinejoin="round"
-            strokeMiterlimit="10"
-          />
-          <defs>
-            <filter id="about-curve-blur" x="-10%" y="-10%" width="120%" height="120%">
-              <feGaussianBlur stdDeviation="5" />
-            </filter>
-          </defs>
-        </svg>
-      </div>
+    <section
+      id="about"
+      className="relative py-20 sm:py-28 lg:py-36 bg-background text-foreground scroll-mt-24 overflow-hidden"
+    >
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-      <div className="container mx-auto px-6 relative z-10">
-        {/* Section Header: Centered Title */}
-        <div ref={titleRef} className="text-center mb-8 overflow-hidden">
-          <h1 className="about-title text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight bg-linear-to-br from-foreground to-foreground/50 bg-clip-text text-transparent inline-block">
-            About <span className="text-foreground">Me</span>
-          </h1>
+
+        {/* Big Editorial Headline */}
+        <div className="mb-14 sm:mb-20 lg:mb-28 max-w-5xl">
+          <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-bold tracking-tight text-foreground leading-[1.02] text-balance">
+            Aspiring full stack developer{" "}
+            <span className="text-muted-foreground/60 font-light">&amp;</span> AI
+            engineer<span className="text-primary">.</span>
+          </h2>
         </div>
 
-        {/* Hero Content Grid */}
-        <div className="grid gap-12 lg:grid-cols-2 items-stretch mb-16">
-          {/* Left Column: Image Gallery Carousel */}
-          <motion.div
-            ref={imageContainerRef}
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: "circOut" }}
-            className="relative h-[360px] sm:h-[420px] lg:h-full min-h-[360px] sm:min-h-[420px] rounded-3xl overflow-hidden group border border-border/50 bg-muted/20"
-            onMouseEnter={() => setIsGalleryPaused(true)}
-            onMouseLeave={() => setIsGalleryPaused(false)}
-          >
-            <div className="relative w-full h-full overflow-hidden">
-              <AnimatePresence initial={false} custom={direction} mode="popLayout">
-                <motion.div
-                  key={currentIdx}
-                  custom={direction}
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{
-                    x: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
-                    opacity: { duration: 0.35, ease: "easeOut" }
-                  }}
-                  className="absolute inset-0"
-                >
-                  <Image
-                    src={galleryImages[currentIdx].url}
-                    alt={`Gallery ${currentIdx}`}
-                    fill
-                    sizes="(min-width: 1024px) 50vw, 100vw"
-                    className="object-cover"
-                  />
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Navigation Controls */}
-              <div className="absolute inset-0 flex items-center justify-between p-3 sm:p-4 z-20 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
-                <button
-                  onClick={prevSlide}
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-md hover:bg-black/70 transition-all border border-white/10 group/btn"
-                  aria-label="Previous slide"
-                >
-                  <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover/btn:-translate-x-0.5" />
-                </button>
-                <button
-                  onClick={nextSlide}
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-md hover:bg-black/70 transition-all border border-white/10 group/btn"
-                  aria-label="Next slide"
-                >
-                  <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover/btn:translate-x-0.5" />
-                </button>
-              </div>
-
-              {/* Caption Overlay */}
-              <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-5 sm:p-8 pt-16 sm:pt-20 z-10 pointer-events-none">
-                <AnimatePresence mode="wait">
-                  <motion.p
+        {/* Main Grid: Frame on Left, Narrative & Facts on Right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          {/* Left Column: 4/5 Aspect Ratio Editorial Visual Frame */}
+          <div className="lg:col-span-5 w-full">
+            <figure
+              className="relative aspect-[4/5] w-full max-w-md lg:max-w-none mx-auto overflow-hidden rounded-2xl border border-border/70 dark:border-white/15 bg-muted/40 shadow-xl group select-none"
+              onMouseEnter={() => setIsGalleryPaused(true)}
+              onMouseLeave={() => setIsGalleryPaused(false)}
+              aria-label="Gallery showcasing engineering and robotics workspace"
+            >
+              {/* Carousel Slides */}
+              <div className="relative w-full h-full overflow-hidden">
+                <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                  <motion.div
                     key={currentIdx}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="text-white text-base sm:text-lg font-medium italic leading-relaxed"
+                    custom={direction}
+                    variants={slideVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{
+                      x: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+                      opacity: { duration: 0.3, ease: "easeOut" },
+                    }}
+                    className="absolute inset-0"
                   >
-                    {galleryImages[currentIdx].caption}
-                  </motion.p>
+                    <Image
+                      src={galleryImages[currentIdx].url}
+                      alt={galleryImages[currentIdx].caption}
+                      fill
+                      sizes="(min-width: 1024px) 40vw, (min-width: 640px) 70vw, 100vw"
+                      className="object-cover"
+                      priority={currentIdx === 0}
+                    />
+                  </motion.div>
                 </AnimatePresence>
 
-                {/* Dots indicator */}
-                <div className="flex gap-1.5 mt-4">
-                  {galleryImages.map((_, i) => (
-                    <div
-                      key={i}
-                      className={`h-1 rounded-full transition-all duration-300 ${i === currentIdx ? 'w-6 bg-primary' : 'w-2 bg-white/30'}`}
-                    />
-                  ))}
+                {/* Ambient Code Lines Overlay Aesthetic */}
+                <div
+                  className="pointer-events-none absolute inset-6 top-6 h-28 grid gap-2 z-10 opacity-30 group-hover:opacity-15 transition-opacity duration-300"
+                  aria-hidden="true"
+                >
+                  <span className="block h-1 w-[55%] rounded-full bg-white/40" />
+                  <span className="block h-1 w-[80%] rounded-full bg-white/30" />
+                  <span className="block h-1 w-[38%] rounded-full bg-white/60" />
+                  <span className="block h-1 w-[68%] rounded-full bg-white/30" />
                 </div>
-              </div>
-            </div>
-          </motion.div>
 
-          {/* Right Column: Bio & Details */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="flex flex-col gap-6 lg:pt-4 h-full"
-          >
-            <div className="space-y-8">
-              <motion.div variants={itemVariants}>
-                <h3 className="text-2xl md:text-3xl font-bold mb-6 leading-tight text-balance">
-                  Aspiring Full Stack Developer & AI Engineer
-                </h3>
-                <div className="space-y-5 sm:space-y-6 text-muted-foreground text-sm sm:text-base leading-relaxed grow mb-auto">
-                  <p>
-                    I’m a <span className="text-foreground font-bold">Computer Engineering graduate</span> who builds web apps and hardware circuits. I work with <span className="text-foreground font-bold">Gemini and Groq APIs</span> to create chatbots, using <span className="text-foreground font-bold">RAG</span> to keep them fast and contextual. Whether I&apos;m designing <span className="text-foreground font-bold">GraphQL</span> schemas, building <span className="text-foreground font-bold">REST APIs</span>, or tinkering with sensors, I love connecting the physical world to the web.
-                  </p>
-                  <p>
-                    I use modern AI tools to speed up my workflow. By combining good architecture with AI coding assistants, I can focus on building solid hardware and maintainable code.
-                  </p>
+                {/* Vignette Gradient Overlay */}
+                <div
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent z-10"
+                  aria-hidden="true"
+                />
+
+                {/* Prev / Next Controls */}
+                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center justify-between p-3 sm:p-4 z-20 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
+                  <button
+                    type="button"
+                    onClick={prevSlide}
+                    className="flex size-9 sm:size-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md border border-white/20 transition-[background-color,transform] duration-200 hover:bg-black/80 active:scale-95 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none cursor-pointer"
+                    aria-label="Previous photo"
+                  >
+                    <ChevronLeft className="size-4 sm:size-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextSlide}
+                    className="flex size-9 sm:size-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md border border-white/20 transition-[background-color,transform] duration-200 hover:bg-black/80 active:scale-95 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none cursor-pointer"
+                    aria-label="Next photo"
+                  >
+                    <ChevronRight className="size-4 sm:size-5" />
+                  </button>
                 </div>
-              </motion.div>
 
-              <div className="grid lg:grid-cols-2 gap-6 items-stretch mt-auto">
-                {/* Info List Card */}
-                <motion.div
-                  variants={itemVariants}
-                  className="bg-muted/50 dark:bg-white/5 border border-border p-6 rounded-3xl flex flex-col justify-center space-y-6 group hover:border-foreground/20 transition-all duration-300 order-2 lg:order-1"
-                >
-                  <div className="flex items-center gap-4 text-lg group/item">
-                    <div className="w-10 h-10 rounded-2xl bg-muted/50 flex items-center justify-center border border-border group-hover/item:border-foreground/20 transition-colors">
-                      <MapPin className="w-5 h-5 text-muted-foreground group-hover/item:text-foreground transition-colors" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Location</p>
-                      <p className="font-semibold text-foreground text-base">Taytay, Rizal, Philippines</p>
-                    </div>
-                  </div>
+                {/* Figcaption & Slide Indicators */}
+                <figcaption className="absolute inset-x-5 bottom-5 sm:inset-x-7 sm:bottom-6 z-20 text-white">
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={currentIdx}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-xs sm:text-sm md:text-base font-normal italic leading-relaxed text-pretty text-white/95"
+                    >
+                      {galleryImages[currentIdx].caption}
+                    </motion.p>
+                  </AnimatePresence>
 
-                  <div className="flex items-center gap-4 text-lg group/item">
-                    <div className="w-10 h-10 rounded-2xl bg-muted/50 flex items-center justify-center border border-border group-hover/item:border-foreground/20 transition-colors">
-                      <GraduationCap className="w-5 h-5 text-muted-foreground group-hover/item:text-foreground transition-colors" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Education</p>
-                      <p className="font-semibold text-foreground text-base">BS Computer Engineering</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 text-lg group/item">
-                    <div className="w-10 h-10 rounded-2xl bg-muted/50 flex items-center justify-center border border-border group-hover/item:border-foreground/20 transition-colors">
-                      <School className="w-5 h-5 text-muted-foreground group-hover/item:text-foreground transition-colors" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">University</p>
-                      <p className="font-semibold text-foreground text-base">Rizal Technological University</p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* GitHub Featured Card */}
-                <motion.div
-                  variants={itemVariants}
-                  className="bg-muted/50 dark:bg-white/5 border border-border p-6 rounded-3xl flex flex-col justify-between group hover:border-foreground/20 transition-all duration-300 order-1 lg:order-2 h-full"
-                >
-                  <div className="grow">
-                    <div className="w-10 h-10 bg-foreground rounded-xl flex items-center justify-center mb-6 overflow-hidden">
-                      <Github className="w-6 h-6 text-background" />
-                    </div>
-                    <h4 className="text-xl font-bold leading-tight">
-                      Open Source Projects & Technical Contributions
-                    </h4>
-                  </div>
-                  <Button variant="secondary" className="rounded-xl w-fit px-6 hover:bg-foreground hover:text-background transition-all" asChild>
-                    <a href="https://github.com/jlfuertes14" target="_blank">
-                      Explore GitHub
-                      <ExternalLink className="ml-2 w-4 h-4" />
-                    </a>
-                  </Button>
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Specialized Toolset */}
-        <div className="py-16 border-t border-border/50">
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground mb-12"
-          >
-            My Tech Stack
-          </motion.p>
-          <div className="flex flex-wrap justify-center gap-8 sm:gap-10 md:gap-16">
-            {skills.map((skill, idx) => {
-              const mapping = iconMap[skill.name] || { kind: "icon" as const, icon: Cpu, color: "#888888" };
-              return (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.05 }}
-                  className="flex flex-col items-center gap-3 group"
-                >
-                  {mapping.kind === "image" ? (
-                    <div className="relative h-10 w-10 md:h-12 md:w-12 transition-all duration-300 group-hover:scale-110 drop-shadow-sm">
-                      <Image
-                        src={mapping.src}
-                        alt={skill.name}
-                        fill
-                        className={`object-contain ${mapping.invertInDark ? "dark:invert dark:brightness-100" : ""}`}
+                  {/* Indicator Dots */}
+                  <div className="flex items-center gap-1.5 mt-3 sm:mt-4">
+                    {galleryImages.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => {
+                          setDirection(i > currentIdx ? 1 : -1);
+                          setCurrentIdx(i);
+                        }}
+                        className={`h-1 rounded-full transition-all duration-300 ${
+                          i === currentIdx ? "w-6 bg-white" : "w-2 bg-white/40"
+                        }`}
+                        aria-label={`Go to slide ${i + 1}`}
                       />
-                    </div>
-                  ) : (
-                    <mapping.icon
-                      className="h-10 w-10 md:h-12 md:w-12 transition-all duration-300 group-hover:scale-110 drop-shadow-sm"
-                      style={{ color: mapping.color }}
-                    />
-                  )}
-                  <span className="text-[10px] font-bold opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity uppercase tracking-widest text-center">
-                    {skill.name}
-                  </span>
-                </motion.div>
-              );
-            })}
+                    ))}
+                  </div>
+                </figcaption>
+              </div>
+            </figure>
+          </div>
+
+          {/* Right Column: Narrative Copy & Facts */}
+          <div className="lg:col-span-7 flex flex-col justify-between">
+            <div className="space-y-6">
+              {/* Lead Paragraph */}
+              <p className="text-lg sm:text-xl md:text-2xl font-normal leading-relaxed text-muted-foreground text-pretty">
+                I’m a{" "}
+                <strong className="font-semibold text-foreground">
+                  Computer Engineering graduate
+                </strong>{" "}
+                who builds web apps and hardware circuits. I work with{" "}
+                <strong className="font-semibold text-foreground">
+                  Gemini and Groq APIs
+                </strong>{" "}
+                to create chatbots, using{" "}
+                <strong className="font-semibold text-foreground">RAG</strong> to
+                keep them fast and contextual. Whether I’m designing{" "}
+                <strong className="font-semibold text-foreground">GraphQL</strong>{" "}
+                schemas, building{" "}
+                <strong className="font-semibold text-foreground">REST APIs</strong>,
+                or tinkering with sensors, I love connecting the physical world to
+                the web.
+              </p>
+
+              {/* Second Paragraph */}
+              <p className="text-sm sm:text-base leading-relaxed text-muted-foreground max-w-2xl text-pretty">
+                I use modern AI tools to speed up my workflow. By combining good
+                architecture with AI coding assistants, I can focus on building{" "}
+                <strong className="font-medium text-foreground">
+                  solid hardware
+                </strong>{" "}
+                and{" "}
+                <strong className="font-medium text-foreground">
+                  maintainable code
+                </strong>
+                .
+              </p>
+            </div>
+
+            {/* Facts Definition List */}
+            <dl className="mt-10 mb-8 border-b border-border/60">
+              <div className="flex items-baseline justify-between gap-4 py-3.5 border-t border-border/60">
+                <dt className="font-mono text-xs uppercase tracking-wider text-muted-foreground/70">
+                  Location
+                </dt>
+                <dd className="text-sm sm:text-base font-medium text-foreground text-right">
+                  Taytay, Rizal, Philippines
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-4 py-3.5 border-t border-border/60">
+                <dt className="font-mono text-xs uppercase tracking-wider text-muted-foreground/70">
+                  Education
+                </dt>
+                <dd className="text-sm sm:text-base font-medium text-foreground text-right">
+                  BS Computer Engineering
+                </dd>
+              </div>
+              <div className="flex items-baseline justify-between gap-4 py-3.5 border-t border-border/60">
+                <dt className="font-mono text-xs uppercase tracking-wider text-muted-foreground/70">
+                  University
+                </dt>
+                <dd className="text-sm sm:text-base font-medium text-foreground text-right">
+                  Rizal Technological University
+                </dd>
+              </div>
+            </dl>
+
+            {/* GitHub Callout Action */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
+              <span className="text-xs sm:text-sm text-muted-foreground max-w-[28ch] leading-relaxed">
+                Open source projects &amp; technical contributions
+              </span>
+              <a
+                href="https://github.com/jlfuertes14"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-foreground text-background px-6 py-3 text-xs sm:text-sm font-medium transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none w-fit shrink-0 cursor-pointer"
+              >
+                <span>Explore GitHub</span>
+                <ArrowUpRight className="size-4" />
+              </a>
+            </div>
           </div>
         </div>
 
-        {/* GitHub Stats Section - Maximized Layout */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="relative overflow-hidden rounded-3xl bg-muted/50 dark:bg-white/5 border border-border p-8 md:p-12 mb-6"
-        >
-          <div className="flex flex-col gap-4 text-center md:text-left relative z-10">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground/90">GitHub Ecosystem</h2>
-            <p className="max-w-screen-sm text-muted-foreground leading-relaxed">
-              Real-time metrics from my open-source journey. Authenticated and synchronized with the official GitHub API.
-            </p>
-          </div>
-
-          <div className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 text-center relative z-10">
-            {statsItems.map((item, idx) => (
-              <motion.div
-                className="flex flex-col gap-1"
-                key={idx}
-                initial={{ scale: 0.8, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 * idx, type: "spring", stiffness: 100 }}
-              >
-                <p className="text-[10px] font-bold tracking-widest text-muted-foreground/60">{item.label}</p>
-                <span className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter text-foreground">
-                  {githubData.loading ? "..." : item.value}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="pointer-events-none absolute inset-0 z-0 opacity-10 dark:opacity-[0.03]">
-            <div className="absolute inset-0 bg-[radial-gradient(#000_1px,transparent_1px)] dark:bg-[radial-gradient(#fff_1px,transparent_1px)] bg-size-[20px_20px] mask-[radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
-          </div>
-        </motion.div>
-
-        {/* GitHub Contribution Calendar - Separate Section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-          className="relative overflow-hidden rounded-3xl bg-background border border-border/50 p-6 sm:p-8 md:p-12 flex flex-col items-center"
-        >
-          <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-muted-foreground" />
-              <h3 className="text-sm font-bold tracking-widest text-muted-foreground">Contribution History</h3>
+        {/* Tech Stack Section */}
+        <div className="mt-28 sm:mt-36 pt-16 border-t border-border/60">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
+            <div className="lg:col-span-5">
+              <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+                Tech stack<span className="text-primary">.</span>
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Core technologies, languages, and hardware frameworks.
+              </p>
             </div>
-            <div className="w-fit text-[10px] font-medium text-muted-foreground/60 bg-muted/50 px-3 py-1 rounded-full border border-border/30">
-              Last 12 Months
+
+            <dl className="lg:col-span-7 flex flex-col border-b border-border/60">
+              {techStack.map((group, groupIndex) => {
+                const isGroupActive = activeRows[groupIndex];
+                return (
+                  <div
+                    key={group.category}
+                    ref={(el) => {
+                      rowRefs.current[groupIndex] = el;
+                    }}
+                    className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-3 sm:gap-6 py-6 sm:py-8 border-t border-border/60 items-baseline"
+                  >
+                    <dt className="font-mono text-xs uppercase tracking-wider text-muted-foreground/70 pt-1">
+                      {group.category}
+                    </dt>
+                    <dd className="flex flex-wrap gap-x-6 sm:gap-x-8 gap-y-3 sm:gap-y-4 text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-foreground/90">
+                      {group.skills.map((skill, skillIndex) => {
+                        const icon = iconMap[skill];
+                        const logoEnterDelay = skillIndex * 0.18;
+                        const nameEnterDelay = logoEnterDelay + 0.14;
+                        const reverseIndex = group.skills.length - 1 - skillIndex;
+                        const nameExitDelay = reverseIndex * 0.04;
+                        const logoExitDelay = nameExitDelay + 0.04;
+
+                        return (
+                          <span
+                            key={skill}
+                            className="inline-flex items-center gap-2.5 transition-colors duration-200 hover:text-primary cursor-default group/skill"
+                          >
+                            {icon && (
+                              <motion.span
+                                initial="hidden"
+                                animate={isGroupActive ? "visible" : "hidden"}
+                                custom={{
+                                  enterDelay: logoEnterDelay,
+                                  exitDelay: logoExitDelay,
+                                }}
+                                variants={stackLogoVariants}
+                                className="shrink-0 flex items-center justify-center"
+                              >
+                                <span className="relative size-6 sm:size-7 md:size-8 shrink-0 flex items-center justify-center transition-transform duration-200 group-hover/skill:scale-110">
+                                  {icon.kind === "image" ? (
+                                    <Image
+                                      src={icon.src}
+                                      alt={skill}
+                                      width={32}
+                                      height={32}
+                                      className={`size-full object-contain ${
+                                        icon.rounded ? "rounded-md" : ""
+                                      } ${
+                                        icon.invertInDark
+                                          ? "dark:invert dark:brightness-100"
+                                          : ""
+                                      }`}
+                                    />
+                                  ) : (
+                                    <icon.icon
+                                      className={`size-full object-contain ${
+                                        icon.invertInDark
+                                          ? "text-[#2b2728] dark:text-white"
+                                          : ""
+                                      }`}
+                                      style={
+                                        icon.invertInDark
+                                          ? undefined
+                                          : { color: icon.color }
+                                      }
+                                    />
+                                  )}
+                                </span>
+                              </motion.span>
+                            )}
+                            <motion.span
+                              initial="hidden"
+                              animate={isGroupActive ? "visible" : "hidden"}
+                              custom={{
+                                enterDelay: nameEnterDelay,
+                                exitDelay: nameExitDelay,
+                              }}
+                              variants={stackNameVariants}
+                              className="inline-block"
+                            >
+                              {skill}
+                            </motion.span>
+                          </span>
+                        );
+                      })}
+                    </dd>
+                  </div>
+                );
+              })}
+            </dl>
+          </div>
+        </div>
+
+        {/* GitHub Ecosystem Section */}
+        <div className="mt-28 sm:mt-36 pt-16 border-t border-border/60">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start mb-16">
+            <div className="lg:col-span-5">
+              <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+                GitHub ecosystem<span className="text-primary">.</span>
+              </h3>
+              <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed max-w-sm text-pretty">
+                Live metrics from my open-source work, synced with the official
+                GitHub API.
+              </p>
+            </div>
+
+            {/* 6 Stats Grid */}
+            <div
+              ref={metricsRef}
+              className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-8 border-t border-border/60 pt-6"
+            >
+              {statsItems.map((item, index) => (
+                <div
+                  key={item.label}
+                  className="flex flex-col gap-1.5 pb-6 border-b border-border/60"
+                >
+                  <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground/70">
+                    {item.label}
+                  </span>
+                  <strong className="text-4xl sm:text-5xl lg:text-6xl font-bold font-mono tracking-tight text-foreground tabular-nums">
+                    <AnimatedCounter
+                      value={item.value}
+                      loading={githubData.loading}
+                      isActive={isMetricsActive}
+                      delay={index * 0.08}
+                    />
+                  </strong>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div ref={calendarScrollRef} className="hide-scrollbar w-full overflow-x-auto pb-2 sm:pb-4 flex justify-start sm:justify-center">
-            <div className="min-w-fit pr-4 sm:pr-0">
-              <GitHubCalendar
-                username="jlfuertes14"
-                fontSize={isCompactCalendar ? 9 : 11}
-                blockSize={isCompactCalendar ? 8 : 11}
-                blockMargin={isCompactCalendar ? 3 : 4}
-                colorScheme={theme === "dark" ? "dark" : "light"}
-              />
+          {/* Contribution Activity Heatmap */}
+          <div className="pt-8 sm:pt-10 border-t border-border/60">
+            {/* Horizontal Scrollable Calendar with Zero Scrollbar */}
+            <div
+              ref={calendarScrollRef}
+              className="w-full overflow-x-auto hide-scrollbar no-scrollbar py-2 sm:py-4"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              <div className="min-w-fit flex justify-center">
+                <GitHubCalendar
+                  username="jlfuertes14"
+                  fontSize={isCompactCalendar ? 11 : 14}
+                  blockSize={isCompactCalendar ? 11 : 16}
+                  blockMargin={isCompactCalendar ? 3.5 : 4.5}
+                  blockRadius={3}
+                  colorScheme={theme === "dark" ? "dark" : "light"}
+                />
+              </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

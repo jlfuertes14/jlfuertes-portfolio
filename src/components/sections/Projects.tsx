@@ -35,7 +35,7 @@ const ProjectCardItem = ({
     className="project-card-mobile group relative h-full bg-card dark:bg-[#0a0a0a] border border-border dark:border-white/5 rounded-[2rem] transition-all duration-500 hover:border-black/20 dark:hover:border-white/20 flex flex-col hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
   >
     <div className="relative p-5 sm:p-8 grow flex flex-col">
-      <div className="flex flex-row justify-between items-start mb-3 sm:mb-6">
+      <div className="flex flex-row justify-between items-start mb-3 sm:mb-4 min-h-[3.75rem] sm:min-h-[4.25rem]">
         <div className="flex-1 pr-2">
           <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground block mb-1">
             {project.category}
@@ -62,14 +62,14 @@ const ProjectCardItem = ({
         </div>
       </div>
 
-      <p className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-4 sm:mb-6 text-pretty">
+      <p className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-4 sm:mb-6 text-pretty line-clamp-3 min-h-[4.25rem] sm:min-h-[5rem]">
         {project.description}
       </p>
 
       <button
         type="button"
         onClick={() => openProjectView(project, project.isDesktopOnly ? "desktop" : "mobile", project.previewImage || project.imageUrl)}
-        className="relative aspect-video w-full rounded-2xl bg-muted dark:bg-white/5 border border-border dark:border-white/5 overflow-hidden flex items-center justify-center group-hover:bg-muted/20 transition-all duration-500 text-left cursor-pointer"
+        className="relative aspect-video w-full rounded-2xl bg-muted dark:bg-white/5 border border-border dark:border-white/5 overflow-hidden flex items-center justify-center group-hover:bg-muted/20 transition-all duration-500 text-left cursor-pointer shrink-0"
       >
         <div className="project-card-visual relative w-full h-full transition-all duration-500 group-hover:scale-105">
           <Image
@@ -83,6 +83,18 @@ const ProjectCardItem = ({
           Tap to preview
         </div>
       </button>
+
+      {/* Tech Stack below image */}
+      <div className="flex flex-wrap gap-2 mt-4 sm:mt-5">
+        {project.techStack.map((tech) => (
+          <span
+            key={tech}
+            className="px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-slate-200/80 dark:bg-white/5 border border-black/5 dark:border-white/5 text-[11px] font-semibold text-foreground/70 dark:text-foreground/60 transition-colors hover:bg-primary/10 hover:text-primary"
+          >
+            {tech}
+          </span>
+        ))}
+      </div>
 
       <AnimatePresence>
         {hoveredProject === index && (
@@ -198,22 +210,6 @@ const ProjectCardItem = ({
           </div>
         )}
       </AnimatePresence>
-    </div>
-
-    <div className="p-5 sm:p-8 pt-4 border-t border-border/50 bg-muted/20 dark:bg-black/40 z-120 rounded-b-[2rem]">
-      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 block mb-2 sm:mb-4">
-        Tech Stack
-      </span>
-      <div className="flex flex-wrap gap-2">
-        {project.techStack.map((tech) => (
-          <span
-            key={tech}
-            className="px-4 py-1.5 rounded-full bg-slate-200 dark:bg-white/5 border border-black/5 dark:border-white/5 text-[11px] font-semibold text-foreground/60 transition-all hover:bg-primary/10 hover:text-primary"
-          >
-            {tech}
-          </span>
-        ))}
-      </div>
     </div>
   </motion.div>
 );
@@ -442,7 +438,7 @@ export default function Projects() {
           className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12"
         >
           {filteredProjects.map((project, index) => (
-            <div key={index} className="relative h-[550px] w-full">
+            <div key={index} className="relative h-full w-full">
               <ProjectCardItem
                 project={project}
                 index={index}

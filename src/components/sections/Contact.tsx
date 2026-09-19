@@ -161,15 +161,15 @@ export default function Contact() {
     <section
       id="contact"
       ref={sectionRef}
-      className="pt-16 sm:pt-24 lg:pt-32 pb-24 sm:pb-32 bg-background relative overflow-hidden scroll-mt-24 min-h-screen flex flex-col justify-start"
+      className="pt-14 sm:pt-18 lg:pt-20 pb-0 bg-background relative overflow-hidden scroll-mt-24 flex flex-col justify-start"
     >
       {/* Absolute background cover to ensure no peeking */}
       <div className="absolute inset-0 bg-background z-0" />
       {/* Background Glows */}
-      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/3 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-2/3 right-0 -translate-y-1/2 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-6 relative z-10 pb-14 sm:pb-18">
         <div className="contact-grid grid gap-12 sm:gap-16 lg:grid-cols-[1fr_1.5fr] items-start">
 
           {/* ══════ Left — "Noir Minimalist" Info ══════ */}
@@ -330,6 +330,26 @@ export default function Contact() {
             </form>
           </div>
         </div>
+      </div>
+
+      {/* 🌊 Organic Wavy Bottom Edge using wavefooter.svg — Moves with the Contact Section */}
+      <div className="relative w-full leading-none pointer-events-none select-none z-10 -mb-[1px]">
+        <svg
+          viewBox="0 0 900 230"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-16 sm:h-20 md:h-24 block"
+          preserveAspectRatio="none"
+        >
+          {/* Base matching footer: black in light mode, white in dark mode */}
+          <rect x="0" y="0" width="900" height="230" className="fill-zinc-950 dark:fill-white transition-colors duration-300" />
+
+          {/* Exact Background wave matching Contact page — no border, no shadow */}
+          <path
+            d="M0 177L25 185.5C50 194 100 211 150 204.2C200 197.3 250 166.7 300 160.3C350 154 400 172 450 187.3C500 202.7 550 215.3 600 211C650 206.7 700 185.3 750 172C800 158.7 850 153.3 875 150.7L900 148L900 0L875 0C850 0 800 0 750 0C700 0 650 0 600 0C550 0 500 0 450 0C400 0 350 0 300 0C250 0 200 0 150 0C100 0 50 0 25 0L0 0Z"
+            className="fill-background"
+          />
+        </svg>
       </div>
     </section>
   );

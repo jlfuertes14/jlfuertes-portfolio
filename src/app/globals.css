@@ -170,14 +170,28 @@
   }
 }
 
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* Scrollbar utilities */
+.hide-scrollbar,
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }
 
-.hide-scrollbar::-webkit-scrollbar {
-  width: 0;
-  height: 0;
+.hide-scrollbar::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+  &::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
 }
 
 /* Selection */
@@ -260,10 +274,10 @@
   transform: translateZ(-60px);
 }
 
-.box-1 { animation: box1 1.5s cubic-bezier(0.23, 1, 0.32, 1) infinite; }
-.box-2 { animation: box2 1.5s cubic-bezier(0.23, 1, 0.32, 1) infinite; }
-.box-3 { animation: box3 1.5s cubic-bezier(0.23, 1, 0.32, 1) infinite; }
-.box-4 { animation: box4 1.5s cubic-bezier(0.23, 1, 0.32, 1) infinite; }
+.box-1 { animation: box1 0.85s cubic-bezier(0.23, 1, 0.32, 1) infinite; }
+.box-2 { animation: box2 0.85s cubic-bezier(0.23, 1, 0.32, 1) infinite; }
+.box-3 { animation: box3 0.85s cubic-bezier(0.23, 1, 0.32, 1) infinite; }
+.box-4 { animation: box4 0.85s cubic-bezier(0.23, 1, 0.32, 1) infinite; }
 
 .face {
   position: absolute;

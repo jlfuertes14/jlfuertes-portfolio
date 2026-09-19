@@ -40,7 +40,7 @@ const milestones: TimelineMilestone[] = [
   {
     id: 2,
     period: "February 2026 - April 2026",
-    role: "IT Intern (Research Department)",
+    role: "IT Intern",
     organization: "Q Asia Magazine Inc.",
     description: "Stepping into the research department at Q Asia Magazine opened my eyes to how fast-paced and demanding corporate workflows really are. It was completely new territory for me, but I adapted quickly and looked for ways to make a tangible difference. Even though it was a marketing-focused environment, I stood out by leaning into my technical strengths. I built the 'QAsia Email Automation Software', a custom Python and CustomTkinter desktop tool that streamlined bulk outreach via SMTP and cut manual contact tracing by over 60%, directly helping the team smash their daily quotas and widen company reach.",
     images: ["/images/journey/internship1.png", "/images/journey/internship2.jpeg"]

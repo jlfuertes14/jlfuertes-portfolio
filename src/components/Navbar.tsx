@@ -3,10 +3,12 @@
 import React, { useMemo, useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Logo } from "@/components/Logo";
 import MobileMenu from "@/components/MobileMenu";
 import { navLinks } from "@/lib/site-data";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -28,7 +30,7 @@ export default function Navbar() {
 
     const updateScrolledState = () => {
       frameId = null;
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 40);
     };
 
     const handleScroll = () => {
@@ -140,64 +142,86 @@ export default function Navbar() {
   };
 
   return (
-    <nav
+    <header
       ref={navRef}
       data-theme-static
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "border-b border-border/50 bg-background/72 backdrop-blur-md shadow-sm"
-          : "bg-transparent"
-      } ${
-        activeSection === "#services" ? "-translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
-      }`}
+      className="fixed top-3 sm:top-5 inset-x-0 z-50 flex items-center justify-center px-3 sm:px-4 pointer-events-none"
     >
-      <div className="flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-10 xl:px-14 2xl:px-20 py-4 sm:py-5 lg:py-6">
-        {/* Left Side: Logo + Nav Links */}
-        <div className="flex items-center gap-8 lg:gap-12">
-          <Link
-            href="/"
-            aria-label="John Lester Fuertes - Home"
-            className="hover:opacity-90 active:scale-95 transition-transform"
-          >
-            <Logo />
-          </Link>
+      <nav
+        aria-label="Main Navigation"
+        className={cn(
+          "pointer-events-auto flex items-center justify-between gap-3 sm:gap-4 md:gap-5",
+          "rounded-full border px-3 sm:px-4 py-1.5 sm:py-2",
+          "backdrop-blur-xl sm:backdrop-blur-2xl transition-[background-color,border-color,box-shadow,transform] duration-300 ease-out",
+          scrolled
+            ? "bg-background/80 dark:bg-[#0c0c0e]/80 border-border/80 dark:border-white/15 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.15)] dark:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.08)]"
+            : "bg-background/60 dark:bg-[#0c0c0e]/60 border-border/50 dark:border-white/10 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.1)] dark:shadow-[0_15px_35px_-10px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.05)]",
+          "w-full max-w-[calc(100vw-1.5rem)] md:w-auto md:max-w-none"
+        )}
+      >
+        {/* Brand Logo */}
+        <Link
+          href="/"
+          aria-label="John Lester Fuertes - Home"
+          className="flex items-center shrink-0 pl-1.5 sm:pl-2 scale-90 sm:scale-95 origin-left hover:opacity-90 active:scale-90 transition-[transform,opacity] duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none rounded-lg"
+        >
+          <Logo />
+        </Link>
 
-            {/* Desktop Nav Links */}
-            <div className="hidden items-center space-x-6 lg:space-x-8 md:flex">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  href={resolveHref(link.href)}
-                  onClick={(e) => {
-                    if (link.href.startsWith("#") && pathname === "/") {
-                      e.preventDefault();
-                      const element = document.getElementById(link.href.substring(1));
-                      element?.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }}
-                  className={`relative text-[15px] font-medium transition-colors duration-300 pb-1 after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:origin-bottom-left after:bg-primary after:transition-transform after:duration-300 ${
-                    isActive(link.href)
-                      ? "text-primary after:scale-x-100"
-                      : "text-foreground/50 hover:text-primary after:scale-x-0 hover:after:scale-x-100"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
+        {/* Divider between Logo & Links (Desktop) */}
+        <div className="hidden md:block h-5 w-px bg-border/60 dark:bg-white/10 shrink-0" aria-hidden="true" />
+
+        {/* Desktop Nav Links (Segmented Pill Layout) */}
+        <div className="hidden md:flex items-center gap-1 lg:gap-1.5">
+          {navLinks.map((link) => {
+            const active = isActive(link.href);
+
+            return (
+              <Link
+                key={link.label}
+                href={resolveHref(link.href)}
+                onClick={(e) => {
+                  if (link.href.startsWith("#") && pathname === "/") {
+                    e.preventDefault();
+                    const element = document.getElementById(link.href.substring(1));
+                    element?.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                className={cn(
+                  "relative px-3 sm:px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-[color,background-color] duration-200 select-none",
+                  "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
+                  active
+                    ? "text-foreground font-semibold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                )}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="floating-nav-active-pill"
+                    className="absolute inset-0 rounded-full bg-foreground/10 dark:bg-white/10 shadow-xs border border-foreground/5 dark:border-white/10 -z-10"
+                    transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                  />
+                )}
+                <span className="relative z-10">{link.label}</span>
+              </Link>
+            );
+          })}
         </div>
 
-        {/* Right Side: Theme Toggle */}
-        <div className="hidden md:block">
+        {/* Divider between Links & Actions (Desktop) */}
+        <div className="hidden md:block h-5 w-px bg-border/60 dark:bg-white/10 shrink-0" aria-hidden="true" />
+
+        {/* Right Side: Theme Toggle on Desktop */}
+        <div className="hidden md:flex items-center shrink-0 pr-1">
           <ThemeToggle />
         </div>
 
-        {/* Mobile Nav */}
-        <div className="flex items-center space-x-3 md:hidden">
+        {/* Mobile Nav: Theme Toggle + Mobile Menu Trigger */}
+        <div className="flex items-center gap-1.5 sm:gap-2 md:hidden shrink-0">
           <ThemeToggle />
           <MobileMenu />
         </div>
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }

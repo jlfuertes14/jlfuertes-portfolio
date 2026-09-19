@@ -1,22 +1,18 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import {
-  Layers,
-  Sparkles,
-  Cpu,
-  BarChart3,
-  CheckCircle,
   ArrowUpRight,
   ArrowLeft,
   X,
-  type LucideIcon,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
-import { AnimatePresence, motion, useScroll } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useLenis } from "lenis/react";
-import { useTheme } from "next-themes";
-import FlowArt, { FlowSection } from "@/components/ui/story-scroll";
+import { cn } from "@/lib/utils";
+import { ServiceHoverModal } from "@/components/ui/services-with-animated-hover-modal";
 
 interface GalleryImage {
   src: string;
@@ -24,15 +20,12 @@ interface GalleryImage {
 }
 
 interface ServiceItem {
-  icon: LucideIcon;
   title: string;
   subtitle: string;
+  shortDesc: string;
   description: string;
   tech: string[];
-  hoverBorder: string;
-  iconColor: string;
-  accentSurface: string;
-  accentSoft: string;
+  color: string;
   proof: {
     description: string;
     image: string;
@@ -43,19 +36,16 @@ interface ServiceItem {
 
 const services: ServiceItem[] = [
   {
-    icon: Layers,
     title: "Full-Stack Development",
     subtitle: "Web Applications",
+    shortDesc: "Scalable web platforms, microservices, and reactive user interfaces built for speed.",
     description:
-      "You don't just need a website you need a platform that works flawlessly and scales as you grow. I design and build full-stack web applications from the ground up. Whether it's a sleek customer portal, a data-heavy internal dashboard, or a fast-loading e-commerce site, I handle both the backend logic and the pixel-perfect frontend. The result? A digital product that looks great, runs fast, and drives your business forward.",
+      "You don't just need a website — you need a platform that works flawlessly and scales as you grow. I design and build full-stack web applications from the ground up. Whether it's a sleek customer portal, a data-heavy internal dashboard, or a fast-loading e-commerce site, I handle both the backend logic and pixel-perfect frontend. The result? A digital product that looks great, runs fast, and drives your business forward.",
     tech: ["React / Next.js", "TypeScript", "FastAPI / Node.js", "MongoDB / SQL"],
-    hoverBorder: "hover:border-black/20 dark:hover:border-white/20",
-    iconColor: "text-primary",
-    accentSurface: "bg-primary/5 dark:bg-primary/10",
-    accentSoft: "group-hover:bg-muted/70 dark:group-hover:bg-white/10 group-hover:text-foreground",
+    color: "#0a0f1d",
     proof: {
       description:
-        "Real products I've shipped responsive storefronts, admin dashboards, and API-driven platforms running in production.",
+        "Real products I've shipped — responsive storefronts, admin dashboards, and API-driven platforms running in production.",
       image: "/images/aniverse-right-image.png",
       alt: "AniVerse desktop application preview",
       gallery: [
@@ -69,16 +59,13 @@ const services: ServiceItem[] = [
     },
   },
   {
-    icon: Sparkles,
     title: "AI Integration",
-    subtitle: "Intelligent Workflows",
+    subtitle: "AI Powered Solutions",
+    shortDesc: "Custom LLM agents, local dataset training, and high-accuracy vision pipelines.",
     description:
       "AI shouldn't just be a buzzword for your business; it needs to deliver real value. I specialize in integrating practical AI solutions tailored specifically to your needs. I handle custom model training using your own datasets, develop conversational chatbots, and build sophisticated LLM agents and intelligent assistants. Instead of generic wrappers, you get purpose-built AI tools that streamline your workflows and actively assist your customers.",
     tech: ["Model Training / Datasets", "Chatbots & LLM Agents", "RAG Pipelines", "Gemini / Groq APIs"],
-    hoverBorder: "hover:border-black/20 dark:hover:border-white/20",
-    iconColor: "text-primary",
-    accentSurface: "bg-primary/5 dark:bg-primary/10",
-    accentSoft: "group-hover:bg-muted/70 dark:group-hover:bg-white/10 group-hover:text-foreground",
+    color: "#110d22",
     proof: {
       description:
         "Custom-trained vision models, conversational AI assistants, and agent pipelines I've built and deployed.",
@@ -95,16 +82,13 @@ const services: ServiceItem[] = [
     },
   },
   {
-    icon: Cpu,
     title: "IoT & Embedded Hardware",
-    subtitle: "Physical Electronics",
+    subtitle: "Electronics",
+    shortDesc: "Microcontroller architecture, PID feedback loops, and live hardware telemetry.",
     description:
       "If you need to bridge the gap between the physical world and digital software, I can build it. I engineer custom IoT systems and embedded hardware solutions that do exactly what you need. From programming microcontrollers and wiring up complex circuits to building the web dashboards that monitor them, I create end-to-end setups. Whether it's live sensor tracking or automated physical controls, I make sure your hardware talks seamlessly to your software.",
     tech: ["ESP32 / Arduino", "C++ / MicroPython", "PID Control Loops", "Sensor Calibration"],
-    hoverBorder: "hover:border-black/20 dark:hover:border-white/20",
-    iconColor: "text-primary",
-    accentSurface: "bg-primary/5 dark:bg-primary/10",
-    accentSoft: "group-hover:bg-muted/70 dark:group-hover:bg-white/10 group-hover:text-foreground",
+    color: "#161616",
     proof: {
       description:
         "Hands-on builds — ESP32-powered control systems, sensor rigs, and robots I've wired, coded, and tested.",
@@ -121,16 +105,13 @@ const services: ServiceItem[] = [
     },
   },
   {
-    icon: BarChart3,
     title: "Automation & Data Analysis",
-    subtitle: "Process Intelligence",
+    subtitle: "Data-Driven Automation",
+    shortDesc: "Automated data extractors, ETL pipelines, and executive reporting consoles.",
     description:
       "Stop wasting hours on manual tasks that a script could do in seconds. I help businesses save time and money by building custom automations that handle the heavy lifting. I write scripts to extract data, clean up messy databases, and automate your reporting workflows. More importantly, I turn raw numbers into clear, actionable dashboards so you always know exactly what's driving your business. Less manual entry, more intelligent decisions.",
     tech: ["Python / Pandas", "Data Cleaning / ETL", "Dashboards / Reporting", "Workflow Automation"],
-    hoverBorder: "hover:border-black/20 dark:hover:border-white/20",
-    iconColor: "text-primary",
-    accentSurface: "bg-primary/5 dark:bg-primary/10",
-    accentSoft: "group-hover:bg-muted/70 dark:group-hover:bg-white/10 group-hover:text-foreground",
+    color: "#0e191b",
     proof: {
       description:
         "Email tools, lead scrapers, and reporting dashboards I've built to cut hours of manual work down to one click.",
@@ -156,11 +137,11 @@ const stackedGalleryPositions = [
 
 export default function Services() {
   const lenis = useLenis();
-  const { resolvedTheme } = useTheme();
-  const isLightMode = resolvedTheme === "light";
 
+  const [modal, setModal] = useState({ active: false, index: 0 });
   const [activeServiceIndex, setActiveServiceIndex] = useState<number | null>(null);
   const [isGalleryExpanded, setIsGalleryExpanded] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const activeService =
     activeServiceIndex !== null ? services[activeServiceIndex] : null;
@@ -168,11 +149,29 @@ export default function Services() {
   const openGallery = useCallback((serviceIndex: number) => {
     setActiveServiceIndex(serviceIndex);
     setIsGalleryExpanded(false);
+    setLightboxIndex(null);
   }, []);
 
   const closeGallery = useCallback(() => {
     setActiveServiceIndex(null);
     setIsGalleryExpanded(false);
+    setLightboxIndex(null);
+  }, []);
+
+  const goToPreviousService = useCallback(() => {
+    setActiveServiceIndex((prev) =>
+      prev !== null ? (prev - 1 + services.length) % services.length : 0
+    );
+    setIsGalleryExpanded(false);
+    setLightboxIndex(null);
+  }, []);
+
+  const goToNextService = useCallback(() => {
+    setActiveServiceIndex((prev) =>
+      prev !== null ? (prev + 1) % services.length : 0
+    );
+    setIsGalleryExpanded(false);
+    setLightboxIndex(null);
   }, []);
 
   useEffect(() => {
@@ -187,8 +186,37 @@ export default function Services() {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        closeGallery();
+        if (lightboxIndex !== null) {
+          setLightboxIndex(null);
+        } else if (isGalleryExpanded) {
+          setIsGalleryExpanded(false);
+        } else {
+          closeGallery();
+        }
         return;
+      }
+
+      if (lightboxIndex !== null && activeService) {
+        if (event.key === "ArrowLeft") {
+          setLightboxIndex((prev) =>
+            prev !== null
+              ? (prev - 1 + activeService.proof.gallery.length) %
+                activeService.proof.gallery.length
+              : null
+          );
+        } else if (event.key === "ArrowRight") {
+          setLightboxIndex((prev) =>
+            prev !== null
+              ? (prev + 1) % activeService.proof.gallery.length
+              : null
+          );
+        }
+      } else if (!isGalleryExpanded && activeServiceIndex !== null) {
+        if (event.key === "ArrowLeft") {
+          goToPreviousService();
+        } else if (event.key === "ArrowRight") {
+          goToNextService();
+        }
       }
     };
 
@@ -200,270 +228,476 @@ export default function Services() {
       lenis?.start();
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeService, closeGallery, lenis]);
+  }, [
+    activeService,
+    closeGallery,
+    goToNextService,
+    goToPreviousService,
+    isGalleryExpanded,
+    lenis,
+    lightboxIndex,
+    activeServiceIndex,
+  ]);
+
+  // Formatted items for the cursor-following floating preview
+  const hoverModalItems = services.map((s) => ({
+    title: s.title,
+    subtitle: s.subtitle,
+    category: s.subtitle,
+    color: s.color,
+    src: s.proof.image,
+    alt: s.proof.alt,
+  }));
 
   return (
     <>
       <section
         id="services"
-        className="pb-32 lg:pb-48 bg-background relative scroll-mt-24"
+        className="relative py-24 sm:py-32 lg:py-40 bg-background text-foreground scroll-mt-24 overflow-hidden"
       >
-        <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[800px] max-w-[100vw] aspect-square bg-primary/5 rounded-full blur-[140px] pointer-events-none" />
+        {/* Ambient atmospheric backdrop */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] max-w-full aspect-square rounded-full bg-primary/5 blur-[160px]"
+        />
 
-        <FlowArt aria-label="My Services">
-          <FlowSection aria-label="Services Introduction" style={{ backgroundColor: isLightMode ? '#fff' : '#000', color: isLightMode ? '#000' : '#fff' }}>
-            <div className="flex h-full flex-col items-center justify-center text-center mt-auto mb-auto">
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="text-[clamp(4rem,10vw,12rem)] font-bold mb-4 sm:mb-8 tracking-tight uppercase leading-[0.85]"
-              >
-                My
-                <br />
-                Services
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className={`${isLightMode ? 'text-black/70' : 'text-white/70'} text-[clamp(1rem,2vw,1.5rem)] max-w-2xl mx-auto`}
-              >
-                Core focus areas and specialized capabilities I offer to help bring your ideas to life.
-              </motion.p>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Header section */}
+          <div className="mb-12 md:mb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div>
+              <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground">
+                Services<span className="text-primary">.</span>
+              </h2>
             </div>
-          </FlowSection>
-          {services.map((service, index) => {
-            const isBlack = index % 2 === 1; // Alternating
-            const applyBlack = isLightMode ? !isBlack : isBlack;
-            const bg = applyBlack ? '#000' : '#fff';
-            const fg = applyBlack ? '#fff' : '#000';
-            const border = applyBlack ? 'border-white/20' : 'border-black/20';
+            <p className="max-w-md text-base sm:text-lg text-muted-foreground font-normal leading-relaxed text-pretty">
+              Modern digital solutions tailored to complex business challenges, delivering high-speed execution, rock-solid stability, and architectural precision.
+            </p>
+          </div>
 
-            return (
-              <FlowSection
-                key={service.title}
-                aria-label={service.title}
-                style={{ backgroundColor: bg, color: fg }}
-              >
-                <p className="text-xs font-bold uppercase tracking-[0.2em] opacity-90">0{index + 1} — {service.subtitle}</p>
-                <hr className={`my-[2vw] border-none border-t ${border}`} />
-                
-                <div className="flex flex-col lg:flex-row lg:items-center gap-[6vw] flex-1 mt-[2vw]">
-                  {/* Left Column */}
-                  <div className="flex-1 w-full">
-                    <h3 className="text-[clamp(3.2rem,6vw,8rem)] font-bold leading-[0.85] uppercase tracking-tight mb-[3vw]">
-                      {service.title.split(' ').map((word, i) => (
-                        <React.Fragment key={i}>
-                          {word}
-                          <br />
-                        </React.Fragment>
-                      ))}
-                    </h3>
-                    
-                    <p className="max-w-[45ch] text-[clamp(1rem,1.2vw,1.5rem)] font-normal leading-relaxed mb-[3vw]">
-                      {service.description}
-                    </p>
-                    
-                    <div>
-                      <p className="mb-3 text-sm font-bold uppercase tracking-wider">Core Technologies</p>
-                      <div className="flex flex-wrap gap-2">
-                        {service.tech.map((tech) => (
+          {/* Interactive Dennis Snellenberg-inspired Services List */}
+          <div
+            role="list"
+            className="flex w-full flex-col border-t border-border/80"
+          >
+            {services.map((service, index) => {
+              const formattedIndex = String(index + 1).padStart(2, "0");
+
+              return (
+                <button
+                  key={service.title}
+                  type="button"
+                  role="listitem"
+                  onClick={(e) => {
+                    e.currentTarget.blur();
+                    openGallery(index);
+                  }}
+                  onMouseEnter={() => setModal({ active: true, index })}
+                  onMouseLeave={() => setModal({ active: false, index })}
+                  className={cn(
+                    "group relative flex w-full flex-col md:flex-row items-start md:items-center justify-between",
+                    "py-8 sm:py-10 lg:py-12 px-4 sm:px-6 md:px-8 border-b border-border/70 text-left cursor-pointer",
+                    "hover:border-transparent active:border-transparent focus:border-transparent",
+                    "rounded-2xl md:rounded-3xl overflow-hidden select-none",
+                    "outline-none focus:outline-none focus:ring-0 active:outline-none",
+                    "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                  )}
+                  aria-label={`Open ${service.title} gallery and case details`}
+                >
+                  {/* Smooth GPU-Composited Hover Highlight Backdrop */}
+                  <div
+                    aria-hidden="true"
+                    className={cn(
+                      "pointer-events-none absolute inset-0 z-0",
+                      "bg-zinc-950 dark:bg-white",
+                      "opacity-0 group-hover:opacity-100",
+                      "transition-opacity duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]",
+                      "shadow-xl dark:shadow-2xl dark:shadow-white/5"
+                    )}
+                  />
+
+                  {/* Left Column: Number, Title, and Tech Tags */}
+                  <div className="relative z-10 flex flex-row items-baseline gap-4 sm:gap-6 md:gap-8 flex-1 min-w-0 pr-4">
+                    <span className="font-mono text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-muted-foreground/60 tabular-nums shrink-0 select-none transition-colors duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:text-white dark:group-hover:text-zinc-950">
+                      {formattedIndex}
+                    </span>
+
+                    <div className="flex flex-col gap-2 min-w-0">
+                      <h3 className="m-0 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-foreground transition-[transform,color] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:translate-x-2.5 motion-reduce:group-hover:translate-x-0 group-hover:text-white dark:group-hover:text-zinc-950">
+                        {service.title}
+                      </h3>
+
+                      {/* Short description on mobile, tech pills on tablet+ */}
+                      <p className="text-sm text-muted-foreground line-clamp-2 md:hidden transition-colors duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:text-zinc-300 dark:group-hover:text-zinc-600">
+                        {service.shortDesc}
+                      </p>
+
+                      <div className="hidden sm:flex flex-wrap items-center gap-2 mt-1 transition-[transform] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:translate-x-2.5 motion-reduce:group-hover:translate-x-0">
+                        {service.tech.map((item) => (
                           <span
-                            key={tech}
-                            className={`inline-flex items-center px-4 py-2 rounded-full border text-[11px] sm:text-sm font-bold tracking-tight ${border}`}
+                            key={item}
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-full border border-border/80 bg-background/80 text-[11px] font-mono text-muted-foreground font-medium transition-[background-color,border-color,color] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:bg-white/10 group-hover:border-white/20 group-hover:text-zinc-200 dark:group-hover:bg-black/5 dark:group-hover:border-black/15 dark:group-hover:text-zinc-800"
                           >
-                            <CheckCircle className="w-3.5 h-3.5 mr-2 opacity-80" />
-                            {tech}
+                            {item}
                           </span>
                         ))}
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Right Column */}
-                  <div className="flex-1 w-full lg:h-[65vh] mt-8 lg:mt-0 pb-[2vw] flex flex-col">
-                    <button
-                      type="button"
-                      onClick={() => openGallery(index)}
-                      className={`group relative flex-1 min-h-[300px] lg:min-h-0 h-full w-full overflow-hidden rounded-[2rem] border transition-transform duration-300 ease-out active:scale-[0.98] ${border}`}
-                      aria-label={`Open ${service.title} gallery`}
-                    >
-                      <Image
-                        src={service.proof.image}
-                        alt={service.proof.alt}
-                        fill
-                        sizes="(min-width: 1024px) 50vw, 100vw"
-                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex items-center justify-center backdrop-blur-sm">
-                         <span className="text-white text-lg font-bold tracking-widest uppercase flex items-center gap-2 drop-shadow-md">
-                           View Gallery <ArrowUpRight className="w-5 h-5" />
-                         </span>
-                      </div>
-                      
-                      {/* Mobile Visible Overlay */}
-                      <div className="absolute inset-x-0 bottom-0 p-4 flex lg:hidden items-center justify-between z-10 bg-gradient-to-t from-black/80 to-transparent">
-                        <p className="text-sm font-bold tracking-tight text-white drop-shadow-lg">
-                          View Gallery
-                        </p>
-                        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/20 border border-white/30 backdrop-blur-md text-white">
-                          <ArrowUpRight className="w-4 h-4" />
-                        </div>
-                      </div>
-                    </button>
+
+                  {/* Right Column: Category Subtitle & Action Trigger */}
+                  <div className="relative z-10 mt-4 md:mt-0 flex items-center justify-between w-full md:w-auto gap-4 md:gap-8 shrink-0">
+                    <span className="font-mono text-xs sm:text-sm font-medium tracking-wider uppercase text-muted-foreground transition-[transform,color] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:text-zinc-200 dark:group-hover:text-zinc-800 group-hover:translate-x-1">
+                      {service.subtitle}
+                    </span>
+
+                    {/* Desktop Hover Hint / Mobile Action Badge */}
+                    <div className="flex size-9 sm:size-10 items-center justify-center rounded-full border border-border/80 bg-card text-muted-foreground transition-[transform,background-color,border-color,color] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-110 group-hover:bg-white group-hover:border-white group-hover:text-zinc-950 dark:group-hover:bg-zinc-950 dark:group-hover:border-zinc-950 dark:group-hover:text-white">
+                      <ArrowUpRight className="size-4 sm:size-5 transition-[transform] duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:rotate-45" />
+                    </div>
                   </div>
-                </div>
-              </FlowSection>
-            );
-          })}
-        </FlowArt>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Floating Cursor-Following Modal (Dennis Snellenberg Style) */}
+        <ServiceHoverModal modal={modal} items={hoverModalItems} />
       </section>
 
+      {/* Still-View Gallery Modal with Stacked Layout & Full Grid */}
+      {/* Still-View Gallery Modal with Minimalist Two-Column Layout, Service Switcher & Lightbox */}
       <AnimatePresence>
-        {activeService && (
+        {activeService && activeServiceIndex !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[1000] overflow-hidden overscroll-none bg-black/50 p-4 backdrop-blur-sm sm:p-6 lg:p-10"
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[1000] overflow-hidden overscroll-contain bg-black/65 dark:bg-black/80 p-3 sm:p-6 lg:p-8 backdrop-blur-md flex items-center justify-center"
             onClick={closeGallery}
           >
             <motion.div
-              initial={{ opacity: 0, y: 24, scale: 0.98 }}
+              initial={{ opacity: 0, y: 16, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 24, scale: 0.98 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              exit={{ opacity: 0, y: 16, scale: 0.98 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
               onClick={(event) => event.stopPropagation()}
-              className="mx-auto flex h-full w-full max-w-6xl flex-col"
+              className={cn(
+                "mx-auto flex w-full max-w-5xl flex-col rounded-2xl sm:rounded-3xl border border-border/70 dark:border-white/10",
+                "bg-background dark:bg-[#0a0a0c] shadow-2xl backdrop-blur-2xl text-foreground overflow-hidden",
+                isGalleryExpanded ? "h-[88vh]" : "max-h-[90vh]"
+              )}
             >
-              <div className="flex items-center justify-between gap-4 px-2 py-2 sm:px-3 sm:py-3">
-                <div className="flex min-h-10 items-center">
-                  <AnimatePresence>
-                    {isGalleryExpanded && (
+              {/* Header Bar */}
+              <div className="flex items-center justify-between gap-4 px-5 py-3.5 sm:px-8 sm:py-4 border-b border-border/50 select-none">
+                <div className="flex items-center gap-3 min-h-9">
+                  <AnimatePresence mode="wait">
+                    {isGalleryExpanded ? (
                       <motion.button
                         key="back-button"
-                        initial={{ opacity: 0, x: -10 }}
+                        initial={{ opacity: 0, x: -6 }}
                         animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -10 }}
+                        exit={{ opacity: 0, x: -6 }}
                         type="button"
                         onClick={() => setIsGalleryExpanded(false)}
-                        className="flex items-center gap-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
+                        className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-muted/20 px-3.5 py-1.5 text-xs sm:text-sm font-medium text-foreground transition-[color,background-color] duration-150 hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer"
                       >
-                        <span className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/25 text-white backdrop-blur-md">
-                          <ArrowLeft className="h-4 w-4" />
-                        </span>
-                        Go back
+                        <ArrowLeft className="size-3.5" />
+                        <span>Back to overview</span>
                       </motion.button>
+                    ) : (
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-muted-foreground/70">
+                          <span>{String(activeServiceIndex + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}</span>
+                          <span className="text-border">•</span>
+                          <span>{activeService.subtitle}</span>
+                        </div>
+                        <h3 className="text-base sm:text-lg font-semibold tracking-tight text-foreground">
+                          {activeService.title}
+                        </h3>
+                      </div>
                     )}
                   </AnimatePresence>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={closeGallery}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/25 text-white backdrop-blur-md transition-all hover:bg-black/40"
-                  aria-label="Close service gallery"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+                <div className="flex items-center gap-1 sm:gap-1.5">
+                  {!isGalleryExpanded && (
+                    <>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={goToPreviousService}
+                          className="flex size-8 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-[color,background-color] duration-150 hover:bg-muted/40 hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer"
+                          aria-label="Previous service"
+                          title="Previous service (←)"
+                        >
+                          <ChevronLeft className="size-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={goToNextService}
+                          className="flex size-8 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-[color,background-color] duration-150 hover:bg-muted/40 hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer"
+                          aria-label="Next service"
+                          title="Next service (→)"
+                        >
+                          <ChevronRight className="size-4" />
+                        </button>
+                      </div>
+                      <div className="h-4 w-px bg-border/60 mx-1" />
+                    </>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={closeGallery}
+                    className="flex size-8 sm:size-9 items-center justify-center rounded-full border border-border/60 bg-muted/20 text-muted-foreground transition-[color,background-color,transform] duration-150 hover:bg-muted hover:text-foreground active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer"
+                    aria-label="Close modal"
+                    title="Close (Esc)"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
               </div>
 
+              {/* Scrollbar-Free Gallery Content Area */}
               <div
                 data-lenis-prevent
-                className="flex-1 overflow-y-auto overscroll-contain px-2 pb-2 sm:px-3 sm:pb-3"
+                className="flex-1 overflow-y-auto overscroll-contain px-5 py-6 sm:px-8 sm:py-8 hide-scrollbar no-scrollbar"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
               >
                 <AnimatePresence mode="wait">
                   {!isGalleryExpanded ? (
                     <motion.div
-                      key="gallery-stack"
-                      initial={{ opacity: 0, y: 16 }}
+                      key={`gallery-overview-${activeServiceIndex}`}
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -16 }}
-                      transition={{ duration: 0.24 }}
-                      className="flex min-h-full flex-col items-center justify-start pt-10 sm:pt-12"
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center min-h-full"
                     >
-                      <div className="relative mb-8 flex h-[420px] w-full items-center justify-center">
-                        {activeService.proof.gallery.slice(0, 3).map((photo, photoIndex) => {
-                          const position = stackedGalleryPositions[photoIndex];
+                      {/* Left Narrative Column */}
+                      <div className="lg:col-span-7 flex flex-col justify-center text-left">
+                        <p className="text-base sm:text-lg font-medium text-foreground/90 leading-snug tracking-tight mb-3 text-pretty">
+                          {activeService.shortDesc}
+                        </p>
+                        
+                        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-6 text-pretty">
+                          {activeService.description}
+                        </p>
 
-                          return (
-                            <motion.button
-                              key={photo.src}
-                              type="button"
-                              initial={{ opacity: 0, scale: 0.92 }}
-                              animate={{
-                                opacity: 1,
-                                scale: 1,
-                                x: position.x,
-                                y: position.y,
-                                rotate: position.rotate,
-                              }}
-                              whileHover={{
-                                scale: 1.04,
-                                y: position.y - 16,
-                                rotate: position.rotate * 0.75,
-                              }}
-                              transition={{ type: "spring", stiffness: 220, damping: 22 }}
-                              onClick={() => setIsGalleryExpanded(true)}
-                              className="absolute h-[220px] w-[168px] overflow-hidden rounded-[2rem] bg-muted shadow-[0_26px_70px_rgba(0,0,0,0.16)] sm:h-[270px] sm:w-[210px] lg:h-[320px] lg:w-[245px]"
-                              style={{ zIndex: position.zIndex }}
-                            >
-                              <Image
-                                src={photo.src}
-                                alt={photo.alt}
-                                fill
-                                sizes="(min-width: 1024px) 245px, (min-width: 640px) 210px, 168px"
-                                className="object-cover"
-                              />
-                            </motion.button>
-                          );
-                        })}
+                        {/* Capabilities / Tech Stack Tags */}
+                        <div className="mb-6">
+                          <span className="block font-mono text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-2">
+                            Core Stack & Capabilities
+                          </span>
+                          <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                            {activeService.tech.map((item) => (
+                              <span
+                                key={item}
+                                className="inline-flex items-center px-3 py-1 rounded-full border border-border/70 bg-muted/20 dark:bg-white/5 text-[11px] font-mono text-muted-foreground font-medium"
+                              >
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex flex-wrap items-center gap-3 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => setIsGalleryExpanded(true)}
+                            className="inline-flex items-center gap-2 rounded-full bg-foreground text-background px-5 py-2.5 text-xs sm:text-sm font-medium shadow-sm transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer"
+                          >
+                            <span>Explore all {activeService.proof.gallery.length} case images</span>
+                            <ArrowUpRight className="size-3.5 sm:size-4" />
+                          </button>
+                        </div>
                       </div>
 
-                      <div className="flex justify-center">
+                      {/* Right Visual Column: Interactive Deck */}
+                      <div className="lg:col-span-5 flex flex-col items-center justify-center pt-2 lg:pt-0">
                         <button
                           type="button"
                           onClick={() => setIsGalleryExpanded(true)}
-                          className="inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-all hover:scale-[1.02]"
+                          className="group relative flex h-[210px] sm:h-[250px] w-full items-center justify-center cursor-pointer select-none rounded-2xl focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                          aria-label={`View ${activeService.proof.gallery.length} case images for ${activeService.title}`}
                         >
-                          Explore gallery
-                          <ArrowUpRight className="h-4 w-4" />
+                          {activeService.proof.gallery.slice(0, 3).map((photo, photoIndex) => {
+                            const basePos = [
+                              { x: -62, y: 12, rotate: -9, zIndex: 10 },
+                              { x: 0, y: -10, rotate: -1, zIndex: 20 },
+                              { x: 62, y: 8, rotate: 7, zIndex: 30 },
+                            ][photoIndex];
+
+                            return (
+                              <div
+                                key={photo.src}
+                                className="absolute h-[155px] w-[125px] sm:h-[200px] sm:w-[160px] overflow-hidden rounded-xl sm:rounded-2xl border border-border/60 dark:border-white/10 bg-muted shadow-xl transition-[transform,box-shadow] duration-300 ease-out group-hover:scale-105 group-hover:shadow-2xl"
+                                style={{
+                                  zIndex: basePos.zIndex,
+                                  transform: `translateX(${basePos.x}px) translateY(${basePos.y}px) rotate(${basePos.rotate}deg)`,
+                                }}
+                              >
+                                <Image
+                                  src={photo.src}
+                                  alt={photo.alt}
+                                  fill
+                                  sizes="(min-width: 640px) 160px, 125px"
+                                  className="object-cover"
+                                />
+                                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-200" />
+                              </div>
+                            );
+                          })}
                         </button>
+
+                        <p className="text-[11px] font-mono text-muted-foreground/70 mt-3 flex items-center gap-1.5 select-none">
+                          <span>Click preview to expand gallery</span>
+                          <span className="text-border">•</span>
+                          <span>{activeService.proof.gallery.length} artifacts</span>
+                        </p>
                       </div>
                     </motion.div>
                   ) : (
                     <motion.div
-                      key="gallery-expanded"
-                      initial={{ opacity: 0, y: 16 }}
+                      key={`gallery-expanded-${activeServiceIndex}`}
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -16 }}
-                      transition={{ duration: 0.24 }}
-                      className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6"
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="space-y-6"
                     >
-                      {activeService.proof.gallery.map((photo) => (
-                        <motion.div
-                          key={photo.src}
-                          layout
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.2 }}
-                          className="relative aspect-square overflow-hidden rounded-[1.5rem] bg-muted shadow-lg md:rounded-[2rem]"
-                        >
-                          <Image
-                            src={photo.src}
-                            alt={photo.alt}
-                            fill
-                            sizes="(min-width: 1024px) 33vw, 50vw"
-                            className="object-cover"
-                          />
-                        </motion.div>
-                      ))}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
+                        <p className="text-xs sm:text-sm font-medium text-muted-foreground">
+                          {activeService.proof.description}
+                        </p>
+                        <span className="text-[11px] font-mono text-muted-foreground/70 shrink-0">
+                          {activeService.proof.gallery.length} screenshots • Click to inspect full-size
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                        {activeService.proof.gallery.map((photo, i) => (
+                          <button
+                            key={photo.src}
+                            type="button"
+                            onClick={() => setLightboxIndex(i)}
+                            className="group relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-border/60 dark:border-white/10 bg-muted text-left transition-[border-color,transform] duration-200 hover:border-foreground/40 hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer"
+                            aria-label={`Inspect screenshot: ${photo.alt}`}
+                          >
+                            <Image
+                              src={photo.src}
+                              alt={photo.alt}
+                              fill
+                              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                              className="object-cover transition-[transform] duration-500 ease-out group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end p-3.5">
+                              <p className="text-xs font-medium text-white line-clamp-2">
+                                {photo.alt}
+                              </p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Lightbox for Full-Size Screenshot Inspection */}
+      <AnimatePresence>
+        {lightboxIndex !== null && activeService && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="fixed inset-0 z-[1100] bg-black/92 backdrop-blur-md flex flex-col items-center justify-between p-4 sm:p-6"
+            onClick={() => setLightboxIndex(null)}
+          >
+            {/* Top Bar */}
+            <div
+              className="w-full max-w-5xl flex items-center justify-between text-white/80 py-2 select-none"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="font-mono text-xs text-white/70">
+                {lightboxIndex + 1} / {activeService.proof.gallery.length}
+              </span>
+              <button
+                type="button"
+                onClick={() => setLightboxIndex(null)}
+                className="flex size-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none cursor-pointer"
+                aria-label="Close image inspection (Esc)"
+                title="Close (Esc)"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            {/* Center Image */}
+            <div
+              className="relative flex-1 w-full max-w-5xl flex items-center justify-center py-2"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative w-full h-full max-h-[75vh] flex items-center justify-center">
+                <Image
+                  src={activeService.proof.gallery[lightboxIndex].src}
+                  alt={activeService.proof.gallery[lightboxIndex].alt}
+                  fill
+                  className="object-contain"
+                  sizes="100vw"
+                  priority
+                />
+              </div>
+
+              {/* Prev / Next controls */}
+              {activeService.proof.gallery.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setLightboxIndex(
+                        (lightboxIndex - 1 + activeService.proof.gallery.length) %
+                          activeService.proof.gallery.length
+                      )
+                    }
+                    className="absolute left-2 sm:left-4 flex size-10 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-sm hover:bg-black/80 transition-colors focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none cursor-pointer"
+                    aria-label="Previous image"
+                    title="Previous (←)"
+                  >
+                    <ChevronLeft className="size-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setLightboxIndex(
+                        (lightboxIndex + 1) % activeService.proof.gallery.length
+                      )
+                    }
+                    className="absolute right-2 sm:right-4 flex size-10 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-sm hover:bg-black/80 transition-colors focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none cursor-pointer"
+                    aria-label="Next image"
+                    title="Next (→)"
+                  >
+                    <ChevronRight className="size-5" />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Bottom Caption */}
+            <div
+              className="w-full max-w-2xl text-center py-2 text-white/90 text-xs sm:text-sm font-medium"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {activeService.proof.gallery[lightboxIndex].alt}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

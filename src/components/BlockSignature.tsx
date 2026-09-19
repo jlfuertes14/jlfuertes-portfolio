@@ -4,6 +4,7 @@ import React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 const LETTERS = {
   J: [
@@ -93,8 +94,12 @@ const TEXT = "JOHN LESTER";
 const CHAR_SPACING = 2;
 const WORD_SPACING = 6;
 const DEPTH_STRATA = 4;
-const BASE_COLOR = new THREE.Color(0x444444);
-const HOVER_COLOR = new THREE.Color(0x999999);
+// When footer is dark (in light mode), blocks are ivory white
+const DARK_FOOTER_BASE = new THREE.Color(0xf4f4f5);
+const DARK_FOOTER_HOVER = new THREE.Color(0xa1a1aa);
+// When footer is white (in dark mode), blocks are obsidian dark
+const LIGHT_FOOTER_BASE = new THREE.Color(0x18181b);
+const LIGHT_FOOTER_HOVER = new THREE.Color(0x52525b);
 const REVEAL_HOLD_MS = 1800;
 
 type LetterKey = keyof typeof LETTERS;
@@ -118,12 +123,23 @@ type BlockData = {
 type BlockSignatureProps = {
   className?: string;
   variant?: "full-bleed" | "footer";
+  footerTheme?: "dark" | "light";
 };
 
 export function BlockSignature({
   className,
   variant = "footer",
+  footerTheme,
 }: BlockSignatureProps) {
+  const { resolvedTheme } = useTheme();
+  // If app is dark mode, footer is light; if app is light mode, footer is dark
+  const activeFooterTheme = footerTheme ?? (resolvedTheme === "dark" ? "light" : "dark");
+  const footerThemeRef = React.useRef(activeFooterTheme);
+
+  React.useEffect(() => {
+    footerThemeRef.current = activeFooterTheme;
+  }, [activeFooterTheme]);
+
   const sectionRef = React.useRef<HTMLDivElement>(null);
   const mountRef = React.useRef<HTMLDivElement>(null);
   const isAssembledRef = React.useRef(false);
@@ -313,7 +329,7 @@ export function BlockSignature({
               targetY: scatterY,
               targetZ: scatterZ,
               hoverOffset: 0,
-              currentColor: new THREE.Color(0x444444),
+              currentColor: new THREE.Color(footerThemeRef.current === "dark" ? 0xf4f4f5 : 0x18181b),
             });
 
             indexCounter += 1;
@@ -478,21 +494,25 @@ export function BlockSignature({
         hoveredLetterIndex = blocksData[hoveredId]?.letterIndex ?? null;
       }
 
+      const isDarkFooter = footerThemeRef.current === "dark";
+      const currentBaseColor = isDarkFooter ? DARK_FOOTER_BASE : LIGHT_FOOTER_BASE;
+      const currentHoverColor = isDarkFooter ? DARK_FOOTER_HOVER : LIGHT_FOOTER_HOVER;
+
       blocksData.forEach((block) => {
         block.currX += (block.targetX - block.currX) * 0.04;
         block.currY += (block.targetY - block.currY) * 0.04;
         block.currZ += (block.targetZ - block.currZ) * 0.04;
 
         let targetHoverOffset = 0;
-        let targetColor = BASE_COLOR;
+        let targetColor = currentBaseColor;
 
         if (hoveredLetterIndex !== null && block.letterIndex === hoveredLetterIndex) {
           targetHoverOffset = 0.8;
-          targetColor = HOVER_COLOR;
+          targetColor = currentHoverColor;
         }
 
         block.hoverOffset += (targetHoverOffset - block.hoverOffset) * 0.15;
-        block.currentColor.lerp(targetColor, 0.15);
+        block.currentColor.lerp(targetColor, 0.12);
 
         dummyMatrix.position.set(block.currX, block.currY + block.hoverOffset, block.currZ);
         dummyMatrix.updateMatrix();
