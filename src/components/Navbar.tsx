@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SoundToggle } from "@/components/SoundToggle";
 import { Logo } from "@/components/Logo";
 import MobileMenu from "@/components/MobileMenu";
 import { navLinks } from "@/lib/site-data";
@@ -211,13 +212,15 @@ export default function Navbar() {
         {/* Divider between Links & Actions (Desktop) */}
         <div className="hidden md:block h-5 w-px bg-border/60 dark:bg-white/10 shrink-0" aria-hidden="true" />
 
-        {/* Right Side: Theme Toggle on Desktop */}
-        <div className="hidden md:flex items-center shrink-0 pr-1">
+        {/* Right Side: Sound Toggle & Theme Toggle on Desktop */}
+        <div className="hidden md:flex items-center gap-2 shrink-0 pr-1">
+          <SoundToggle />
           <ThemeToggle />
         </div>
 
-        {/* Mobile Nav: Theme Toggle + Mobile Menu Trigger */}
+        {/* Mobile Nav: Sound Toggle + Theme Toggle + Mobile Menu Trigger */}
         <div className="flex items-center gap-1.5 sm:gap-2 md:hidden shrink-0">
+          <SoundToggle />
           <ThemeToggle />
           <MobileMenu />
         </div>

@@ -7,11 +7,31 @@ import { ArrowUpRight, ChevronLeft, ChevronRight, Cpu } from "lucide-react";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence, useReducedMotion, useInView, animate, type Variants } from "framer-motion";
 import { SiEspressif } from "react-icons/si";
+import { playHoverSound } from "@/lib/sound-effects";
 
 const GitHubCalendar = dynamic(
   () => import("react-github-calendar").then((mod) => mod.GitHubCalendar),
   { ssr: false }
 );
+
+function formatContributionDate(dateStr: string): string {
+  try {
+    const [yearStr, monthStr, dayStr] = dateStr.split("-");
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10) - 1;
+    const day = parseInt(dayStr, 10);
+    const date = new Date(year, month, day);
+
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  } catch {
+    return dateStr;
+  }
+}
 
 type SkillIcon =
   | { kind: "image"; src: string; invertInDark?: boolean; rounded?: boolean }
@@ -218,6 +238,30 @@ export default function About() {
 
   const metricsRef = useRef<HTMLDivElement>(null);
   const [isMetricsActive, setIsMetricsActive] = useState(false);
+
+  // GitHub contribution hover tooltip state
+  const [hoveredBlock, setHoveredBlock] = useState<{
+    activity: { date: string; count: number; level: number };
+    rect: {
+      top: number;
+      bottom: number;
+      left: number;
+      right: number;
+      width: number;
+      height: number;
+    };
+  } | null>(null);
+
+  // Dismiss calendar tooltip on window scroll or resize to prevent floating desync
+  useEffect(() => {
+    const handleDismiss = () => setHoveredBlock(null);
+    window.addEventListener("scroll", handleDismiss, { passive: true });
+    window.addEventListener("resize", handleDismiss, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleDismiss);
+      window.removeEventListener("resize", handleDismiss);
+    };
+  }, []);
 
   // Track each category and metrics viewport alignment so animations are strictly scroll-based
   useEffect(() => {
@@ -844,14 +888,51 @@ export default function About() {
           </div>
 
           {/* Contribution Activity Heatmap */}
-          <div className="pt-8 sm:pt-10 border-t border-border/60">
+          <div className="pt-8 sm:pt-10 border-t border-border/60 relative">
+            {/* SVG Gradients for Hovered Calendar Block Sheen */}
+            <svg
+              width="0"
+              height="0"
+              className="absolute -z-50 pointer-events-none opacity-0"
+              aria-hidden="true"
+            >
+              <defs>
+                {/* Dark mode active green hovered glossy gradient */}
+                <linearGradient id="github-calendar-hover-gradient-dark" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#86efac" />
+                  <stop offset="35%" stopColor="#39d353" />
+                  <stop offset="100%" stopColor="#0e4429" />
+                </linearGradient>
+
+                {/* Dark mode empty day hovered gradient */}
+                <linearGradient id="github-calendar-hover-empty-dark" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#38414e" />
+                  <stop offset="100%" stopColor="#161b22" />
+                </linearGradient>
+
+                {/* Light mode active green hovered glossy gradient */}
+                <linearGradient id="github-calendar-hover-gradient-light" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#bbf7d0" />
+                  <stop offset="35%" stopColor="#40c463" />
+                  <stop offset="100%" stopColor="#216e39" />
+                </linearGradient>
+
+                {/* Light mode empty day hovered gradient */}
+                <linearGradient id="github-calendar-hover-empty-light" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="100%" stopColor="#d1d5db" />
+                </linearGradient>
+              </defs>
+            </svg>
+
             {/* Horizontal Scrollable Calendar with Zero Scrollbar */}
             <div
               ref={calendarScrollRef}
+              onScroll={() => setHoveredBlock(null)}
               className="w-full overflow-x-auto hide-scrollbar no-scrollbar py-2 sm:py-4"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
-              <div className="min-w-fit flex justify-center">
+              <div className="min-w-fit flex justify-center text-muted-foreground">
                 <GitHubCalendar
                   username="jlfuertes14"
                   fontSize={isCompactCalendar ? 11 : 14}
@@ -859,12 +940,98 @@ export default function About() {
                   blockMargin={isCompactCalendar ? 3.5 : 4.5}
                   blockRadius={3}
                   colorScheme={theme === "dark" ? "dark" : "light"}
+                  theme={{
+                    dark: ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
+                    light: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
+                  }}
+                  renderBlock={(block, activity) => {
+                    const isHovered = hoveredBlock?.activity.date === activity.date;
+
+                    return React.cloneElement(block as React.ReactElement<React.SVGProps<SVGRectElement>>, {
+                      className: `github-calendar-cell ${isHovered ? "is-hovered" : ""}`,
+                      style: {
+                        ...((block as React.ReactElement<{ style?: React.CSSProperties }>).props?.style),
+                        rx: 3,
+                        ry: 3,
+                        cursor: "pointer",
+                      },
+                      onMouseEnter: (e: React.MouseEvent<SVGRectElement>) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        setHoveredBlock({
+                          activity,
+                          rect: {
+                            top: rect.top,
+                            bottom: rect.bottom,
+                            left: rect.left,
+                            right: rect.right,
+                            width: rect.width,
+                            height: rect.height,
+                          },
+                        });
+                        playHoverSound({ volume: 0.16 });
+                      },
+                      onMouseLeave: () => {
+                        setHoveredBlock((curr) => (curr?.activity.date === activity.date ? null : curr));
+                      },
+                      onTouchStart: (e: React.TouchEvent<SVGRectElement>) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        setHoveredBlock({
+                          activity,
+                          rect: {
+                            top: rect.top,
+                            bottom: rect.bottom,
+                            left: rect.left,
+                            right: rect.right,
+                            width: rect.width,
+                            height: rect.height,
+                          },
+                        });
+                        playHoverSound({ volume: 0.16 });
+                      },
+                    });
+                  }}
                 />
               </div>
             </div>
+
+            {/* Floating Custom Monospace Contribution Tooltip Badge */}
+            <AnimatePresence>
+              {hoveredBlock && (
+                <motion.div
+                  key={hoveredBlock.activity.date}
+                  initial={{ opacity: 0, y: 3, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 2, scale: 0.98 }}
+                  transition={{ duration: 0.1, ease: [0.23, 1, 0.32, 1] }}
+                  style={{
+                    position: "fixed",
+                    top: hoveredBlock.rect.top < 65 ? hoveredBlock.rect.bottom + 8 : hoveredBlock.rect.top - 8,
+                    left: typeof window !== "undefined"
+                      ? Math.max(160, Math.min(window.innerWidth - 160, hoveredBlock.rect.left + hoveredBlock.rect.width / 2))
+                      : hoveredBlock.rect.left + hoveredBlock.rect.width / 2,
+                    transform: hoveredBlock.rect.top < 65 ? "translate(-50%, 0)" : "translate(-50%, -100%)",
+                    zIndex: 99999,
+                    pointerEvents: "none",
+                  }}
+                  className="pointer-events-none select-none rounded-lg border border-white/20 bg-[#090a0f]/95 px-3.5 py-1.5 shadow-2xl shadow-black/80 backdrop-blur-md"
+                >
+                  <div className="flex items-center gap-1.5 font-mono text-[12px] sm:text-[13px] leading-snug whitespace-nowrap text-zinc-100">
+                    <span className="font-bold text-white">
+                      {hoveredBlock.activity.count === 0
+                        ? "No contributions"
+                        : `${hoveredBlock.activity.count} contribution${hoveredBlock.activity.count === 1 ? "" : "s"}`}
+                    </span>
+                    <span className="font-normal text-zinc-300">
+                      on {formatContributionDate(hoveredBlock.activity.date)}
+                    </span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
     </section>
   );
 }
+

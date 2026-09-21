@@ -19,6 +19,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 
 import Navbar from "@/components/Navbar";
 import { AppLoader } from "@/components/ui/app-loader";
+import { SoundEffectsProvider } from "@/components/SoundEffectsProvider";
 
 export const metadata: Metadata = {
   title: "John Lester Fuertes — Portfolio",
@@ -60,7 +61,7 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className="antialiased min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-primary transition-colors duration-300 overflow-x-hidden"
+        className="antialiased min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-primary overflow-x-hidden"
       >
         <ThemeProvider
           attribute="class"
@@ -68,12 +69,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AppLoader>
-            <DotsBackground />
-            <Navbar />
-            {children}
-            <AiChat />
-          </AppLoader>
+          <SoundEffectsProvider>
+            <AppLoader>
+              <DotsBackground />
+              <Navbar />
+              {children}
+              <AiChat />
+            </AppLoader>
+          </SoundEffectsProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -186,7 +186,7 @@ export default function ResumePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-primary transition-colors duration-300">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-primary">
       {/* Spacer for sticky navbar */}
       <div className="h-20 sm:h-24 md:h-28" />
 

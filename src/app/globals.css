@@ -306,3 +306,73 @@
   transform: translateX(calc(var(--box-size) * -0.5)) translateZ(calc(var(--box-size) * 0.5)) rotateY(-90deg);
 }
 
+/* Circular Theme Reveal Transition */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+  animation: circle-reveal 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes circle-reveal {
+  0% {
+    clip-path: circle(var(--theme-toggle-start-r, 0px) at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%));
+  }
+  100% {
+    clip-path: circle(var(--theme-toggle-r, 150vmax) at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* GitHub Calendar Contribution Block Hover Effect */
+.github-calendar-cell {
+  transition: filter 0.18s cubic-bezier(0.23, 1, 0.32, 1),
+              stroke 0.18s cubic-bezier(0.23, 1, 0.32, 1),
+              fill 0.18s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.dark .github-calendar-cell:hover,
+[data-theme="dark"] .github-calendar-cell:hover {
+  fill: url(#github-calendar-hover-gradient-dark) !important;
+  stroke: #ffffff !important;
+  stroke-width: 1.5px !important;
+  filter: drop-shadow(0 0 6px rgba(57, 211, 83, 0.6)) !important;
+  cursor: pointer;
+}
+
+.dark .github-calendar-cell[data-level="0"]:hover,
+[data-theme="dark"] .github-calendar-cell[data-level="0"]:hover {
+  fill: url(#github-calendar-hover-empty-dark) !important;
+  stroke: rgba(255, 255, 255, 0.85) !important;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.3)) !important;
+}
+
+html:not(.dark) .github-calendar-cell:hover {
+  fill: url(#github-calendar-hover-gradient-light) !important;
+  stroke: #166534 !important;
+  stroke-width: 1.5px !important;
+  filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.45)) !important;
+  cursor: pointer;
+}
+
+html:not(.dark) .github-calendar-cell[data-level="0"]:hover {
+  fill: url(#github-calendar-hover-empty-light) !important;
+  stroke: #4b5563 !important;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.2)) !important;
+}
+

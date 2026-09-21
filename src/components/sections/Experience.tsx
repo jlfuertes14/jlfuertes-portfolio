@@ -193,27 +193,8 @@ function TimelineContent() {
 
       milestones.forEach((_, index) => {
         const card = cardRefs.current[index];
-        const dot = dotRefs.current[index];
 
-        if (card && dot) {
-          gsap.fromTo(
-            dot,
-            { scale: 0, backgroundColor: '#111', boxShadow: '0 0 0px rgba(255,255,255,0)' },
-            {
-              scale: 1,
-              backgroundColor: 'var(--primary)',
-              boxShadow: '0 0 20px var(--primary)',
-              duration: 0.4,
-              ease: 'back.out(2)',
-              scrollTrigger: {
-                trigger: dot,
-                start: 'center 55%',
-                end: 'center 10%',
-                toggleActions: 'play reverse play reverse',
-              },
-            }
-          );
-
+        if (card) {
           const isMobile = window.innerWidth < 768;
           const isLeft = index % 2 === 0;
           const cardXOffset = isMobile ? 50 : (isLeft ? -50 : 50);
@@ -292,17 +273,16 @@ function TimelineContent() {
               d={pathD}
               fill="none"
               stroke="transparent"
-              strokeWidth="2"
-              strokeLinecap="round"
+              strokeWidth="15"
+              strokeLinecap="butt"
             />
             <path
               ref={pathRef}
               d={pathD}
               fill="none"
               stroke="var(--primary)"
-              strokeWidth="5.5"
-              strokeLinecap="round"
-              style={{ filter: 'drop-shadow(0 0 10px var(--primary))' }}
+              strokeWidth="15"
+              strokeLinecap="butt"
             />
           </svg>
 
@@ -321,8 +301,9 @@ function TimelineContent() {
                   >
                     <div
                       ref={(el) => { dotRefs.current[index] = el; }}
-                      className={`absolute top-12 w-3 h-3 rounded-full z-20 ${isLeft ? 'md:-right-[6px] -left-6 sm:-left-8 md:-left-[6px]' : '-left-6 sm:-left-8 md:-left-[6px]'
+                      className={`absolute top-12 w-3 h-3 opacity-0 pointer-events-none z-20 ${isLeft ? 'md:-right-[6px] -left-6 sm:-left-8 md:-left-[6px]' : '-left-6 sm:-left-8 md:-left-[6px]'
                         }`}
+                      aria-hidden="true"
                     />
 
                     <div className="flex flex-col gap-2 relative z-10">

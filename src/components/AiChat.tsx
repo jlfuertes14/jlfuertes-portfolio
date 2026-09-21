@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { MessageCircle, Send, X, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
+import { playMechanicalClick } from "@/lib/sound-effects";
 
 interface Message {
   role: "user" | "model";
@@ -73,6 +74,21 @@ export default function AiChat() {
       ]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const lastKeyTimeRef = useRef(0);
+
+  const handleKeySound = (key?: string) => {
+    lastKeyTimeRef.current = Date.now();
+    if (key === " " || key === "Spacebar") {
+      playMechanicalClick({ pitchShift: 0.82, volume: 0.38 });
+    } else if (key === "Enter") {
+      playMechanicalClick({ pitchShift: 0.88, volume: 0.40 });
+    } else if (key === "Backspace" || key === "Delete") {
+      playMechanicalClick({ pitchShift: 1.08, volume: 0.32 });
+    } else {
+      playMechanicalClick({ volume: 0.34 });
     }
   };
 
@@ -173,7 +189,18 @@ export default function AiChat() {
             <form onSubmit={handleSubmit} className="flex items-center gap-2">
               <input
                 value={input}
-                onChange={(e) => setInput(e.target.value.slice(0, MAX_CHARS))}
+                onChange={(e) => {
+                  const newVal = e.target.value.slice(0, MAX_CHARS);
+                  // Trigger sound if keydown was missed (e.g. mobile virtual keyboards or autocomplete)
+                  if (Date.now() - lastKeyTimeRef.current > 55 && newVal !== input) {
+                    handleKeySound();
+                  }
+                  setInput(newVal);
+                }}
+                onKeyDown={(e) => {
+                  if (["Shift", "Control", "Alt", "Meta", "CapsLock", "Tab"].includes(e.key)) return;
+                  handleKeySound(e.key);
+                }}
                 placeholder="Type a message..."
                 className="flex-1 rounded-xl bg-muted/50 border border-border/50 px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
               />

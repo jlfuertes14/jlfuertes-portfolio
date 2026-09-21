@@ -13,6 +13,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useLenis } from "lenis/react";
 import { cn } from "@/lib/utils";
 import { ServiceHoverModal } from "@/components/ui/services-with-animated-hover-modal";
+import { playHoverSound } from "@/lib/sound-effects";
 
 interface GalleryImage {
   src: string;
@@ -291,7 +292,10 @@ export default function Services() {
                     e.currentTarget.blur();
                     openGallery(index);
                   }}
-                  onMouseEnter={() => setModal({ active: true, index })}
+                  onMouseEnter={() => {
+                    setModal({ active: true, index });
+                    playHoverSound();
+                  }}
                   onMouseLeave={() => setModal({ active: false, index })}
                   className={cn(
                     "group relative flex w-full flex-col md:flex-row items-start md:items-center justify-between",
