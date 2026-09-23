@@ -42,6 +42,9 @@ export const metadata: Metadata = {
       "Computer Engineering graduate building web applications and hardware circuits.",
     type: "website",
   },
+  verification: {
+    google: "G44CczSUsBYNaA_LxBUWUesC3pizbmi2wqvZQ8x-Y-s",
+  },
 };
 
 export default function RootLayout({
