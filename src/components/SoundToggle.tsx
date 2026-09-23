@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Volume2, VolumeX, Check, Play } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -19,6 +20,12 @@ export function SoundToggle() {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  // Close dropdown on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     setMounted(true);
@@ -44,7 +51,7 @@ export function SoundToggle() {
     };
   }, []);
 
-  // Close dropdown on outside click
+  // Close dropdown on outside click, escape, or window resize
   useEffect(() => {
     if (!isOpen) return;
 
@@ -60,12 +67,18 @@ export function SoundToggle() {
       }
     };
 
+    const handleResize = () => {
+      setIsOpen(false);
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", handleResize);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("resize", handleResize);
     };
   }, [isOpen]);
 
@@ -98,8 +111,9 @@ export function SoundToggle() {
     <div ref={containerRef} className="relative flex items-center">
       {/* Bare speaker icon button — NO container box, NO active dot */}
       <button
+        type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="group relative flex cursor-pointer items-center justify-center p-1.5 text-foreground/70 hover:text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none rounded-md"
+        className="group relative flex cursor-pointer items-center justify-center p-1.5 text-foreground/70 hover:text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none rounded-md touch-manipulation"
         aria-label={enabled ? "Sound settings: Click sounds active" : "Sound settings: Click sounds muted"}
         aria-haspopup="true"
         aria-expanded={isOpen}
@@ -120,24 +134,25 @@ export function SoundToggle() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -6 }}
             transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-            className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl border border-border/70 bg-background/95 backdrop-blur-2xl p-3 shadow-2xl z-50 select-none"
+            className="fixed top-[4.25rem] right-3 sm:right-6 w-[calc(100vw-1.5rem)] max-w-[340px] md:absolute md:top-full md:mt-2 md:right-0 md:w-80 md:max-w-none rounded-2xl border border-border/70 bg-background/95 backdrop-blur-2xl p-3 shadow-2xl z-50 select-none touch-manipulation origin-top-right pointer-events-auto"
             role="menu"
             aria-orientation="vertical"
           >
             {/* Header: Title & Mute toggle */}
-            <div className="flex items-center justify-between px-2 pb-2.5 mb-2 border-b border-border/50">
-              <div className="flex flex-col">
-                <span className="text-xs font-semibold tracking-wider uppercase text-foreground">
+            <div className="flex items-center justify-between px-1.5 sm:px-2 pb-2.5 mb-2 border-b border-border/50">
+              <div className="flex flex-col min-w-0 pr-2">
+                <span className="text-xs font-semibold tracking-wider uppercase text-foreground truncate">
                   Mechanical Sounds
                 </span>
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-[11px] text-muted-foreground truncate">
                   Choose your switch profile
                 </span>
               </div>
 
               <button
+                type="button"
                 onClick={handleToggleMute}
-                className={`text-xs px-3 py-1 rounded-full font-medium transition-colors cursor-pointer border ${
+                className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors cursor-pointer border shrink-0 touch-manipulation focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
                   enabled
                     ? "border-primary/30 bg-primary/10 text-primary hover:bg-primary/20"
                     : "border-primary/50 bg-primary text-primary-foreground hover:bg-primary/90"
@@ -153,10 +168,11 @@ export function SoundToggle() {
                 const isSelected = enabled && currentProfile === profile.id;
 
                 return (
-                  <div
+                  <button
+                    type="button"
                     key={profile.id}
                     onClick={() => handleSelectProfile(profile.id)}
-                    className={`group/item flex items-center justify-between gap-3 p-2.5 rounded-xl cursor-pointer transition-all duration-150 ${
+                    className={`group/item w-full text-left flex items-center justify-between gap-3 p-2.5 rounded-xl cursor-pointer transition-[background-color,border-color,color] duration-150 touch-manipulation focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
                       isSelected
                         ? "bg-primary/10 border border-primary/30 text-foreground"
                         : "hover:bg-muted/50 border border-transparent text-muted-foreground hover:text-foreground"
@@ -168,7 +184,7 @@ export function SoundToggle() {
                         <span className={`text-sm font-medium ${isSelected ? "text-foreground font-semibold" : ""}`}>
                           {profile.name}
                         </span>
-                        <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-muted/80 text-muted-foreground border border-border/40">
+                        <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-muted/80 text-muted-foreground border border-border/40 shrink-0">
                           {profile.tag}
                         </span>
                       </div>
@@ -178,7 +194,7 @@ export function SoundToggle() {
                     </div>
 
                     {/* Preview / Selected Icon */}
-                    <div className="flex items-center gap-1 shrink-0">
+                    <div className="flex items-center gap-1 shrink-0" aria-hidden="true">
                       {isSelected ? (
                         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
                           <Check className="h-3.5 w-3.5" />
@@ -192,7 +208,7 @@ export function SoundToggle() {
                         </span>
                       )}
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>

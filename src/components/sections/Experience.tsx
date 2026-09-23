@@ -34,7 +34,7 @@ const milestones: TimelineMilestone[] = [
     period: "July 2026",
     role: "BS Computer Engineering Graduate",
     organization: "Rizal Technological University",
-    description: "I took up Computer Engineering back in 2022 simply because I loved computers, but looking back, it opened up so many doors for me to grow, not just as an engineer, but as a person. There were definitely times when I doubted whether I could keep up with complex circuit design and low-level architectures, but persevering through those challenges made me fall in love with the art of building. It led me straight to my capstone thesis, 'HatchWatch', an IoT and AI-powered incubator system for Philippine Mallard Ducks, and helped me realize my true path: creating practical software and intelligent hardware that solve real-world problems.",
+    description: "I took up Computer Engineering in 2022 because I loved computers, but it quickly grew into a passion for the art of building. Tackling complex circuits and low-level architectures led straight to my capstone thesis, 'HatchWatch'—an IoT and AI-powered incubator system for Philippine Mallard Ducks—and solidified my path: creating practical software and intelligent hardware that solve real-world problems.",
     image: "/images/journey/graduation_pic.png"
   },
   {
@@ -42,7 +42,7 @@ const milestones: TimelineMilestone[] = [
     period: "February 2026 - April 2026",
     role: "IT Intern",
     organization: "Q Asia Magazine Inc.",
-    description: "Stepping into the research department at Q Asia Magazine opened my eyes to how fast-paced and demanding corporate workflows really are. It was completely new territory for me, but I adapted quickly and looked for ways to make a tangible difference. Even though it was a marketing-focused environment, I stood out by leaning into my technical strengths. I built the 'QAsia Email Automation Software', a custom Python and CustomTkinter desktop tool that streamlined bulk outreach via SMTP and cut manual contact tracing by over 60%, directly helping the team smash their daily quotas and widen company reach.",
+    description: "Stepping into the research department at Q Asia Magazine opened my eyes to fast-paced corporate workflows. I adapted quickly and leaned into my technical strengths, building the 'QAsia Email Automation Software'—a custom Python and CustomTkinter tool that cut manual contact tracing by over 60% and directly helped our team smash daily quotas.",
     images: ["/images/journey/internship1.png", "/images/journey/internship2.jpeg"]
   },
   {
@@ -50,7 +50,7 @@ const milestones: TimelineMilestone[] = [
     period: "2020 - 2022",
     role: "STEM Research Lead",
     organization: "Buting Senior High School",
-    description: "Senior high school was where my curiosity and obsession with experimentation really took off. Stepping up as a STEM Research Lead, I coordinated our academic teams through late-night trial-and-error experiments, diving into feasibility studies on piezoelectric generators and organic materials. It taught me how to lead others, troubleshoot when experiments inevitably failed, and stay disciplined under pressure. Finishing that chapter with Honors and a 94% GPA gave me the confidence that I had what it takes to pursue engineering in college.",
+    description: "Senior high school was where my obsession with experimentation really took off. As a STEM Research Lead, I coordinated our teams through late-night experiments, diving into feasibility studies on piezoelectric generators and organic materials. Troubleshooting failed trials taught me discipline under pressure, finishing that chapter with Honors and a 94% GPA.",
     image: "/images/journey/buting-senior-high-research.jpeg"
   },
   {
@@ -58,7 +58,7 @@ const milestones: TimelineMilestone[] = [
     period: "2015 - 2026",
     role: "Pasig City Scholar",
     organization: "City Government of Pasig",
-    description: "Being a Pasig City Scholar for 11 consecutive years is something I hold very close to my heart. Earning the scholarship through competitive academic screening was tough, but keeping it year after year from grade school all the way through to university graduation required relentless consistency. Whenever school got overwhelming or self-doubt crept in, this scholarship was a constant reminder of the trust placed in me and why I started. It shaped my work ethic, taught me accountability, and proved to me that staying disciplined over the long run always pays off.",
+    description: "Being a Pasig City Scholar for 11 consecutive years is something I hold very close to my heart. Keeping it from grade school through university graduation required relentless consistency. It was a constant reminder of the trust placed in me, shaping my work ethic, accountability, and proving that long-term discipline always pays off.",
     image: "/images/journey/Pasig%20City%20Scholarship%20Office.png"
   }
 ];
@@ -193,12 +193,15 @@ function TimelineContent() {
 
       milestones.forEach((_, index) => {
         const card = cardRefs.current[index];
+        const dot = dotRefs.current[index];
+        const imgEl = imageRefs.current[index];
 
-        if (card) {
+        if (card && dot) {
           const isMobile = window.innerWidth < 768;
           const isLeft = index % 2 === 0;
           const cardXOffset = isMobile ? 50 : (isLeft ? -50 : 50);
 
+          // Render description card when SVG touches dot
           gsap.fromTo(
             card,
             { opacity: 0, x: cardXOffset },
@@ -208,15 +211,14 @@ function TimelineContent() {
               duration: 0.8,
               ease: 'power3.out',
               scrollTrigger: {
-                trigger: card,
-                start: 'top 65%',
-                end: 'bottom 25%',
+                trigger: dot,
+                start: 'center center',
                 toggleActions: 'play reverse play reverse',
               },
             }
           );
 
-          const imgEl = imageRefs.current[index];
+          // Render photo card at the same time
           if (imgEl) {
             gsap.fromTo(
               imgEl,
@@ -228,9 +230,8 @@ function TimelineContent() {
                 duration: 0.8,
                 ease: 'power3.out',
                 scrollTrigger: {
-                  trigger: card,
-                  start: 'top 65%',
-                  end: 'bottom 25%',
+                  trigger: dot,
+                  start: 'center center',
                   toggleActions: 'play reverse play reverse',
                 },
               }
@@ -286,7 +287,7 @@ function TimelineContent() {
             />
           </svg>
 
-          <div className="relative z-10 w-full flex flex-col gap-[15vh] py-[5vh]">
+          <div className="relative z-10 w-full flex flex-col gap-[18vh] py-[5vh]">
             {milestones.map((exp, index) => {
               const isLeft = index % 2 === 0;
 
@@ -306,17 +307,17 @@ function TimelineContent() {
                       aria-hidden="true"
                     />
 
-                    <div className="flex flex-col gap-2 relative z-10">
-                      <span className="font-mono text-sm text-primary uppercase tracking-widest font-semibold">
+                    <div className="flex flex-col gap-1.5 sm:gap-2 relative z-10">
+                      <span className="font-mono text-xs sm:text-sm text-primary uppercase tracking-widest font-semibold">
                         {exp.period}
                       </span>
-                      <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground leading-tight mt-2">
+                      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground leading-snug mt-0.5 sm:mt-1">
                         {exp.role}
                       </h3>
-                      <h4 className="text-base text-foreground tracking-[0.1em] font-bold uppercase mb-6">
+                      <h4 className="text-xs sm:text-sm text-muted-foreground tracking-[0.1em] font-semibold uppercase mb-3 sm:mb-4">
                         {exp.organization}
                       </h4>
-                      <p className="text-base sm:text-lg leading-relaxed text-foreground/90">
+                      <p className="text-sm sm:text-base leading-relaxed text-foreground/85">
                         {exp.description}
                       </p>
                     </div>

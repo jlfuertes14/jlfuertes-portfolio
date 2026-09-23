@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import {
   ArrowUpRight,
@@ -143,6 +144,39 @@ export default function Services() {
   const [activeServiceIndex, setActiveServiceIndex] = useState<number | null>(null);
   const [isGalleryExpanded, setIsGalleryExpanded] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [mobileCarouselIndex, setMobileCarouselIndex] = useState(0);
+  const mobileCarouselRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Reset mobile carousel when service changes or when expanding gallery
+  useEffect(() => {
+    setMobileCarouselIndex(0);
+    if (mobileCarouselRef.current) {
+      mobileCarouselRef.current.scrollLeft = 0;
+    }
+  }, [activeServiceIndex, isGalleryExpanded]);
+
+  const handleMobileCarouselScroll = useCallback(() => {
+    if (!mobileCarouselRef.current) return;
+    const { scrollLeft, clientWidth } = mobileCarouselRef.current;
+    if (clientWidth === 0) return;
+    const newIndex = Math.round(scrollLeft / clientWidth);
+    setMobileCarouselIndex(newIndex);
+  }, []);
+
+  const scrollCarouselTo = useCallback((index: number) => {
+    if (!mobileCarouselRef.current) return;
+    const { clientWidth } = mobileCarouselRef.current;
+    mobileCarouselRef.current.scrollTo({
+      left: index * clientWidth,
+      behavior: "smooth",
+    });
+    setMobileCarouselIndex(index);
+  }, []);
 
   const activeService =
     activeServiceIndex !== null ? services[activeServiceIndex] : null;
@@ -183,6 +217,7 @@ export default function Services() {
 
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
+    document.body.setAttribute("data-modal-open", "true");
     lenis?.stop();
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -226,6 +261,7 @@ export default function Services() {
     return () => {
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.removeAttribute("data-modal-open");
       lenis?.start();
       window.removeEventListener("keydown", handleKeyDown);
     };
@@ -371,61 +407,63 @@ export default function Services() {
 
       {/* Still-View Gallery Modal with Stacked Layout & Full Grid */}
       {/* Still-View Gallery Modal with Minimalist Two-Column Layout, Service Switcher & Lightbox */}
-      <AnimatePresence>
-        {activeService && activeServiceIndex !== null && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[1000] overflow-hidden overscroll-contain bg-black/65 dark:bg-black/80 p-3 sm:p-6 lg:p-8 backdrop-blur-md flex items-center justify-center"
-            onClick={closeGallery}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 16, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 16, scale: 0.98 }}
-              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              onClick={(event) => event.stopPropagation()}
-              className={cn(
-                "mx-auto flex w-full max-w-5xl flex-col rounded-2xl sm:rounded-3xl border border-border/70 dark:border-white/10",
-                "bg-background dark:bg-[#0a0a0c] shadow-2xl backdrop-blur-2xl text-foreground overflow-hidden",
-                isGalleryExpanded ? "h-[88vh]" : "max-h-[90vh]"
-              )}
-            >
-              {/* Header Bar */}
-              <div className="flex items-center justify-between gap-4 px-5 py-3.5 sm:px-8 sm:py-4 border-b border-border/50 select-none">
-                <div className="flex items-center gap-3 min-h-9">
-                  <AnimatePresence mode="wait">
-                    {isGalleryExpanded ? (
-                      <motion.button
-                        key="back-button"
-                        initial={{ opacity: 0, x: -6 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -6 }}
-                        type="button"
-                        onClick={() => setIsGalleryExpanded(false)}
-                        className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-muted/20 px-3.5 py-1.5 text-xs sm:text-sm font-medium text-foreground transition-[color,background-color] duration-150 hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer"
-                      >
-                        <ArrowLeft className="size-3.5" />
-                        <span>Back to overview</span>
-                      </motion.button>
-                    ) : (
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-muted-foreground/70">
-                          <span>{String(activeServiceIndex + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}</span>
-                          <span className="text-border">•</span>
-                          <span>{activeService.subtitle}</span>
-                        </div>
-                        <h3 className="text-base sm:text-lg font-semibold tracking-tight text-foreground">
-                          {activeService.title}
-                        </h3>
-                      </div>
-                    )}
-                  </AnimatePresence>
-                </div>
+      {mounted && typeof document !== "undefined" && createPortal(
+        <>
+          <AnimatePresence>
+            {activeService && activeServiceIndex !== null && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-[100] overflow-hidden overscroll-contain bg-black/75 dark:bg-black/85 p-3.5 sm:p-6 lg:p-8 backdrop-blur-md flex items-center justify-center"
+                onClick={closeGallery}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 16, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 16, scale: 0.98 }}
+                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  onClick={(event) => event.stopPropagation()}
+                  className={cn(
+                    "mx-auto flex w-full max-w-5xl flex-col rounded-2xl sm:rounded-3xl border border-border/70 dark:border-white/10",
+                    "bg-background dark:bg-[#0a0a0c] shadow-2xl backdrop-blur-2xl text-foreground overflow-hidden",
+                    isGalleryExpanded ? "h-auto max-h-[85vh] sm:h-[88vh]" : "h-auto max-h-[85vh] sm:max-h-[90vh]"
+                  )}
+                >
+                  {/* Header Bar */}
+                  <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-8 sm:py-4 border-b border-border/50 select-none">
+                    <div className="flex items-center gap-2 sm:gap-3 min-h-9 min-w-0 flex-1">
+                      <AnimatePresence mode="wait">
+                        {isGalleryExpanded ? (
+                          <motion.button
+                            key="back-button"
+                            initial={{ opacity: 0, x: -6 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -6 }}
+                            type="button"
+                            onClick={() => setIsGalleryExpanded(false)}
+                            className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-border/70 bg-muted/20 px-3.5 py-1.5 text-xs sm:text-sm font-medium text-foreground transition-[color,background-color] duration-150 hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer"
+                          >
+                            <ArrowLeft className="size-3.5" />
+                            <span>Back to overview</span>
+                          </motion.button>
+                        ) : (
+                          <div className="flex flex-col min-w-0">
+                            <div className="flex items-center gap-1.5 sm:gap-2 font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground/70 truncate">
+                              <span>{String(activeServiceIndex + 1).padStart(2, "0")} / {String(services.length).padStart(2, "0")}</span>
+                              <span className="text-border">•</span>
+                              <span className="truncate">{activeService.subtitle}</span>
+                            </div>
+                            <h3 className="text-sm sm:text-base lg:text-lg font-semibold tracking-tight text-foreground truncate">
+                              {activeService.title}
+                            </h3>
+                          </div>
+                        )}
+                      </AnimatePresence>
+                    </div>
 
-                <div className="flex items-center gap-1 sm:gap-1.5">
+                    <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                   {!isGalleryExpanded && (
                     <>
                       <div className="flex items-center gap-1">
@@ -467,7 +505,7 @@ export default function Services() {
               {/* Scrollbar-Free Gallery Content Area */}
               <div
                 data-lenis-prevent
-                className="flex-1 overflow-y-auto overscroll-contain px-5 py-6 sm:px-8 sm:py-8 hide-scrollbar no-scrollbar"
+                className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-8 sm:py-8 hide-scrollbar no-scrollbar"
                 style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
               >
                 <AnimatePresence mode="wait">
@@ -571,18 +609,109 @@ export default function Services() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
-                      className="space-y-6"
+                      className="space-y-3.5 sm:space-y-6"
                     >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 border-b border-border/40 pb-2.5 sm:pb-4">
                         <p className="text-xs sm:text-sm font-medium text-muted-foreground">
                           {activeService.proof.description}
                         </p>
                         <span className="text-[11px] font-mono text-muted-foreground/70 shrink-0">
-                          {activeService.proof.gallery.length} screenshots • Click to inspect full-size
+                          <span className="hidden sm:inline">
+                            {activeService.proof.gallery.length} screenshots • Click to inspect full-size
+                          </span>
+                          <span className="inline sm:hidden">
+                            Swipe or tap arrows to browse
+                          </span>
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                      {/* Mobile Carousel View (< sm) */}
+                      <div className="block sm:hidden space-y-2.5">
+                        <div className="relative">
+                          {/* Horizontal Swipe Track */}
+                          <div
+                            ref={mobileCarouselRef}
+                            onScroll={handleMobileCarouselScroll}
+                            className="flex w-full overflow-x-auto snap-x snap-mandatory gap-3 no-scrollbar scroll-smooth"
+                            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                          >
+                            {activeService.proof.gallery.map((photo, i) => (
+                              <div
+                                key={photo.src}
+                                className="w-full shrink-0 snap-center"
+                              >
+                                <button
+                                  type="button"
+                                  onClick={() => setLightboxIndex(i)}
+                                  className="group relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-border/70 dark:border-white/10 bg-muted text-left shadow-lg transition-transform active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer"
+                                  aria-label={`Inspect screenshot ${i + 1} of ${activeService.proof.gallery.length}: ${photo.alt}`}
+                                >
+                                  <Image
+                                    src={photo.src}
+                                    alt={photo.alt}
+                                    fill
+                                    sizes="100vw"
+                                    className="object-cover"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent flex items-end p-3.5">
+                                    <p className="text-xs font-medium text-white line-clamp-2">
+                                      {photo.alt}
+                                    </p>
+                                  </div>
+                                  <div className="absolute top-2.5 right-2.5 rounded-full bg-black/60 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-mono text-white/90 border border-white/15">
+                                    Tap to inspect
+                                  </div>
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Mobile Carousel Navigation Bar */}
+                        <div className="flex items-center justify-between px-1 pt-1 select-none">
+                          {/* Slider Left Arrow */}
+                          <button
+                            type="button"
+                            onClick={() => scrollCarouselTo(Math.max(0, mobileCarouselIndex - 1))}
+                            disabled={mobileCarouselIndex === 0}
+                            className="flex size-8 items-center justify-center rounded-full border border-border/70 bg-muted/20 text-foreground disabled:opacity-25 disabled:cursor-not-allowed hover:bg-muted/40 transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer touch-manipulation"
+                            aria-label="Previous case image"
+                          >
+                            <ChevronLeft className="size-4" />
+                          </button>
+
+                          {/* Indicator Dots with Highlight Icon Filled */}
+                          <div className="flex items-center gap-1.5 py-1">
+                            {activeService.proof.gallery.map((_, dotIdx) => (
+                              <button
+                                key={dotIdx}
+                                type="button"
+                                onClick={() => scrollCarouselTo(dotIdx)}
+                                aria-label={`Go to slide ${dotIdx + 1}`}
+                                className={`transition-all duration-200 rounded-full cursor-pointer touch-manipulation ${
+                                  mobileCarouselIndex === dotIdx
+                                    ? "w-4 h-1.5 bg-primary"
+                                    : "w-1.5 h-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                                }`}
+                              />
+                            ))}
+                          </div>
+
+                          {/* Slider Right Arrow */}
+                          <button
+                            type="button"
+                            onClick={() => scrollCarouselTo(Math.min(activeService.proof.gallery.length - 1, mobileCarouselIndex + 1))}
+                            disabled={mobileCarouselIndex === activeService.proof.gallery.length - 1}
+                            className="flex size-8 items-center justify-center rounded-full border border-border/70 bg-muted/20 text-foreground disabled:opacity-25 disabled:cursor-not-allowed hover:bg-muted/40 transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer touch-manipulation"
+                            aria-label="Next case image"
+                          >
+                            <ChevronRight className="size-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Desktop Grid View (>= sm) */}
+                      <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                         {activeService.proof.gallery.map((photo, i) => (
                           <button
                             key={photo.src}
@@ -616,95 +745,98 @@ export default function Services() {
       </AnimatePresence>
 
       {/* Lightbox for Full-Size Screenshot Inspection */}
-      <AnimatePresence>
-        {lightboxIndex !== null && activeService && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
-            className="fixed inset-0 z-[1100] bg-black/92 backdrop-blur-md flex flex-col items-center justify-between p-4 sm:p-6"
-            onClick={() => setLightboxIndex(null)}
-          >
-            {/* Top Bar */}
-            <div
-              className="w-full max-w-5xl flex items-center justify-between text-white/80 py-2 select-none"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <span className="font-mono text-xs text-white/70">
-                {lightboxIndex + 1} / {activeService.proof.gallery.length}
-              </span>
-              <button
-                type="button"
+          <AnimatePresence>
+            {lightboxIndex !== null && activeService && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                className="fixed inset-0 z-[120] bg-black/95 backdrop-blur-md flex flex-col items-center justify-between p-4 sm:p-6"
                 onClick={() => setLightboxIndex(null)}
-                className="flex size-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none cursor-pointer"
-                aria-label="Close image inspection (Esc)"
-                title="Close (Esc)"
               >
-                <X className="size-4" />
-              </button>
-            </div>
-
-            {/* Center Image */}
-            <div
-              className="relative flex-1 w-full max-w-5xl flex items-center justify-center py-2"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="relative w-full h-full max-h-[75vh] flex items-center justify-center">
-                <Image
-                  src={activeService.proof.gallery[lightboxIndex].src}
-                  alt={activeService.proof.gallery[lightboxIndex].alt}
-                  fill
-                  className="object-contain"
-                  sizes="100vw"
-                  priority
-                />
-              </div>
-
-              {/* Prev / Next controls */}
-              {activeService.proof.gallery.length > 1 && (
-                <>
+                {/* Top Bar */}
+                <div
+                  className="w-full max-w-5xl flex items-center justify-between text-white/80 py-2 select-none"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <span className="font-mono text-xs text-white/70">
+                    {lightboxIndex + 1} / {activeService.proof.gallery.length}
+                  </span>
                   <button
                     type="button"
-                    onClick={() =>
-                      setLightboxIndex(
-                        (lightboxIndex - 1 + activeService.proof.gallery.length) %
-                          activeService.proof.gallery.length
-                      )
-                    }
-                    className="absolute left-2 sm:left-4 flex size-10 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-sm hover:bg-black/80 transition-colors focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none cursor-pointer"
-                    aria-label="Previous image"
-                    title="Previous (←)"
+                    onClick={() => setLightboxIndex(null)}
+                    className="flex size-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none cursor-pointer"
+                    aria-label="Close image inspection (Esc)"
+                    title="Close (Esc)"
                   >
-                    <ChevronLeft className="size-5" />
+                    <X className="size-4" />
                   </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setLightboxIndex(
-                        (lightboxIndex + 1) % activeService.proof.gallery.length
-                      )
-                    }
-                    className="absolute right-2 sm:right-4 flex size-10 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-sm hover:bg-black/80 transition-colors focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none cursor-pointer"
-                    aria-label="Next image"
-                    title="Next (→)"
-                  >
-                    <ChevronRight className="size-5" />
-                  </button>
-                </>
-              )}
-            </div>
+                </div>
 
-            {/* Bottom Caption */}
-            <div
-              className="w-full max-w-2xl text-center py-2 text-white/90 text-xs sm:text-sm font-medium"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {activeService.proof.gallery[lightboxIndex].alt}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                {/* Center Image */}
+                <div
+                  className="relative flex-1 w-full max-w-5xl flex items-center justify-center py-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="relative w-full h-full max-h-[75vh] flex items-center justify-center">
+                    <Image
+                      src={activeService.proof.gallery[lightboxIndex].src}
+                      alt={activeService.proof.gallery[lightboxIndex].alt}
+                      fill
+                      className="object-contain"
+                      sizes="100vw"
+                      priority
+                    />
+                  </div>
+
+                  {/* Prev / Next controls */}
+                  {activeService.proof.gallery.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setLightboxIndex(
+                            (lightboxIndex - 1 + activeService.proof.gallery.length) %
+                              activeService.proof.gallery.length
+                          )
+                        }
+                        className="absolute left-2 sm:left-4 flex size-10 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-sm hover:bg-black/80 transition-colors focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none cursor-pointer"
+                        aria-label="Previous image"
+                        title="Previous (←)"
+                      >
+                        <ChevronLeft className="size-5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setLightboxIndex(
+                            (lightboxIndex + 1) % activeService.proof.gallery.length
+                          )
+                        }
+                        className="absolute right-2 sm:right-4 flex size-10 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-sm hover:bg-black/80 transition-colors focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none cursor-pointer"
+                        aria-label="Next image"
+                        title="Next (→)"
+                      >
+                        <ChevronRight className="size-5" />
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                {/* Bottom Caption */}
+                <div
+                  className="w-full max-w-2xl text-center py-2 text-white/90 text-xs sm:text-sm font-medium"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {activeService.proof.gallery[lightboxIndex].alt}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>,
+        document.body
+      )}
     </>
   );
 }

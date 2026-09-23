@@ -376,3 +376,13 @@ html:not(.dark) .github-calendar-cell[data-level="0"]:hover {
   filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.2)) !important;
 }
 
+/* Hide floating navbar and chat trigger when any modal preview is open */
+body[data-modal-open="true"] header[data-theme-static],
+body[data-modal-open="true"] button[aria-label="Chat with John Lester"] {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(-100%) !important;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease !important;
+}
+

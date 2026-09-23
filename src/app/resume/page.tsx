@@ -170,7 +170,7 @@ const RESUME_ROLES: Record<ResumeRole, RoleConfig> = {
 };
 
 export default function ResumePage() {
-  const [activeRole, setActiveRole] = useState<ResumeRole>("web-developer");
+  const [activeRole, setActiveRole] = useState<ResumeRole>("software-engineer");
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   const roleData = RESUME_ROLES[activeRole];

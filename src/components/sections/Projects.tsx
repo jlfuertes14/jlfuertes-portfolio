@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { projects } from "@/lib/site-data";
@@ -215,11 +216,16 @@ const ProjectCardItem = ({
 );
 
 export default function Projects() {
+  const [mounted, setMounted] = useState(false);
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
   const [selectedViewType, setSelectedViewType] = useState<"mobile" | "desktop">("desktop");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [filter, setFilter] = useState("Web Development");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const filterOptions = ["Web Development", "Mobile Application", "AI/Machine Learning", "Schoolworks"];
 
@@ -305,12 +311,15 @@ export default function Projects() {
   useEffect(() => {
     if (selectedProject) {
       document.body.style.overflow = "hidden";
+      document.body.setAttribute("data-modal-open", "true");
     } else {
       document.body.style.overflow = "unset";
+      document.body.removeAttribute("data-modal-open");
     }
 
     return () => {
       document.body.style.overflow = "unset";
+      document.body.removeAttribute("data-modal-open");
     };
   }, [selectedProject]);
 
@@ -498,116 +507,122 @@ export default function Projects() {
         )}
       </motion.div>
 
-      <AnimatePresence>
-        {selectedProject && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-1000 flex items-center justify-center p-4 sm:p-12 bg-black/60 backdrop-blur-xl"
-            onClick={closeProjectView}
-          >
-            <div className="fixed top-0 left-0 right-0 p-5 sm:p-8 flex items-start justify-between z-1100 pointer-events-none">
-              <div className="pointer-events-auto max-w-[calc(100%-6rem)] sm:max-w-[min(100%,32rem)]">
-                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.3em] text-white/60 block mb-1 sm:mb-2 drop-shadow-sm">
-                  {selectedProject.category} • {activeView?.label || "Preview"}
-                </span>
-                <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight drop-shadow-sm leading-tight">
-                  {selectedProject.title}
-                </h2>
-                <p className="mt-1 text-xs sm:text-sm text-white/70">
-                  {Math.max(currentViewIndex, 0) + 1} / {selectedViews.length}
-                </p>
-              </div>
-
-              <div className="flex flex-col items-end gap-2.5 sm:flex-row sm:items-center sm:gap-6 pointer-events-auto shrink-0">
-                <a
-                  href={selectedProject.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hidden sm:flex items-center gap-2 sm:gap-3 px-4 sm:px-8 py-3 sm:py-4 rounded-full bg-foreground text-background font-bold text-sm sm:text-lg hover:scale-105 active:scale-95 transition-all shadow-[0_20px_40px_rgba(0,0,0,0.3)] group"
-                >
-                  <span>{selectedProject.ctaLabel}</span>
-                  <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                </a>
-
-                <button
-                  onClick={closeProjectView}
-                  className="w-11 h-11 sm:w-14 sm:h-14 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 border border-white/10 text-white backdrop-blur-xl transition-all group"
-                >
-                  <svg className="w-6 h-6 sm:w-8 sm:h-8 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-
-                <a
-                  href={selectedProject.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="sm:hidden flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-foreground text-background font-bold text-[9.5px] uppercase tracking-[0.08em] hover:scale-105 active:scale-95 transition-all shadow-md whitespace-nowrap shrink-0"
-                >
-                  <span>{selectedProject.ctaLabel}</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              </div>
-            </div>
-
+      {/* Full-Screen Project Preview Modal - Portaled to document.body to ensure it renders above the fixed navbar */}
+      {mounted && typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {selectedProject && (
             <motion.div
-              initial={{ scale: 0.9, y: 40, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.9, y: 40, opacity: 0 }}
-              className="relative w-full h-full flex items-center justify-center pointer-events-none"
-              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-12 bg-background/60 dark:bg-background/75 backdrop-blur-2xl overscroll-contain select-none"
+              onClick={closeProjectView}
             >
-              {selectedViews.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => navigatePreview("previous")}
-                    className="pointer-events-auto absolute left-2 sm:left-8 lg:left-12 top-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/30 text-white backdrop-blur-xl transition-all hover:scale-105 hover:bg-black/45"
-                    aria-label="Show previous preview"
-                  >
-                    <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => navigatePreview("next")}
-                    className="pointer-events-auto absolute right-2 sm:right-8 lg:right-12 top-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/30 text-white backdrop-blur-xl transition-all hover:scale-105 hover:bg-black/45"
-                    aria-label="Show next preview"
-                  >
-                    <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
-                  </button>
-                </>
-              )}
+              <div className="fixed top-0 left-0 right-0 p-4 pt-6 sm:p-8 flex items-start justify-between z-[110] pointer-events-none">
+                <div className="pointer-events-auto max-w-[calc(100%-6.5rem)] sm:max-w-[min(100%,32rem)]">
+                  <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.3em] text-foreground/60 block mb-1 sm:mb-2">
+                    {selectedProject.category} • {activeView?.label || "Preview"}
+                  </span>
+                  <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight leading-tight">
+                    {selectedProject.title}
+                  </h2>
+                  <p className="mt-1 text-xs sm:text-sm text-foreground/70 font-mono">
+                    {Math.max(currentViewIndex, 0) + 1} / {selectedViews.length}
+                  </p>
+                </div>
 
-              <div className="relative pointer-events-auto max-w-full max-h-full flex items-center justify-center">
-                {selectedViewType === "mobile" ? (
-                  <div className="relative w-[72vw] max-w-[320px] sm:w-[420px] aspect-9/19 bg-black border-10 sm:border-12 border-[#111] rounded-[2.75rem] sm:rounded-[4rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)] ring-4 ring-white/5">
-                    <div className="absolute top-3 sm:top-4 left-1/2 -translate-x-1/2 w-20 sm:w-24 h-6 sm:h-7 bg-[#111] rounded-full z-10 border border-white/5" />
-                    <Image
-                      src={selectedImage || selectedProject.imageUrl}
-                      alt={selectedProject.title}
-                      fill
-                      className="object-cover"
-                      priority
-                    />
-                  </div>
-                ) : (
-                  <div className="relative w-[90vw] sm:w-[85vw] max-w-[1200px] aspect-video bg-card border-4 border-black/5 dark:border-white/10 rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)]">
-                    <Image
-                      src={selectedImage || selectedProject.imageUrl}
-                      alt={selectedProject.title}
-                      fill
-                      className="object-cover"
-                      priority
-                    />
-                  </div>
-                )}
+                <div className="flex flex-col items-end gap-2.5 sm:flex-row sm:items-center sm:gap-4 pointer-events-auto shrink-0">
+                  <a
+                    href={selectedProject.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hidden sm:flex items-center gap-2 sm:gap-3 px-4 sm:px-8 py-3 sm:py-4 rounded-full bg-foreground text-background font-bold text-sm sm:text-lg hover:scale-105 active:scale-95 transition-all shadow-md group focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                  >
+                    <span>{selectedProject.ctaLabel}</span>
+                    <ExternalLink className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" aria-hidden="true" />
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={closeProjectView}
+                    className="w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center rounded-full bg-foreground/10 hover:bg-foreground/20 active:scale-95 border border-foreground/15 text-foreground backdrop-blur-xl transition-all group focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer"
+                    aria-label="Close project preview"
+                  >
+                    <svg className="w-5 h-5 sm:w-7 sm:h-7 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+
+                  <a
+                    href={selectedProject.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="sm:hidden flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-foreground text-background font-bold text-[9.5px] uppercase tracking-[0.08em] hover:scale-105 active:scale-95 transition-all shadow-md whitespace-nowrap shrink-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                  >
+                    <span>{selectedProject.ctaLabel}</span>
+                    <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                  </a>
+                </div>
               </div>
+
+              <motion.div
+                initial={{ scale: 0.9, y: 40, opacity: 0 }}
+                animate={{ scale: 1, y: 0, opacity: 1 }}
+                exit={{ scale: 0.9, y: 40, opacity: 0 }}
+                className="relative w-full h-full flex items-center justify-center pointer-events-none pt-14 sm:pt-0"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {selectedViews.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => navigatePreview("previous")}
+                      className="pointer-events-auto absolute left-2 sm:left-8 lg:left-12 top-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 -translate-y-1/2 items-center justify-center rounded-full border border-border/80 bg-background/80 text-foreground shadow-lg backdrop-blur-xl transition-all hover:scale-105 hover:bg-background focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer"
+                      aria-label="Show previous preview"
+                    >
+                      <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigatePreview("next")}
+                      className="pointer-events-auto absolute right-2 sm:right-8 lg:right-12 top-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 -translate-y-1/2 items-center justify-center rounded-full border border-border/80 bg-background/80 text-foreground shadow-lg backdrop-blur-xl transition-all hover:scale-105 hover:bg-background focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer"
+                      aria-label="Show next preview"
+                    >
+                      <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />
+                    </button>
+                  </>
+                )}
+
+                <div className="relative pointer-events-auto max-w-full max-h-full flex items-center justify-center">
+                  {selectedViewType === "mobile" ? (
+                    <div className="relative w-[72vw] max-w-[320px] sm:w-[420px] aspect-9/19 bg-black border-10 sm:border-12 border-[#111] rounded-[2.75rem] sm:rounded-[4rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)] ring-4 ring-white/5">
+                      <div className="absolute top-3 sm:top-4 left-1/2 -translate-x-1/2 w-20 sm:w-24 h-6 sm:h-7 bg-[#111] rounded-full z-10 border border-white/5" />
+                      <Image
+                        src={selectedImage || selectedProject.imageUrl}
+                        alt={selectedProject.title}
+                        fill
+                        className="object-cover"
+                        priority
+                      />
+                    </div>
+                  ) : (
+                    <div className="relative w-[90vw] sm:w-[85vw] max-w-[1200px] aspect-video bg-card border-4 border-black/5 dark:border-white/10 rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.5)]">
+                      <Image
+                        src={selectedImage || selectedProject.imageUrl}
+                        alt={selectedProject.title}
+                        fill
+                        className="object-cover"
+                        priority
+                      />
+                    </div>
+                  )}
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </section>
   );
 }
