@@ -182,7 +182,7 @@ export default function Contact() {
 
             <div className="space-y-8">
               <div className="contact-item group">
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/80 dark:text-foreground/75 mb-2">
                   Email:
                 </p>
                 <a
@@ -194,7 +194,7 @@ export default function Contact() {
               </div>
 
               <div className="contact-item group">
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/80 dark:text-foreground/75 mb-2">
                   Address:
                 </p>
                 <p className="text-lg sm:text-xl md:text-2xl font-medium text-foreground text-balance">
@@ -221,7 +221,7 @@ export default function Contact() {
 
             {/* Follow Us */}
             <div className="pt-3 border-t border-border/10 reveal-item">
-              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 mb-4 block">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-foreground/80 dark:text-foreground/75 mb-4 block">
                 Follow Me
               </span>
               <div className="flex flex-wrap gap-4">

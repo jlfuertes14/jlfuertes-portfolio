@@ -5,22 +5,22 @@ import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 
 const technologies = [
-  { name: "C++", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" },
-  { name: "C#", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" },
-  { name: "Arduino", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/arduino/arduino-original.svg" },
-  { name: "Python", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
-  { name: "FastAPI", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" },
-  { name: "Flask", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg", invertInDark: true },
-  { name: "HTML5", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" },
-  { name: "CSS3", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" },
-  { name: "JavaScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" },
-  { name: "Node.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
-  { name: "Next.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" },
-  { name: "React", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
-  { name: "TypeScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" },
-  { name: "Tailwind CSS", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" },
-  { name: "MongoDB", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" },
-  { name: "UI/UX Design", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg", invertInDark: true },
+  { name: "C++", icon: "/icons/tech/cplusplus.svg" },
+  { name: "C#", icon: "/icons/tech/csharp.svg" },
+  { name: "Arduino", icon: "/icons/tech/arduino.svg" },
+  { name: "Python", icon: "/icons/tech/python.svg" },
+  { name: "FastAPI", icon: "/icons/tech/fastapi.svg" },
+  { name: "Flask", icon: "/icons/tech/flask.svg", invertInDark: true },
+  { name: "HTML5", icon: "/icons/tech/html5.svg" },
+  { name: "CSS3", icon: "/icons/tech/css3.svg" },
+  { name: "JavaScript", icon: "/icons/tech/javascript.svg" },
+  { name: "Node.js", icon: "/icons/tech/nodejs.svg" },
+  { name: "Next.js", icon: "/icons/tech/nextjs.svg" },
+  { name: "React", icon: "/icons/tech/react.svg" },
+  { name: "TypeScript", icon: "/icons/tech/typescript.svg" },
+  { name: "Tailwind CSS", icon: "/icons/tech/tailwindcss.svg" },
+  { name: "MongoDB", icon: "/icons/tech/mongodb.svg" },
+  { name: "UI/UX Design", icon: "/icons/tech/figma.svg", invertInDark: true },
 ];
 
 function TechItem({

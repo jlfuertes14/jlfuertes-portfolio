@@ -555,6 +555,7 @@ export function BlockSignature({
           : "bg-transparent",
         className
       )}
+      role="img"
       aria-label="JOHN LESTER 3D voxel signature"
     >
       <div ref={mountRef} className="absolute inset-0 cursor-crosshair" />

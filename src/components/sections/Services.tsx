@@ -310,15 +310,13 @@ export default function Services() {
           </div>
 
           {/* Interactive Dennis Snellenberg-inspired Services List */}
-          <div
-            role="list"
-            className="flex w-full flex-col border-t border-border/80"
-          >
+          <ul className="flex w-full flex-col border-t border-border/80 list-none p-0 m-0">
             {services.map((service, index) => {
               const formattedIndex = String(index + 1).padStart(2, "0");
 
               return (
-                <button
+                <li key={service.title} className="list-none w-full p-0 m-0">
+                  <button
                   key={service.title}
                   type="button"
                   onClick={(e) => {
@@ -354,7 +352,7 @@ export default function Services() {
 
                   {/* Left Column: Number, Title, and Tech Tags */}
                   <div className="relative z-10 flex flex-row items-baseline gap-4 sm:gap-6 md:gap-8 flex-1 min-w-0 pr-4">
-                    <span className="font-mono text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-muted-foreground/60 tabular-nums shrink-0 select-none transition-colors duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:text-white dark:group-hover:text-zinc-950">
+                    <span className="font-mono text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-foreground/80 dark:text-foreground/70 tabular-nums shrink-0 select-none transition-colors duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:text-white dark:group-hover:text-zinc-950">
                       {formattedIndex}
                     </span>
 
@@ -393,9 +391,10 @@ export default function Services() {
                     </div>
                   </div>
                 </button>
-              );
-            })}
-          </div>
+              </li>
+            );
+          })}
+        </ul>
         </div>
 
         {/* Floating Cursor-Following Modal (Dennis Snellenberg Style) */}
@@ -678,19 +677,23 @@ export default function Services() {
                           </button>
 
                           {/* Indicator Dots with Highlight Icon Filled */}
-                          <div className="flex items-center gap-1.5 py-1">
+                          <div className="flex items-center gap-1 py-1">
                             {activeService.proof.gallery.map((_, dotIdx) => (
                               <button
                                 key={dotIdx}
                                 type="button"
                                 onClick={() => scrollCarouselTo(dotIdx)}
                                 aria-label={`Go to slide ${dotIdx + 1}`}
-                                className={`transition-all duration-200 rounded-full cursor-pointer touch-manipulation ${
-                                  mobileCarouselIndex === dotIdx
-                                    ? "w-4 h-1.5 bg-primary"
-                                    : "w-1.5 h-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                                }`}
-                              />
+                                className="relative flex items-center justify-center p-2.5 min-h-[44px] min-w-[32px] cursor-pointer touch-manipulation"
+                              >
+                                <span
+                                  className={`rounded-full transition-[opacity,transform] duration-200 ${
+                                    mobileCarouselIndex === dotIdx
+                                      ? "w-4 h-1.5 bg-primary opacity-100"
+                                      : "w-1.5 h-1.5 bg-muted-foreground/50 opacity-60 hover:opacity-100"
+                                  }`}
+                                />
+                              </button>
                             ))}
                           </div>
 

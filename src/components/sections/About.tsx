@@ -40,57 +40,57 @@ type SkillIcon =
 const iconMap: Record<string, SkillIcon> = {
   "HTML5": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
+    src: "/icons/tech/html5.svg",
   },
   "React": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+    src: "/icons/tech/react.svg",
   },
   "Next.js": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg",
+    src: "/icons/tech/nextjs.svg",
     invertInDark: true,
   },
   "TypeScript": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
+    src: "/icons/tech/typescript.svg",
   },
   "Tailwind CSS": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg",
+    src: "/icons/tech/tailwindcss.svg",
   },
   "Node.js": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
+    src: "/icons/tech/nodejs.svg",
   },
   "FastAPI": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg",
+    src: "/icons/tech/fastapi.svg",
   },
   "Flask": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg",
+    src: "/icons/tech/flask.svg",
     invertInDark: true,
   },
   "MongoDB": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg",
+    src: "/icons/tech/mongodb.svg",
   },
   "Python": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
+    src: "/icons/tech/python.svg",
   },
   "C#": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg",
+    src: "/icons/tech/csharp.svg",
   },
   "C++": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
+    src: "/icons/tech/cplusplus.svg",
   },
   "Arduino": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/arduino/arduino-original.svg",
+    src: "/icons/tech/arduino.svg",
   },
   "ESP32": {
     kind: "icon",
@@ -104,7 +104,7 @@ const iconMap: Record<string, SkillIcon> = {
   },
   "Figma": {
     kind: "image",
-    src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
+    src: "/icons/tech/figma.svg",
   },
   "Google Stitch": {
     kind: "image",
@@ -403,7 +403,7 @@ export default function About() {
     forks: "1",
     commits: "670",
     contributions: "707",
-    loading: true,
+    loading: false,
   });
 
   // Slide navigation
@@ -440,27 +440,29 @@ export default function About() {
     return () => window.removeEventListener("resize", updateCalendarMode);
   }, []);
 
-  // Center or scroll calendar into view
+  // Center or scroll calendar into view once without continuous ResizeObserver forced reflows
   useEffect(() => {
-    const container = calendarScrollRef.current;
-    if (!container) return;
+    const timer = setTimeout(() => {
+      requestAnimationFrame(() => {
+        if (calendarScrollRef.current) {
+          calendarScrollRef.current.scrollLeft = calendarScrollRef.current.scrollWidth;
+        }
+      });
+    }, 400);
 
-    const resizeObserver = new ResizeObserver(() => {
-      container.scrollLeft = container.scrollWidth;
-    });
-
-    resizeObserver.observe(container);
-    return () => resizeObserver.disconnect();
+    return () => clearTimeout(timer);
   }, []);
 
-  // Live GitHub stats fetcher
+  // Defer live GitHub stats fetch until idle so initial paint, FCP and TBT are unblocked
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const userRes = await fetch("https://api.github.com/users/jlfuertes14");
+        if (!userRes.ok) return;
         const userData = await userRes.json();
 
         const reposRes = await fetch("https://api.github.com/users/jlfuertes14/repos?per_page=100");
+        if (!reposRes.ok) return;
         const reposData = await reposRes.json();
 
         let totalStars = 0;
@@ -476,10 +478,10 @@ export default function About() {
         const commitsRes = await fetch("https://api.github.com/search/commits?q=author:jlfuertes14", {
           headers: { Accept: "application/vnd.github.cloak-preview" },
         });
-        const commitsData = await commitsRes.json();
+        const commitsData = commitsRes.ok ? await commitsRes.json() : {};
 
         const issuesRes = await fetch("https://api.github.com/search/issues?q=author:jlfuertes14");
-        const issuesData = await issuesRes.json();
+        const issuesData = issuesRes.ok ? await issuesRes.json() : {};
 
         setGithubData({
           repos: userData.public_repos?.toString() || "35",
@@ -492,19 +494,26 @@ export default function About() {
           loading: false,
         });
       } catch {
-        setGithubData({
-          repos: "35",
-          followers: "3",
-          stars: "1",
-          forks: "1",
-          commits: "670",
-          contributions: "707",
-          loading: false,
-        });
+        // Fallback stats already preloaded in initial state
       }
     };
 
-    fetchStats();
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      const handle = (window as unknown as { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(
+        () => {
+          fetchStats();
+        },
+        { timeout: 5000 }
+      );
+      return () => {
+        if ("cancelIdleCallback" in window) {
+          (window as unknown as { cancelIdleCallback: (h: number) => void }).cancelIdleCallback(handle);
+        }
+      };
+    } else {
+      const timer = setTimeout(fetchStats, 3500);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   const statsItems = [
@@ -648,11 +657,15 @@ export default function About() {
                           setDirection(i > currentIdx ? 1 : -1);
                           setCurrentIdx(i);
                         }}
-                        className={`h-1 rounded-full transition-all duration-300 ${
-                          i === currentIdx ? "w-6 bg-white" : "w-2 bg-white/40"
-                        }`}
+                        className="relative flex items-center justify-center p-3 min-h-[44px] min-w-[36px] cursor-pointer"
                         aria-label={`Go to slide ${i + 1}`}
-                      />
+                      >
+                        <span
+                          className={`h-1.5 rounded-full transition-[opacity,transform] duration-300 ${
+                            i === currentIdx ? "w-6 bg-white opacity-100" : "w-2 bg-white/60 opacity-60"
+                          }`}
+                        />
+                      </button>
                     ))}
                   </div>
                 </figcaption>
@@ -701,7 +714,7 @@ export default function About() {
             {/* Facts Definition List */}
             <dl className="mt-10 mb-8 border-b border-border/60">
               <div className="flex items-baseline justify-between gap-4 py-3.5 border-t border-border/60">
-                <dt className="font-mono text-xs uppercase tracking-wider text-muted-foreground/70">
+                <dt className="font-mono text-xs uppercase tracking-wider text-foreground/80 dark:text-foreground/75 font-medium">
                   Location
                 </dt>
                 <dd className="text-sm sm:text-base font-medium text-foreground text-right">
@@ -709,7 +722,7 @@ export default function About() {
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-4 py-3.5 border-t border-border/60">
-                <dt className="font-mono text-xs uppercase tracking-wider text-muted-foreground/70">
+                <dt className="font-mono text-xs uppercase tracking-wider text-foreground/80 dark:text-foreground/75 font-medium">
                   Education
                 </dt>
                 <dd className="text-sm sm:text-base font-medium text-foreground text-right">
@@ -717,7 +730,7 @@ export default function About() {
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-4 py-3.5 border-t border-border/60">
-                <dt className="font-mono text-xs uppercase tracking-wider text-muted-foreground/70">
+                <dt className="font-mono text-xs uppercase tracking-wider text-foreground/80 dark:text-foreground/75 font-medium">
                   University
                 </dt>
                 <dd className="text-sm sm:text-base font-medium text-foreground text-right">
@@ -767,7 +780,7 @@ export default function About() {
                     }}
                     className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-3 sm:gap-6 py-6 sm:py-8 border-t border-border/60 items-baseline"
                   >
-                    <dt className="font-mono text-xs uppercase tracking-wider text-muted-foreground/70 pt-1">
+                    <dt className="font-mono text-xs uppercase tracking-wider text-foreground/80 dark:text-foreground/75 font-medium pt-1">
                       {group.category}
                     </dt>
                     <dd className="flex flex-wrap gap-x-6 sm:gap-x-8 gap-y-3 sm:gap-y-4 text-xl sm:text-2xl md:text-3xl font-medium tracking-tight text-foreground/90">
@@ -812,6 +825,7 @@ export default function About() {
                                     />
                                   ) : (
                                     <icon.icon
+                                      aria-hidden="true"
                                       className={`size-full object-contain ${
                                         icon.invertInDark
                                           ? "text-[#2b2728] dark:text-white"
@@ -873,7 +887,7 @@ export default function About() {
                   key={item.label}
                   className="flex flex-col gap-1.5 pb-6 border-b border-border/60"
                 >
-                  <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground/70">
+                  <span className="font-mono text-xs uppercase tracking-wider text-foreground/80 dark:text-foreground/75 font-medium">
                     {item.label}
                   </span>
                   <strong className="text-4xl sm:text-5xl lg:text-6xl font-bold font-mono tracking-tight text-foreground tabular-nums">

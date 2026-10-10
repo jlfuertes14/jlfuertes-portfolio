@@ -20,7 +20,8 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
   variable: "--font-instrument-serif",
 });
-import AiChat from "@/components/AiChat";
+import dynamic from "next/dynamic";
+const AiChat = dynamic(() => import("@/components/AiChat"));
 import DotsBackground from "@/components/DotsBackground";
 import { ThemeProvider } from "@/components/ThemeProvider";
 

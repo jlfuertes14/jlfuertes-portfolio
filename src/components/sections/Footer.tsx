@@ -116,9 +116,9 @@ export default function Footer() {
 
               {/* Navigation Column */}
               <div className="space-y-4 pt-6 sm:pt-8 md:pt-14">
-                <h4 className="text-xs font-bold tracking-widest text-zinc-400 dark:text-zinc-500 uppercase">
+                <h3 className="text-xs font-bold tracking-widest text-zinc-400 dark:text-zinc-500 uppercase">
                   Navigation
-                </h4>
+                </h3>
                 <nav className="flex flex-col gap-2">
                   {navLinks.map((link) => (
                     <Link
@@ -134,9 +134,9 @@ export default function Footer() {
 
               {/* Social Column */}
               <div className="space-y-4 pt-6 sm:pt-8 md:pt-14">
-                <h4 className="text-xs font-bold tracking-widest text-zinc-400 dark:text-zinc-500 uppercase">
+                <h3 className="text-xs font-bold tracking-widest text-zinc-400 dark:text-zinc-500 uppercase">
                   Connect
-                </h4>
+                </h3>
                 <div className="flex flex-wrap gap-3">
                   {socialData.map((link) => {
                     const Icon = iconMap[link.icon];
