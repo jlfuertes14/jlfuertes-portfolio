@@ -131,12 +131,6 @@ const services: ServiceItem[] = [
   },
 ];
 
-const stackedGalleryPositions = [
-  { x: -92, y: 18, rotate: -14, zIndex: 10 },
-  { x: 0, y: -14, rotate: -3, zIndex: 20 },
-  { x: 94, y: 10, rotate: 12, zIndex: 30 },
-];
-
 export default function Services() {
   const lenis = useLenis();
 
@@ -149,12 +143,16 @@ export default function Services() {
   const mobileCarouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMounted(true);
+    window.requestAnimationFrame(() => {
+      setMounted(true);
+    });
   }, []);
 
   // Reset mobile carousel when service changes or when expanding gallery
   useEffect(() => {
-    setMobileCarouselIndex(0);
+    window.requestAnimationFrame(() => {
+      setMobileCarouselIndex(0);
+    });
     if (mobileCarouselRef.current) {
       mobileCarouselRef.current.scrollLeft = 0;
     }
@@ -323,7 +321,6 @@ export default function Services() {
                 <button
                   key={service.title}
                   type="button"
-                  role="listitem"
                   onClick={(e) => {
                     e.currentTarget.blur();
                     openGallery(index);

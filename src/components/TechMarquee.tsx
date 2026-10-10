@@ -85,7 +85,7 @@ export const TechMarquee = () => {
         <div className="space-y-4">
           <div className="overflow-hidden" style={maskedStyle}>
             <motion.div
-              className="flex w-max items-center gap-3"
+              className="flex w-max items-center gap-3 will-change-transform"
               animate={prefersReducedMotion ? undefined : { x: ["0%", "-50%"] }}
               transition={
                 prefersReducedMotion
@@ -106,7 +106,7 @@ export const TechMarquee = () => {
 
           <div className="overflow-hidden" style={maskedStyle}>
             <motion.div
-              className="flex w-max items-center gap-3"
+              className="flex w-max items-center gap-3 will-change-transform"
               animate={prefersReducedMotion ? undefined : { x: ["-50%", "0%"] }}
               transition={
                 prefersReducedMotion
@@ -142,7 +142,7 @@ export const TechMarquee = () => {
 
         <div className="flex-1 overflow-hidden" style={maskedStyle}>
           <motion.div
-            className="flex w-max items-center gap-10 md:gap-14 lg:gap-16 xl:gap-24 whitespace-nowrap"
+            className="flex w-max items-center gap-10 md:gap-14 lg:gap-16 xl:gap-24 whitespace-nowrap will-change-transform"
             animate={prefersReducedMotion ? undefined : { x: ["0%", "-50%"] }}
             transition={
               prefersReducedMotion

@@ -70,7 +70,8 @@ const ProjectCardItem = ({
       <button
         type="button"
         onClick={() => openProjectView(project, project.isDesktopOnly ? "desktop" : "mobile", project.previewImage || project.imageUrl)}
-        className="relative aspect-video w-full rounded-2xl bg-muted dark:bg-white/5 border border-border dark:border-white/5 overflow-hidden flex items-center justify-center group-hover:bg-muted/20 transition-all duration-500 text-left cursor-pointer shrink-0"
+        className="relative aspect-video w-full rounded-2xl bg-muted dark:bg-white/5 border border-border dark:border-white/5 overflow-hidden flex items-center justify-center group-hover:bg-muted/20 transition-all duration-500 text-left cursor-pointer shrink-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+        aria-label={`Preview ${project.title}`}
       >
         <div className="project-card-visual relative w-full h-full transition-all duration-500 group-hover:scale-105">
           <Image
@@ -108,13 +109,15 @@ const ProjectCardItem = ({
             />
 
             <div className="relative w-full h-full flex items-center justify-center pointer-events-auto">
-              <motion.div
+              <motion.button
+                type="button"
+                aria-label={`Preview ${project.title} desktop layout left`}
                 initial={{ x: -80, y: 0, opacity: 0, rotate: -20, scale: 0.7 }}
                 animate={{ x: -140, y: -5, opacity: 1, rotate: -12, scale: 0.98 }}
                 whileHover={{ scale: 1.06, rotate: -6, y: -24, opacity: 1, zIndex: 120 }}
                 transition={{ type: "spring", stiffness: 200, damping: 15 }}
                 onClick={() => openProjectView(project, "desktop", project.desktopLeftImage || project.imageUrl)}
-                className="absolute w-[280px] h-[180px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-2xl z-60 cursor-pointer will-change-transform"
+                className="absolute w-[280px] h-[180px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-2xl z-60 cursor-pointer will-change-transform focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
               >
                 <Image
                   src={project.desktopLeftImage || project.imageUrl}
@@ -123,15 +126,17 @@ const ProjectCardItem = ({
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-white/10 dark:bg-black/20 opacity-0 hover:opacity-100 transition-opacity" />
-              </motion.div>
+              </motion.button>
 
-              <motion.div
+              <motion.button
+                type="button"
+                aria-label={`Preview ${project.title} desktop layout right`}
                 initial={{ x: 80, y: 0, opacity: 0, rotate: 20, scale: 0.7 }}
                 animate={{ x: 155, y: -5, opacity: 1, rotate: 12, scale: 0.98 }}
                 whileHover={{ scale: 1.06, rotate: 6, y: -24, opacity: 1, zIndex: 120 }}
                 transition={{ type: "spring", stiffness: 200, damping: 15 }}
                 onClick={() => openProjectView(project, "desktop", project.desktopRightImage || project.imageUrl)}
-                className="absolute w-[280px] h-[180px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-2xl z-60 cursor-pointer will-change-transform"
+                className="absolute w-[280px] h-[180px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-2xl z-60 cursor-pointer will-change-transform focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
               >
                 <Image
                   src={project.desktopRightImage || project.imageUrl}
@@ -140,10 +145,12 @@ const ProjectCardItem = ({
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-white/10 dark:bg-black/20 opacity-0 hover:opacity-100 transition-opacity" />
-              </motion.div>
+              </motion.button>
 
               {!project.isDesktopOnly ? (
-                <motion.div
+                <motion.button
+                  type="button"
+                  aria-label={`Preview ${project.title} mobile layout`}
                   initial={{ y: 150, opacity: 0, scale: 0.6 }}
                   animate={{ y: -60, opacity: 1, scale: 1.31 }}
                   whileHover={{ scale: 1.32, y: -80, zIndex: 130 }}
@@ -155,7 +162,7 @@ const ProjectCardItem = ({
                     mass: 1,
                   }}
                   onClick={() => openProjectView(project, "mobile", project.previewImage || project.imageUrl)}
-                  className="relative w-[200px] h-[400px] bg-black border-8 border-[#111] rounded-[3rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-110 ring-1 ring-white/10 cursor-pointer active:cursor-grabbing will-change-transform"
+                  className="relative w-[200px] h-[400px] bg-black border-8 border-[#111] rounded-[3rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-110 ring-1 ring-white/10 cursor-pointer active:cursor-grabbing will-change-transform focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
                 >
                   <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-16 h-5 bg-[#111] rounded-full z-10 border border-white/5" />
                   <div className="relative w-full h-full bg-[#0a0a0a]">
@@ -171,9 +178,11 @@ const ProjectCardItem = ({
                       <ExternalLink className="w-5 h-5 text-white/90" />
                     </div>
                   </div>
-                </motion.div>
+                </motion.button>
               ) : (
-                <motion.div
+                <motion.button
+                  type="button"
+                  aria-label={`Preview ${project.title} desktop layout`}
                   initial={{ y: 150, opacity: 0, scale: 0.6 }}
                   animate={{ y: -60, opacity: 1, scale: 1.1 }}
                   whileHover={{ scale: 1.15, y: -80, zIndex: 130 }}
@@ -185,7 +194,7 @@ const ProjectCardItem = ({
                     mass: 1,
                   }}
                   onClick={() => openProjectView(project, "desktop", project.previewImage || project.imageUrl)}
-                  className="relative w-[340px] h-[220px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.6)] z-110 cursor-pointer active:cursor-grabbing will-change-transform"
+                  className="relative w-[340px] h-[220px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.6)] z-110 cursor-pointer active:cursor-grabbing will-change-transform focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
                 >
                   <div className="absolute top-0 left-0 right-0 h-6 bg-muted/50 border-b border-border flex items-center px-3 gap-1.5 z-10 backdrop-blur-sm">
                     <div className="w-2 h-2 rounded-full bg-red-400/80" />
@@ -205,7 +214,7 @@ const ProjectCardItem = ({
                       <ExternalLink className="w-5 h-5 text-white/90" />
                     </div>
                   </div>
-                </motion.div>
+                </motion.button>
               )}
             </div>
           </div>
@@ -224,7 +233,9 @@ export default function Projects() {
   const [filter, setFilter] = useState("Web Development");
 
   useEffect(() => {
-    setMounted(true);
+    window.requestAnimationFrame(() => {
+      setMounted(true);
+    });
   }, []);
 
   const filterOptions = ["Web Development", "Mobile Application", "AI/Machine Learning", "Schoolworks"];

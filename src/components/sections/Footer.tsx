@@ -13,7 +13,17 @@ import {
   Facebook,
   Youtube,
 } from "lucide-react";
-import { BlockSignature } from "@/components/BlockSignature";
+import dynamic from "next/dynamic";
+
+const BlockSignature = dynamic(
+  () => import("@/components/BlockSignature").then((mod) => mod.BlockSignature),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[240px] min-h-[240px] w-full max-w-[640px] sm:h-[280px] sm:min-h-[280px] md:h-[320px] md:min-h-[320px] rounded-2xl bg-zinc-900/50 animate-pulse border border-white/5" />
+    ),
+  }
+);
 
 const iconMap: Record<string, React.ElementType> = {
   Github,
@@ -33,7 +43,9 @@ export default function Footer() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    window.requestAnimationFrame(() => {
+      setMounted(true);
+    });
   }, []);
 
   // Inverted contrast: dark mode app -> white footer; light mode app -> black footer

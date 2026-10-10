@@ -57,7 +57,7 @@ export const InitialLoader = ({ onComplete }: { onComplete: () => void }) => {
           if (isMounted) {
             onComplete(); // Instant reveal of hero
           }
-        }, 400);
+        }, 240);
         return;
       }
 
@@ -75,17 +75,17 @@ export const InitialLoader = ({ onComplete }: { onComplete: () => void }) => {
           );
 
           span.style.animationName = "fly-out";
-          span.style.animationDuration = "0.22s";
+          span.style.animationDuration = "0.2s";
           span.style.animationTimingFunction = "cubic-bezier(0.16, 1, 0.3, 1)";
-          span.style.animationDelay = `${(chars.length - index) * 0.012}s`;
+          span.style.animationDelay = `${(chars.length - index) * 0.01}s`;
         });
-      }, 420);
+      }, 280);
 
       wordCycleTimeout = setTimeout(() => {
         if (!isMounted) return;
         currentWordIndex++;
         animateWord();
-      }, 640);
+      }, 420);
     }
 
     // Fast initial delay before first word appears

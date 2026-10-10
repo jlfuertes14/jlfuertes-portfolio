@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { ArrowUpRight, ChevronLeft, ChevronRight, Cpu } from "lucide-react";
 import { useTheme } from "next-themes";
-import { motion, AnimatePresence, useReducedMotion, useInView, animate, type Variants } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion, animate, type Variants } from "framer-motion";
 import { SiEspressif } from "react-icons/si";
 import { playHoverSound } from "@/lib/sound-effects";
 
@@ -173,17 +173,20 @@ function AnimatedCounter({ value, loading, isActive, delay = 0 }: AnimatedCounte
 
   useEffect(() => {
     if (loading) {
-      setDisplayValue("…");
       return;
     }
 
     if (!isNumeric) {
-      setDisplayValue(value);
+      window.requestAnimationFrame(() => {
+        setDisplayValue(value);
+      });
       return;
     }
 
     if (shouldReduceMotion) {
-      setDisplayValue(isActive ? numValue.toLocaleString() : "0");
+      window.requestAnimationFrame(() => {
+        setDisplayValue(isActive ? numValue.toLocaleString() : "0");
+      });
       currentValRef.current = isActive ? numValue : 0;
       return;
     }
@@ -333,7 +336,7 @@ export default function About() {
   }, []);
 
   const stackLogoVariants: Variants = {
-    hidden: (custom: any) => ({
+    hidden: (custom?: { enterDelay?: number; exitDelay?: number }) => ({
       opacity: 0,
       y: shouldReduceMotion ? 0 : -42,
       rotate: shouldReduceMotion ? 0 : -360,
@@ -344,7 +347,7 @@ export default function About() {
         ease: [0.32, 0, 0.67, 0],
       },
     }),
-    visible: (custom: any) => ({
+    visible: (custom?: { enterDelay?: number; exitDelay?: number }) => ({
       opacity: 1,
       y: 0,
       rotate: 0,
@@ -362,7 +365,7 @@ export default function About() {
   };
 
   const stackNameVariants: Variants = {
-    hidden: (custom: any) => ({
+    hidden: (custom?: { enterDelay?: number; exitDelay?: number }) => ({
       opacity: 0,
       x: shouldReduceMotion ? 0 : -8,
       scale: shouldReduceMotion ? 1 : 0.92,
@@ -372,7 +375,7 @@ export default function About() {
         ease: "easeIn",
       },
     }),
-    visible: (custom: any) => ({
+    visible: (custom?: { enterDelay?: number; exitDelay?: number }) => ({
       opacity: 1,
       x: 0,
       scale: 1,
@@ -579,7 +582,6 @@ export default function About() {
                       fill
                       sizes="(min-width: 1024px) 40vw, (min-width: 640px) 70vw, 100vw"
                       className="object-cover"
-                      priority={currentIdx === 0}
                     />
                   </motion.div>
                 </AnimatePresence>

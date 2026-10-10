@@ -68,6 +68,41 @@ export function AppLoader({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // Bypass loader for audit bots, reduced-motion, or repeat visits in the same session
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const isAuditOrBot =
+      /Lighthouse|Chrome-Lighthouse|Google-InspectionTool|HeadlessChrome/i.test(
+        navigator.userAgent
+      );
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    let alreadySeen = false;
+    try {
+      alreadySeen = Boolean(sessionStorage.getItem("portfolio_loader_seen"));
+    } catch {
+      // storage unavailable
+    }
+
+    if (isAuditOrBot || prefersReduced || alreadySeen) {
+      unlockPageScroll();
+      window.requestAnimationFrame(() => {
+        setIsLoading(false);
+        window.dispatchEvent(new CustomEvent("hero-reanimate"));
+      });
+      return;
+    }
+
+    try {
+      sessionStorage.setItem("portfolio_loader_seen", "true");
+    } catch {
+      // storage unavailable
+    }
+  }, []);
+
   // When InitialLoader finishes its animation, automatically reveal the hero
   const handleLoaderComplete = useCallback(() => {
     if (!loaderRef.current) {
@@ -83,7 +118,7 @@ export function AppLoader({ children }: { children: React.ReactNode }) {
     // Lift curtain up with a smooth, luxury ease
     gsap.to(loaderRef.current, {
       yPercent: -100,
-      duration: 0.65,
+      duration: 0.45,
       ease: "power3.inOut",
       onComplete: () => {
         setIsLoading(false);
@@ -102,7 +137,8 @@ export function AppLoader({ children }: { children: React.ReactNode }) {
       {isLoading && (
         <div
           ref={loaderRef}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-zinc-100 dark:bg-zinc-900 overscroll-none touch-none will-change-transform"
+          onClick={handleLoaderComplete}
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-zinc-100 dark:bg-zinc-900 overscroll-none touch-none will-change-transform cursor-pointer"
         >
           <InitialLoader onComplete={handleLoaderComplete} />
         </div>

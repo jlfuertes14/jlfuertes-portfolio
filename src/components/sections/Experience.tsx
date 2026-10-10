@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -331,25 +332,31 @@ function TimelineContent() {
                     {exp.id === 2 || exp.role.includes('Intern') ? (
                       <div className="absolute inset-0 w-full h-full flex flex-col gap-2 p-2">
                         <div className="relative w-full h-1/2 rounded-3xl overflow-hidden bg-muted">
-                          <img
+                          <Image
                             src={exp.images?.[0] || "https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=400&auto=format&fit=crop"}
                             alt={`${exp.role} preview 1`}
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
+                            fill
+                            sizes="(min-width: 768px) 25vw, 50vw"
+                            className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
                           />
                         </div>
                         <div className="relative w-full h-1/2 rounded-3xl overflow-hidden bg-muted">
-                          <img
+                          <Image
                             src={exp.images?.[1] || "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=400&auto=format&fit=crop"}
                             alt={`${exp.role} preview 2`}
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] delay-75"
+                            fill
+                            sizes="(min-width: 768px) 25vw, 50vw"
+                            className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] delay-75"
                           />
                         </div>
                       </div>
                     ) : (
-                      <img
+                      <Image
                         src={exp.image || "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop"}
                         alt={exp.role}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] bg-muted"
+                        fill
+                        sizes="(min-width: 768px) 45vw, 100vw"
+                        className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02] bg-muted"
                       />
                     )}
 

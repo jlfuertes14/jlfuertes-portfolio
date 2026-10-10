@@ -24,13 +24,17 @@ export function SoundToggle() {
 
   // Close dropdown on route change
   useEffect(() => {
-    setIsOpen(false);
+    window.requestAnimationFrame(() => {
+      setIsOpen(false);
+    });
   }, [pathname]);
 
   useEffect(() => {
-    setMounted(true);
-    setEnabled(isSoundEnabled());
-    setCurrentProfile(getSoundProfile());
+    window.requestAnimationFrame(() => {
+      setMounted(true);
+      setEnabled(isSoundEnabled());
+      setCurrentProfile(getSoundProfile());
+    });
 
     const handleSoundChange = (e: Event) => {
       const customEvent = e as CustomEvent<boolean>;
