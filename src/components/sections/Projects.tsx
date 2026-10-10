@@ -78,6 +78,7 @@ const ProjectCardItem = ({
             src={project.imageUrl}
             alt={project.title}
             fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover opacity-80 group-hover:opacity-100 transition-all duration-500"
           />
         </div>
@@ -123,6 +124,7 @@ const ProjectCardItem = ({
                   src={project.desktopLeftImage || project.imageUrl}
                   alt="Desktop Preview Left"
                   fill
+                  sizes="280px"
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-white/10 dark:bg-black/20 opacity-0 hover:opacity-100 transition-opacity" />
@@ -142,6 +144,7 @@ const ProjectCardItem = ({
                   src={project.desktopRightImage || project.imageUrl}
                   alt="Desktop Preview Right"
                   fill
+                  sizes="280px"
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-white/10 dark:bg-black/20 opacity-0 hover:opacity-100 transition-opacity" />
@@ -170,6 +173,7 @@ const ProjectCardItem = ({
                       src={project.previewImage || project.imageUrl}
                       alt={`${project.title} Mobile`}
                       fill
+                      sizes="200px"
                       className="object-cover"
                     />
                   </div>
@@ -206,6 +210,7 @@ const ProjectCardItem = ({
                       src={project.previewImage || project.imageUrl}
                       alt={`${project.title} Preview`}
                       fill
+                      sizes="340px"
                       className="object-cover mt-0"
                     />
                   </div>
@@ -612,6 +617,7 @@ export default function Projects() {
                         src={selectedImage || selectedProject.imageUrl}
                         alt={selectedProject.title}
                         fill
+                        sizes="(max-width: 640px) 72vw, 420px"
                         className="object-cover"
                         priority
                       />
@@ -622,6 +628,7 @@ export default function Projects() {
                         src={selectedImage || selectedProject.imageUrl}
                         alt={selectedProject.title}
                         fill
+                        sizes="(max-width: 1200px) 90vw, 1200px"
                         className="object-cover"
                         priority
                       />

@@ -43,6 +43,7 @@ function TechItem({
           src={tech.icon}
           alt={tech.name}
           fill
+          sizes={compact ? "32px" : "64px"}
           className={`object-contain ${tech.invertInDark ? "dark:invert dark:brightness-100" : ""}`}
         />
       </div>

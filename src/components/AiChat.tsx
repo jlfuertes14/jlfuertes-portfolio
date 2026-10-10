@@ -112,6 +112,7 @@ export default function AiChat() {
                   src="/images/profile-dark.png"
                   alt="John Lester"
                   fill
+                  sizes="40px"
                   className="object-cover"
                 />
               </div>
@@ -143,6 +144,7 @@ export default function AiChat() {
                         src="/images/profile-dark.png"
                         alt="John Lester"
                         fill
+                        sizes="24px"
                         className="object-cover"
                       />
                     </div>
@@ -170,6 +172,7 @@ export default function AiChat() {
                     src="/images/profile-dark.png"
                     alt="John Lester"
                     fill
+                    sizes="24px"
                     className="object-cover"
                   />
                 </div>
