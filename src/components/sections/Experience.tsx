@@ -95,17 +95,6 @@ function TimelineContent() {
       const activeDots = dotRefs.current.filter((dot): dot is HTMLDivElement => dot !== null);
       if (activeDots.length === 0) return;
 
-      // Temporarily remove transforms to get accurate layout positions
-      const originalTransforms = cardRefs.current.map(card => card ? card.style.transform : '');
-      cardRefs.current.forEach(card => {
-        if (card) card.style.transform = 'none';
-      });
-      const originalImgTransforms = imageRefs.current.map(img => img ? img.style.transform : '');
-      imageRefs.current.forEach(img => {
-        if (img) img.style.transform = 'none';
-      });
-
-      // Recalculate container rect after removing transforms in case it affected layout
       const containerRect = containerRef.current.getBoundingClientRect();
       const scrollY = window.scrollY;
 
@@ -143,30 +132,24 @@ function TimelineContent() {
       }
 
       setPathD(d);
+    };
 
-      // Restore transforms
-      cardRefs.current.forEach((card, i) => {
-        if (card) card.style.transform = originalTransforms[i];
-      });
-      imageRefs.current.forEach((img, i) => {
-        if (img) img.style.transform = originalImgTransforms[i];
+    let rafId: number | null = null;
+    const debouncedCalculate = () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        calculatePath();
+        rafId = null;
       });
     };
 
-    // Use ResizeObserver to trigger calculation as cards render and layout stabilizes
-    const observer = new ResizeObserver(() => {
-      calculatePath();
-    });
-    observer.observe(containerRef.current);
+    debouncedCalculate();
 
-    // Initial calculation
-    calculatePath();
-
-    window.addEventListener('resize', calculatePath);
+    window.addEventListener('resize', debouncedCalculate, { passive: true });
 
     return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', calculatePath);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', debouncedCalculate);
     };
   }, []);
 

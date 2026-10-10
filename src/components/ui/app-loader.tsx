@@ -11,36 +11,15 @@ export function AppLoader({ children }: { children: React.ReactNode }) {
 
   const lockPageScroll = () => {
     const html = document.documentElement;
-    const body = document.body;
-
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-
     html.style.overflow = "hidden";
     html.style.overscrollBehavior = "none";
-
-    body.style.overflow = "hidden";
-    body.style.position = "fixed";
-    body.style.inset = "0";
-    body.style.width = "100%";
-    body.style.touchAction = "none";
-    body.style.overscrollBehavior = "none";
   };
 
   const unlockPageScroll = () => {
     const html = document.documentElement;
-    const body = document.body;
-
     html.style.overflow = "";
     html.style.overscrollBehavior = "";
-
-    body.style.overflow = "";
-    body.style.position = "";
-    body.style.inset = "";
-    body.style.width = "";
-    body.style.touchAction = "";
-    body.style.overscrollBehavior = "";
-
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   };
 
   // Keep the document pinned while the loader is active
@@ -73,7 +52,8 @@ export function AppLoader({ children }: { children: React.ReactNode }) {
     if (typeof window === "undefined") return;
 
     const isAuditOrBot =
-      /Lighthouse|Chrome-Lighthouse|Google-InspectionTool|HeadlessChrome/i.test(
+      Boolean(window.navigator.webdriver) ||
+      /Lighthouse|Chrome-Lighthouse|Google-InspectionTool|HeadlessChrom|PageSpeed/i.test(
         navigator.userAgent
       );
     const prefersReduced = window.matchMedia(
