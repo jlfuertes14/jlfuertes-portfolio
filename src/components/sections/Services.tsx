@@ -127,11 +127,7 @@ export default function Services() {
       </div>
 
       {/* Floating Cursor-Following Preview (Dennis Snellenberg Style) */}
-      <ServiceHoverModal
-        modal={modal}
-        items={hoverModalItems}
-        cursorText="Read"
-      />
+      <ServiceHoverModal modal={modal} items={hoverModalItems} />
     </section>
   );
 }

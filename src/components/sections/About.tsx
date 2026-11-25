@@ -713,7 +713,7 @@ export default function About() {
                 . From full-stack platforms and scalable APIs to intelligent
                 workflows powered by{" "}
                 <strong className="font-semibold text-foreground">
-                  Gemini and Groq
+                  LLMs 
                 </strong>
                 , I build software that ships clean and solves real problems.
               </p>
