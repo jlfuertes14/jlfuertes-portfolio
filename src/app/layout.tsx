@@ -30,6 +30,7 @@ import { AppLoader } from "@/components/ui/app-loader";
 import { SoundEffectsProvider } from "@/components/SoundEffectsProvider";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.jlfuertes.dev"),
   title: "John Lester Fuertes — Portfolio",
   description:
     "Computer Engineering graduate building web apps, software solutions, and AI automations, with hands-on roots in embedded hardware and IoT.",
