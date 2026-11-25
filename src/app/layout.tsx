@@ -32,7 +32,7 @@ import { SoundEffectsProvider } from "@/components/SoundEffectsProvider";
 export const metadata: Metadata = {
   title: "John Lester Fuertes — Portfolio",
   description:
-    "Computer Engineering graduate building web applications and hardware circuits. Web developer, electronics hobbyist, and embedded systems enthusiast.",
+    "Computer Engineering graduate building web apps, software solutions, and AI automations, with hands-on roots in embedded hardware and IoT.",
   keywords: [
     "John Lester Fuertes",
     "portfolio",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "John Lester Fuertes — Portfolio",
     description:
-      "Computer Engineering graduate building web applications and hardware circuits.",
+      "Computer Engineering graduate building web apps, software solutions, and AI automations.",
     type: "website",
   },
   verification: {

@@ -19,6 +19,7 @@ export interface ServiceHoverModalProps {
   modal: { active: boolean; index: number };
   items: ServiceHoverItem[];
   className?: string;
+  cursorText?: string;
 }
 
 const scaleAnimation: Variants = {
@@ -55,7 +56,12 @@ function getServerFinePointerSnapshot() {
  * ServiceHoverModal
  * Physics-based floating preview card and magnetic cursor pill following the pointer using GSAP quickTo.
  */
-export function ServiceHoverModal({ modal, items, className }: ServiceHoverModalProps) {
+export function ServiceHoverModal({
+  modal,
+  items,
+  className,
+  cursorText = "View",
+}: ServiceHoverModalProps) {
   const { active, index } = modal;
   const modalContainer = useRef<HTMLDivElement>(null);
   const cursor = useRef<HTMLDivElement>(null);
@@ -179,7 +185,7 @@ export function ServiceHoverModal({ modal, items, className }: ServiceHoverModal
         aria-hidden="true"
         className="pointer-events-none fixed z-50 hidden md:flex h-16 w-16 items-center justify-center rounded-full bg-transparent font-medium text-xs tracking-wider uppercase text-primary-foreground select-none will-change-transform"
       >
-        View
+        {cursorText}
       </motion.div>
     </>
   );

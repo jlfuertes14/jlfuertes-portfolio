@@ -125,6 +125,9 @@ export default function Navbar() {
     if (pathname === "/resume") {
       return linkHref === "/resume";
     }
+    if (pathname.startsWith("/services")) {
+      return linkHref === "#services";
+    }
     if (pathname === "/") {
       if (linkHref === "/") {
         return activeSection === "/" || activeSection === "hero";

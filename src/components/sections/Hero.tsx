@@ -137,7 +137,7 @@ export default function Hero() {
 
           <div className="hero-desc-group max-w-md xl:max-w-lg space-y-6 sm:space-y-8">
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-              I am <span className="text-foreground font-medium">{siteConfig.name}</span>, a Computer Engineering graduate building <span className="text-primary/80">web applications</span> and <span className="text-primary/80">hardware circuits</span>.
+              I am <span className="text-foreground font-medium">{siteConfig.name}</span>, a Computer Engineering graduate building <span className="text-primary/80">web apps</span>, <span className="text-primary/80">software solutions</span>, and <span className="text-primary/80">AI automations</span>.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-6">

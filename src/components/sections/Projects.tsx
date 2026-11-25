@@ -110,45 +110,55 @@ const ProjectCardItem = ({
             />
 
             <div className="relative w-full h-full flex items-center justify-center pointer-events-auto">
-              <motion.button
-                type="button"
-                aria-label={`Preview ${project.title} desktop layout left`}
-                initial={{ x: -80, y: 0, opacity: 0, rotate: -20, scale: 0.7 }}
-                animate={{ x: -140, y: -5, opacity: 1, rotate: -12, scale: 0.98 }}
-                whileHover={{ scale: 1.06, rotate: -6, y: -24, opacity: 1, zIndex: 120 }}
-                transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                onClick={() => openProjectView(project, "desktop", project.desktopLeftImage || project.imageUrl)}
-                className="absolute w-[280px] h-[180px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-2xl z-60 cursor-pointer will-change-transform focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
-              >
-                <Image
-                  src={project.desktopLeftImage || project.imageUrl}
-                  alt="Desktop Preview Left"
-                  fill
-                  sizes="280px"
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-white/10 dark:bg-black/20 opacity-0 hover:opacity-100 transition-opacity" />
-              </motion.button>
-
-              <motion.button
-                type="button"
-                aria-label={`Preview ${project.title} desktop layout right`}
-                initial={{ x: 80, y: 0, opacity: 0, rotate: 20, scale: 0.7 }}
-                animate={{ x: 155, y: -5, opacity: 1, rotate: 12, scale: 0.98 }}
-                whileHover={{ scale: 1.06, rotate: 6, y: -24, opacity: 1, zIndex: 120 }}
-                transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                onClick={() => openProjectView(project, "desktop", project.desktopRightImage || project.imageUrl)}
-                className="absolute w-[280px] h-[180px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-2xl z-60 cursor-pointer will-change-transform focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
-              >
-                <Image
-                  src={project.desktopRightImage || project.imageUrl}
-                  alt="Desktop Preview Right"
-                  fill
-                  sizes="280px"
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-white/10 dark:bg-black/20 opacity-0 hover:opacity-100 transition-opacity" />
-              </motion.button>
+              {[
+                {
+                  side: "left" as const,
+                  image: project.desktopLeftImage || project.imageUrl,
+                  initial: { x: -80, y: 0, opacity: 0, rotate: -20, scale: 0.7 },
+                  animate: { x: -140, y: -5, opacity: 1, rotate: -12, scale: 0.98 },
+                  whileHover: { scale: 1.06, rotate: -6, y: -24, opacity: 1, zIndex: 120 },
+                  alt: project.isMobilePreviews ? `${project.title} Mobile Preview Left` : "Desktop Preview Left",
+                },
+                {
+                  side: "right" as const,
+                  image: project.desktopRightImage || project.imageUrl,
+                  initial: { x: 80, y: 0, opacity: 0, rotate: 20, scale: 0.7 },
+                  animate: { x: 155, y: -5, opacity: 1, rotate: 12, scale: 0.98 },
+                  whileHover: { scale: 1.06, rotate: 6, y: -24, opacity: 1, zIndex: 120 },
+                  alt: project.isMobilePreviews ? `${project.title} Mobile Preview Right` : "Desktop Preview Right",
+                },
+              ].map((preview) => {
+                const viewType = project.isMobilePreviews ? "mobile" : "desktop";
+                return (
+                  <motion.button
+                    key={preview.side}
+                    type="button"
+                    aria-label={`Preview ${project.title} ${viewType} layout ${preview.side}`}
+                    initial={preview.initial}
+                    animate={preview.animate}
+                    whileHover={preview.whileHover}
+                    transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                    onClick={() => openProjectView(project, viewType, preview.image)}
+                    className={
+                      project.isMobilePreviews
+                        ? "absolute w-[160px] h-[320px] bg-black border-[6px] border-[#111] rounded-[2.25rem] overflow-hidden shadow-2xl ring-1 ring-white/10 z-60 cursor-pointer will-change-transform focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                        : "absolute w-[280px] h-[180px] bg-card border-4 border-black/5 dark:border-white/10 rounded-xl overflow-hidden shadow-2xl z-60 cursor-pointer will-change-transform focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                    }
+                  >
+                    {project.isMobilePreviews && (
+                      <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-3.5 bg-[#111] rounded-full z-10 border border-white/5" />
+                    )}
+                    <Image
+                      src={preview.image}
+                      alt={preview.alt}
+                      fill
+                      sizes={project.isMobilePreviews ? "160px" : "280px"}
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-white/10 dark:bg-black/20 opacity-0 hover:opacity-100 transition-opacity" />
+                  </motion.button>
+                );
+              })}
 
               {!project.isDesktopOnly ? (
                 <motion.button
@@ -260,11 +270,12 @@ export default function Projects() {
   }, [filteredProjects]);
 
   const getProjectViews = (project: typeof projects[0]) => {
+    const sideViewType = (project.isMobilePreviews ? "mobile" : "desktop") as "desktop" | "mobile";
     const views = [
       {
-        id: "desktop-left",
-        label: "Desktop Preview",
-        type: "desktop" as const,
+        id: `${sideViewType}-left`,
+        label: project.isMobilePreviews ? "Mobile Preview Left" : "Desktop Preview",
+        type: sideViewType,
         image: project.desktopLeftImage || project.imageUrl,
       },
       {
@@ -274,9 +285,9 @@ export default function Projects() {
         image: project.previewImage || project.imageUrl,
       },
       {
-        id: "desktop-right",
-        label: "Desktop Alt Preview",
-        type: "desktop" as const,
+        id: `${sideViewType}-right`,
+        label: project.isMobilePreviews ? "Mobile Preview Right" : "Desktop Alt Preview",
+        type: sideViewType,
         image: project.desktopRightImage || project.imageUrl,
       },
     ];

@@ -7,7 +7,7 @@ export const siteConfig = {
   shortName: "JL",
   title: "Computer Engineering Graduate",
   tagline:
-    "Computer Engineering graduate building web applications and hardware circuits.",
+    "Computer Engineering graduate building web apps, software solutions, and AI automations.",
   location: "Taytay, Rizal, Philippines",
   email: "johnlester.fuertes@gmail.com",
   phone: "09774129580",
@@ -69,6 +69,7 @@ export interface Project {
   filterCategory?: string;
   filterCategories?: string[];
   isDesktopOnly?: boolean;
+  isMobilePreviews?: boolean;
 }
 
 export const projects: Project[] = [
@@ -93,16 +94,17 @@ export const projects: Project[] = [
     category: "MOBILE AUDIO PLAYER",
     description: "A titanium dark-themed streaming and offline music player app for Android and iOS. Built with React Native and Expo, featuring real-time synchronized lyrics, studio audio auto-resolver, dynamic harmonic glow backdrops, and an offline-first zero-data engine.",
     techStack: ["React Native", "Expo", "TypeScript", "Python", "Node.js", "yt-dlp"],
-    imageUrl: "/images/aura-banner.jpg",
-    previewImage: "/images/aura-mobile-preview.jpg",
-    desktopRightImage: "/images/aura-banner.jpg",
-    desktopLeftImage: "/images/aura-logo.jpg",
+    imageUrl: "/images/aura_poster.png",
+    previewImage: "/images/aura_home.jpg",
+    desktopRightImage: "/images/aura_classic.jpg",
+    desktopLeftImage: "/images/aura_liquid_glass.jpg",
     href: "https://github.com/jlfuertes14/Aura",
     ctaLabel: "View on GitHub",
     themeColor: "170 90% 45%",
     filterCategory: "Mobile Application",
     filterCategories: ["Mobile Application"],
     isDesktopOnly: false,
+    isMobilePreviews: true,
   },
   {
     title: "OrionCLI",

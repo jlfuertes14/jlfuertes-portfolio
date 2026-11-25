@@ -694,32 +694,41 @@ export default function About() {
                 <strong className="font-semibold text-foreground">
                   Computer Engineering graduate
                 </strong>{" "}
-                who builds web apps and hardware circuits. I work with{" "}
+                focused on{" "}
                 <strong className="font-semibold text-foreground">
-                  Gemini and Groq APIs
-                </strong>{" "}
-                to create chatbots, using{" "}
-                <strong className="font-semibold text-foreground">RAG</strong> to
-                keep them fast and contextual. Whether I’m designing{" "}
-                <strong className="font-semibold text-foreground">GraphQL</strong>{" "}
-                schemas, building{" "}
-                <strong className="font-semibold text-foreground">REST APIs</strong>,
-                or tinkering with sensors, I love connecting the physical world to
-                the web.
+                  web and software development
+                </strong>
+                , building fast{" "}
+                <strong className="font-semibold text-foreground">
+                  websites
+                </strong>
+                , cross-platform{" "}
+                <strong className="font-semibold text-foreground">
+                  mobile apps
+                </strong>
+                , and practical{" "}
+                <strong className="font-semibold text-foreground">
+                  AI automation
+                </strong>
+                . From full-stack platforms and scalable APIs to intelligent
+                workflows powered by{" "}
+                <strong className="font-semibold text-foreground">
+                  Gemini and Groq
+                </strong>
+                , I build software that ships clean and solves real problems.
               </p>
 
               {/* Second Paragraph */}
               <p className="text-sm sm:text-base leading-relaxed text-muted-foreground max-w-2xl text-pretty">
-                I use modern AI tools to speed up my workflow. By combining good
-                architecture with AI coding assistants, I can focus on building{" "}
+                I pair solid architecture with modern AI tools to ship{" "}
                 <strong className="font-medium text-foreground">
-                  solid hardware
+                  clean, maintainable code
                 </strong>{" "}
-                and{" "}
+                fast, and still take on{" "}
                 <strong className="font-medium text-foreground">
-                  maintainable code
-                </strong>
-                .
+                  hardware and IoT projects
+                </strong>{" "}
+                when needed.
               </p>
             </div>
 
